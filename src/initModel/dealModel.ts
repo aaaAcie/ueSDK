@@ -65,9 +65,7 @@ export function addModel(meshasset: string): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (data?: string): string => {
       msg = data
-      console.log('00000000')
-      console.log(msg)
-      resolve('success')
+      resolve(msg)
       // 二次校验，等ue做状态码后修改
       // if(msg){
       //   resolve(msg)
@@ -92,8 +90,7 @@ export function deleteModelById(id: number): Promise<{}> {
       msg = data
       console.log(msg)
       if(!data){
-        resolve('success')
-
+        resolve(msg)
       }
       // 二次校验，等ue做状态码后修改
       // if(msg){
@@ -130,7 +127,7 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   })
 }
 
-// 选中⽣命体 ue暂无返回值
+// 选中⽣命体
 export function selectModelById(id: number): Promise<{}> { 
   emitUIInteraction({
     Category: "selectModelById",
@@ -139,14 +136,36 @@ export function selectModelById(id: number): Promise<{}> {
   let msg = ''
 
   return new Promise<string>((resolve, reject) => {
-    addResponseEventListener("selectModelByIdResponse", (data?: string): string => {
-      msg = data
-      console.log('2222222')
-      console.log(msg)
-      if(!data){
-        resolve('success')
+    // SendSelectModelDataResponse
+    addResponseEventListener("SendSelectModelDataResponse", (data?: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
+      // 二次校验，等ue做状态码后修改
+      // if(msg){
+      //   resolve(msg)
+      // }else{
+      //   reject(new Error('接收ue返回失败'))
+      // }
+      return msg
+    })
+  })
+}
 
-      }
+// 选中⽣命体后，改变选择模式
+export function selectModeChange(mode: string): Promise<{}> { 
+  emitUIInteraction({
+    Category: "SelectModeChange",
+    SelectMode: mode
+  })
+  let msg = ''
+
+  return new Promise<string>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("SelectModeChangeResponse", (data?: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
       // 二次校验，等ue做状态码后修改
       // if(msg){
       //   resolve(msg)
@@ -168,11 +187,8 @@ export function selectCancel(): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("selectCancelResponse", (data?: string): string => {
       msg = data
-      console.log('2222222')
-      console.log(msg)
       if(!data){
-        resolve('success')
-
+        resolve(msg)
       }
       // 二次校验，等ue做状态码后修改
       // if(msg){

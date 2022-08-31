@@ -1,5 +1,5 @@
 // const { load,hideOverlay,closews } = require('../basic2/app')
-const { load,hideOverlay,closews,passStats } = require('../basic2/myApp')
+const { load,closews,passStats,emitUIInteraction } = require('../basic2/myApp')
 
 
 
@@ -14,25 +14,42 @@ interface ConnectParams {
 
 export class initUE {
   url: string
-  ws: any
   domId: string
   stats: object
+  resolution?: string // 底座分辨率
+  options?: object // 可选剩余参数
+  successCallback?: (v?) => {}
+  errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
     this.url = parameters.url
     this.domId = parameters.domId
+    this.successCallback = parameters.successCallback
+    this.errorCallback = parameters.errorCallback
   }
   connect():void {
     console.log(this.url)
-    load(this.url)
+    // load(this.url)
+    load(this.url, this.domId).then((value?) => {
+      this.successCallback(value)
+    }).catch((reason) => {
+      this.errorCallback(reason)
+      console.log('failed', reason)
+    })
+
   }
   disconnect():void {
     // 底座关闭连接 
     closews()
-    hideOverlay()
   }
   // 当前连接状态
   getStats():object{
     this.stats = passStats()
     return this.stats
+  }
+  // 保存
+  save(){
+    emitUIInteraction({
+      Category: "SaveMeshData"
+    })
   }
 }

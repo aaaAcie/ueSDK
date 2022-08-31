@@ -1,6 +1,7 @@
 const webRtcPlayer = require('./webRtcPlayer')
 let webRtcPlayerObj = null;
 let ws;
+let myDom;
 let statsObj = {};
 let print_stats = false;
 let print_inputs = false;
@@ -84,7 +85,7 @@ const ToClientMessageType = {
   FileContents: 10
 };
 function resizePlayerStyle(event) {
-  let playerElement = document.getElementById('player');
+  let playerElement = document.getElementById(myDom);
 
   if (!playerElement)
       return;
@@ -112,7 +113,7 @@ function resizePlayerStyle(event) {
   setupMouseAndFreezeFrame(playerElement)
 }
 function setupNormalizeAndQuantize() {
-  let playerElement = document.getElementById('player');
+  let playerElement = document.getElementById(myDom);
   let videoElement = playerElement.getElementsByTagName("video");
 
   if (playerElement && videoElement.length > 0) {
@@ -950,7 +951,7 @@ function setupWebRtcPlayer(htmlElement, config) {
   webRtcPlayerObj.onWebRtcAnswer = function (answer) {
       if (ws && ws.readyState === WS_OPEN_STATE) {
           let answerStr = JSON.stringify(answer);
-          console.log("%c[Outbound SS message (answer)]", "background: lightgreen; color: black", answer);
+          // console.log("%c[Outbound SS message (answer)]", "background: lightgreen; color: black", answer);
           ws.send(answerStr);
       }
   };
@@ -973,7 +974,7 @@ function setupWebRtcPlayer(htmlElement, config) {
 
   webRtcPlayerObj.onDataChannelConnected = function() {
       if (ws && ws.readyState === WS_OPEN_STATE) {
-          showTextOverlay('WebRTC data channel connected... waiting for video');
+          console.log('WebRTC data channel connected... waiting for video');
           requestQualityControl();
       }
   };
@@ -1140,10 +1141,10 @@ function setupWebRtcPlayer(htmlElement, config) {
 
           // 爆改here
           // 让responseEventListeners对应的key去调用value
-          console.log('response的Category类型:', k_response)
+          // console.log('response的Category类型:', k_response)
           try {
             answer = responseEventListeners.get(k_response)(response)
-            console.log('response经过回调处理后的返回值:', k_response,answer)
+            // console.log('response经过回调处理后的返回值:', k_response,answer)
           } catch (error) {
             console.log(`SDK尚未注册${k_response}对应的回调`)
           } finally {
@@ -1244,7 +1245,7 @@ function playStream() {
       requestInitialSettings();
       requestQualityControl();
       // showFreezeFrameOverlay();
-      hideOverlay();
+      // hideOverlay();
   } else {
       console.error("Could not player video stream because webRtcPlayerObj.video was not valid.")
   }
@@ -1266,7 +1267,7 @@ function onWebRtcIce(iceCandidate) {
 }
 // Config data received from WebRTC sender via the Cirrus web server
 function onConfig(config) {
-  let playerDiv = document.getElementById('player');
+  let playerDiv = document.getElementById(myDom);
   let playerElement = setupWebRtcPlayer(playerDiv, config);
   resizePlayerStyle();
 
@@ -1395,77 +1396,85 @@ function passStats() {
 }
 function connect(WSurl) {
   // "use strict";
+  return new Promise((resolve,reject) => {
+    try {
+      window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-  window.WebSocket = window.WebSocket || window.MozWebSocket;
+      if (!window.WebSocket) {
+          // alert('Your browser doesn\'t support WebSocket');
+          // return;
+          reject(new Error('Your browser doesn\'t support WebSocket'))
+      }
 
-  if (!window.WebSocket) {
-      alert('Your browser doesn\'t support WebSocket');
-      return;
-  }
+      // ws = new WebSocket(window.location.href.replace('http://', 'ws://').replace('https://', 'wss://'));
+      // console.log("name",wsconfig.WSurl)
+      // ws = new WebSocket('ws://192.168.2.85:778/')
+      // ws = new WebSocket('ws://' + wsconfig.WSurl)
+      console.log('ws://' + WSurl);
+      if(WSurl){
+        ws = new WebSocket('ws://' + WSurl)
+        // ws = new WebSocket('ws://192.168.2.194:678/')
+        ws.onmessage = function(event) {
+            let msg = JSON.parse(event.data);
+            if (msg.type === 'config') {
+                // console.log("%c[Inbound SS (config)]", "background: lightblue; color: black", msg);
+                onConfig(msg);
+            } else if (msg.type === 'playerCount') {
+                // console.log("%c[Inbound SS (playerCount)]", "background: lightblue; color: black", msg);
+            } else if (msg.type === 'offer') {
+                // console.log("%c[Inbound SS (offer)]", "background: lightblue; color: black", msg);
+                onWebRtcOffer(msg);
+            } else if (msg.type === 'answer') {
+                // console.log("%c[Inbound SS (answer)]", "background: lightblue; color: black", msg);
+                onWebRtcAnswer(msg);
+            } else if (msg.type === 'iceCandidate') {
+                onWebRtcIce(msg.candidate);
+            } else if(msg.type === 'warning' && msg.warning) {
+                console.warn(msg.warning);
+            } else {
+                console.error("Invalid SS message type", msg.type);
+            }
+        };
 
-  // ws = new WebSocket(window.location.href.replace('http://', 'ws://').replace('https://', 'wss://'));
-  // console.log("name",wsconfig.WSurl)
-  // ws = new WebSocket('ws://192.168.2.85:778/')
-// ws = new WebSocket('ws://' + wsconfig.WSurl)
-  console.log('ws://' + WSurl);
-  if(WSurl){
-      ws = new WebSocket('ws://' + WSurl)
-      // ws = new WebSocket('ws://192.168.2.194:678/')
-      ws.onmessage = function(event) {
-          let msg = JSON.parse(event.data);
-          if (msg.type === 'config') {
-              console.log("%c[Inbound SS (config)]", "background: lightblue; color: black", msg);
-              onConfig(msg);
-          } else if (msg.type === 'playerCount') {
-              console.log("%c[Inbound SS (playerCount)]", "background: lightblue; color: black", msg);
-          } else if (msg.type === 'offer') {
-              console.log("%c[Inbound SS (offer)]", "background: lightblue; color: black", msg);
-              onWebRtcOffer(msg);
-          } else if (msg.type === 'answer') {
-              console.log("%c[Inbound SS (answer)]", "background: lightblue; color: black", msg);
-              onWebRtcAnswer(msg);
-          } else if (msg.type === 'iceCandidate') {
-              onWebRtcIce(msg.candidate);
-          } else if(msg.type === 'warning' && msg.warning) {
-              console.warn(msg.warning);
-          } else {
-              console.error("Invalid SS message type", msg.type);
-          }
-      };
+        ws.onerror = function(event) {
+            console.log(`WS error: ${JSON.stringify(event)}`);
+        };
 
-      ws.onerror = function(event) {
-          console.log(`WS error: ${JSON.stringify(event)}`);
-      };
+        ws.onclose = function(event) {
+            console.log(`WS closed: ${JSON.stringify(event.code)} - ${event.reason}`);
+            ws = undefined;
+            is_reconnection = true;
 
-      ws.onclose = function(event) {
-          console.log(`WS closed: ${JSON.stringify(event.code)} - ${event.reason}`);
-          ws = undefined;
-          is_reconnection = true;
+            // destroy `webRtcPlayerObj` if any
+            let playerDiv = document.getElementById(myDom);
+            if (webRtcPlayerObj) {
+                playerDiv.removeChild(webRtcPlayerObj.video);
+                webRtcPlayerObj.close();
+                webRtcPlayerObj = undefined;
+            }
 
-          // destroy `webRtcPlayerObj` if any
-          let playerDiv = document.getElementById('player');
-          if (webRtcPlayerObj) {
-              playerDiv.removeChild(webRtcPlayerObj.video);
-              webRtcPlayerObj.close();
-              webRtcPlayerObj = undefined;
-          }
-
-          showTextOverlay(`Disconnected: ${event.reason}`);
-          // let reclickToStart = setTimeout(start, 4000);
-      };
-  }
+            console.log(`ws连接失败: ${event.reason}`);
+            // let reclickToStart = setTimeout(start, 4000);
+        };
+        resolve()
+      }else{
+       reject(new Error('ws地址接收失败'))
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
-function showTextOverlay(reason) {
-  console.log('showTextOverlay: ',reason)
-}
-function load(WSurl) {
+
+async function load(WSurl,domId) {
+  myDom = domId
   // setupHtmlEvents();
   // setupFreezeFrameOverlay();
   registerKeyboardEvents();
   inputOptions.controlScheme = ControlSchemeType.HoveringMouse;
   inputOptions.fakeMouseWithTouches = true;
   // start(WSurl);
-  connect(WSurl);
+  await connect(WSurl)
 }
 
 function closews() {
@@ -1480,6 +1489,5 @@ module.exports = {
 	addResponseEventListener,
   load,
   closews,
-  hideOverlay,
   passStats,
 }
