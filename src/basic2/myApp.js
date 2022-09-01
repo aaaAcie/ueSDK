@@ -8,7 +8,7 @@ let print_inputs = false;
 let playerElementClientRect = undefined;
 let normalizeAndQuantizeUnsigned = undefined;
 let normalizeAndQuantizeSigned = undefined;
-let autoPlayAudio = true;
+let autoPlayAudio = false;
 let qualityController = false;
 const WS_OPEN_STATE = 1;
 let VideoEncoderQP = "N/A";
@@ -926,7 +926,9 @@ function requestInitialSettings() {
 }
 function setupWebRtcPlayer(htmlElement, config) {
   webRtcPlayerObj = new webRtcPlayer(config);
-  autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : true;
+//   autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : true;
+  autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : false;
+
   htmlElement.appendChild(webRtcPlayerObj.video);
   htmlElement.appendChild(webRtcPlayerObj.audio);
   // htmlElement.appendChild(freezeFrameOverlay);
@@ -1486,7 +1488,7 @@ function hideOverlay() {
 
 module.exports = {
   emitUIInteraction,
-	addResponseEventListener,
+    addResponseEventListener,
   load,
   closews,
   passStats,

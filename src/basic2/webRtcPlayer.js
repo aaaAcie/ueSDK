@@ -130,7 +130,9 @@ function webRtcPlayer(parOptions) {
         video.id = "streamingVideo";
         video.playsInline = true;
         video.disablePictureInPicture = true;
-        video.muted = self.startVideoMuted;;
+        // video.muted = self.startVideoMuted;;
+        video.muted = true;
+
         
         video.addEventListener('loadedmetadata', function(e){
             if(self.onVideoInitialised){

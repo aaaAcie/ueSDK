@@ -40,6 +40,12 @@ export class initUE {
   disconnect():void {
     // 底座关闭连接 
     closews()
+    try {
+      let box = document.getElementById("streamingAudio")
+      box.remove()
+    } catch (error) {
+      console.log(error)
+    }
   }
   // 当前连接状态
   getStats():object{
