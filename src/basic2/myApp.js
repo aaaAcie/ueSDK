@@ -925,6 +925,9 @@ function requestInitialSettings() {
   sendInputData(new Uint8Array([MessageType.RequestInitialSettings]).buffer);
 }
 function setupWebRtcPlayer(htmlElement, config) {
+    return new Promise((resolve,reject) => {
+
+
   webRtcPlayerObj = new webRtcPlayer(config);
 //   autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : true;
   autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : false;
@@ -1148,7 +1151,7 @@ function setupWebRtcPlayer(htmlElement, config) {
             answer = responseEventListeners.get(k_response)(response)
             // console.log('response经过回调处理后的返回值:', k_response,answer)
           } catch (error) {
-            console.log(`SDK尚未注册${k_response}对应的回调`)
+            console.log(`ue发送了${k_response}事件，请注册对应的回调`)
           } finally {
             // 最后统一都用logAll方法接收
             responseEventListeners.get('logAll')(response)
@@ -1216,7 +1219,11 @@ function setupWebRtcPlayer(htmlElement, config) {
 
   //createWebRtcOffer();
 
-  return webRtcPlayerObj.video;
+  //   return webRtcPlayerObj.video;
+    if(webRtcPlayerObj.video){
+        resolve(webRtcPlayerObj.video)
+    }
+  })
 }
 function playVideo() {
   webRtcPlayerObj.video.play().catch((onRejectedReason) => {
@@ -1268,9 +1275,9 @@ function onWebRtcIce(iceCandidate) {
   }
 }
 // Config data received from WebRTC sender via the Cirrus web server
-function onConfig(config) {
+async function onConfig(config) {
   let playerDiv = document.getElementById(myDom);
-  let playerElement = setupWebRtcPlayer(playerDiv, config);
+  let playerElement = await setupWebRtcPlayer(playerDiv, config);
   resizePlayerStyle();
 
   switch (inputOptions.controlScheme) {
@@ -1285,6 +1292,11 @@ function onConfig(config) {
           registerLockedMouseEvents(playerElement);
           break;
   }
+  return new Promise((resolve,reject) => {
+      if(playerElement){
+        resolve(playerElement)
+      }
+  })
 }
 function setupStats(){
   webRtcPlayerObj.aggregateStats(1 * 1000 /*Check every 1 second*/ );
@@ -1398,6 +1410,7 @@ function passStats() {
 }
 function connect(WSurl) {
   // "use strict";
+  let playerElement = null
   return new Promise((resolve,reject) => {
     try {
       window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -1420,7 +1433,12 @@ function connect(WSurl) {
             let msg = JSON.parse(event.data);
             if (msg.type === 'config') {
                 // console.log("%c[Inbound SS (config)]", "background: lightblue; color: black", msg);
-                onConfig(msg);
+                // onConfig(msg);
+                onConfig(msg).then((data) => {
+                    playerElement = data
+                    resolve(playerElement)
+                })
+
             } else if (msg.type === 'playerCount') {
                 // console.log("%c[Inbound SS (playerCount)]", "background: lightblue; color: black", msg);
             } else if (msg.type === 'offer') {
@@ -1458,7 +1476,7 @@ function connect(WSurl) {
             console.log(`ws连接失败: ${event.reason}`);
             // let reclickToStart = setTimeout(start, 4000);
         };
-        resolve()
+        // resolve()
       }else{
        reject(new Error('ws地址接收失败'))
       }

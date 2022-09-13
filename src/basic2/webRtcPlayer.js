@@ -132,7 +132,8 @@ function webRtcPlayer(parOptions) {
         video.disablePictureInPicture = true;
         // video.muted = self.startVideoMuted;;
         video.muted = true;
-
+        // video.style.width = '100%'
+        // video.style.height = '100%'
         
         video.addEventListener('loadedmetadata', function(e){
             if(self.onVideoInitialised){
