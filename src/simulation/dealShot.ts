@@ -10,13 +10,15 @@ interface getParam {
 }
 interface modifyParam {
   id: string
+  name: string
   position: {}
 }
 
 // 添加镜头
-export function addShot(): Promise<Object> {
+export function addShot(name: string): Promise<Object> {
   emitUIInteraction({
-    Category: "addShot"
+    Category: "addShot",
+    name
   })
   let msg = {}
   return new Promise<Object>((resolve, reject) => {
@@ -37,7 +39,7 @@ export function addShot(): Promise<Object> {
 export function deleteShotById(id: string): Promise<Object> {
   emitUIInteraction({
     Category: "deleteShotById",
-    id: id
+    id
   })
   let msg = {}
   return new Promise<Object>((resolve, reject) => {
@@ -58,11 +60,11 @@ export function deleteShotById(id: string): Promise<Object> {
 export function saveShotById(id: string): Promise<Object> {
   emitUIInteraction({
     Category: "saveShotById",
-    id: id
+    id
   })
   let msg = {}
   return new Promise<Object>((resolve, reject) => {
-    addResponseEventListener("saveShotByIdResponse", (data?: string): Object => {
+    addResponseEventListener("SaveShotById", (data?: string): Object => {
       try {
         msg = JSON.parse(data)
         // msg = data
@@ -78,11 +80,11 @@ export function saveShotById(id: string): Promise<Object> {
 // 查询镜头列表
 export function queryShotList(): Promise<Array<Shot>> {
   emitUIInteraction({
-    Category: "saveShotById"
+    Category: "queryShotList"
   })
   let msg: Array<Shot> = []
   return new Promise<Array<Shot>>((resolve, reject) => {
-    addResponseEventListener("saveShotByIdResponse", (data?: string): Array<Shot> => {
+    addResponseEventListener("queryShotListResponse", (data?: string): Array<Shot> => {
       try {
         msg = JSON.parse(data)
         // msg = data
@@ -98,12 +100,12 @@ export function queryShotList(): Promise<Array<Shot>> {
 // 获取单个镜头
 export function getShotById(id: string): Promise<Shot> {
   emitUIInteraction({
-    Category: "saveShotById",
-    id: id
+    Category: "getShotById",
+    id
   })
   let msg: Shot
   return new Promise<Shot>((resolve, reject) => {
-    addResponseEventListener("saveShotByIdResponse", (data?: string): Shot => {
+    addResponseEventListener("getShotByIdResponse", (data?: string): Shot => {
       try {
         msg = JSON.parse(data)
         // msg = data
@@ -117,13 +119,31 @@ export function getShotById(id: string): Promise<Shot> {
 }
 
 // 设置初始镜头
-
+export function setInitShot(id: string): Promise<Shot> {
+  emitUIInteraction({
+    Category: "setInitShot",
+    id
+  })
+  let msg: Shot
+  return new Promise<Shot>((resolve, reject) => {
+    addResponseEventListener("setInitShotResponse", (data?: string): Shot => {
+      try {
+        msg = JSON.parse(data)
+        // msg = data
+        resolve(msg)
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return msg
+    })
+  })
+}
 
 // 修改镜头名称
-export function modifyShotName(id: string): Promise<Shot> {
+export function modifyShotName(modifyParam: modifyParam): Promise<Shot> {
   emitUIInteraction({
     Category: "modifyShotName",
-    id: id
+    ...modifyParam
   })
   let msg: Shot
   return new Promise<Shot>((resolve, reject) => {
@@ -144,7 +164,7 @@ export function modifyShotName(id: string): Promise<Shot> {
 export function switchShot(id: string): Promise<Shot> {
   emitUIInteraction({
     Category: "switchShot",
-    id: id
+    id
   })
   let msg: Shot
   return new Promise<Shot>((resolve, reject) => {
@@ -164,12 +184,12 @@ export function switchShot(id: string): Promise<Shot> {
 // 修改镜头属性
 export function modifyShotProperty(modifyParam: modifyParam): Promise<Shot> {
   emitUIInteraction({
-    Category: "switchShot",
-    modifyParam: modifyParam
+    Category: "modifyShotProperty",
+    ...modifyParam
   })
   let msg: Shot
   return new Promise<Shot>((resolve, reject) => {
-    addResponseEventListener("switchShotResponse", (data?: string): Shot => {
+    addResponseEventListener("modifyShotPropertyResponse", (data?: string): Shot => {
       try {
         msg = JSON.parse(data)
         // msg = data

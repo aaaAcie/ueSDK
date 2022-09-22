@@ -200,3 +200,24 @@ export function selectCancel(): Promise<{}> {
     })
   })
 }
+
+// 获取单个生命体
+export function getModelById (id: string): Promise<Model> {
+  emitUIInteraction({
+    Category: "getModelById",
+    id
+  })
+  let msg: Model
+  return new Promise<Model>((resolve, reject) => {
+    addResponseEventListener("getModelByIdResponse", (data?: string): Model => {
+      try {
+        msg = JSON.parse(data)
+        // msg = data
+        resolve(msg)
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return msg
+    })
+  })
+}

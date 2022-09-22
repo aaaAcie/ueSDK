@@ -10,3 +10,6 @@ export * from './initModel/dealModel'
 
 // 镜头
 export * from './simulation/dealShot'
+
+// POI
+export * from './simulation/dealPOI'
