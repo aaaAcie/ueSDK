@@ -18,7 +18,7 @@ export class initUE {
   stats: object
   resolution?: string // 底座分辨率
   options?: object // 可选剩余参数
-  successCallback?: (v?) => {}
+  successCallback?: (ws: WebSocket) => {} // 接收当前的websocket连接实例
   errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
     this.url = parameters.url
@@ -26,17 +26,30 @@ export class initUE {
     this.successCallback = parameters.successCallback
     this.errorCallback = parameters.errorCallback
   }
-  connect():void {
-    console.log(this.url)
-    // load(this.url)
-    load(this.url, this.domId).then((value?) => {
-      this.successCallback(value)
-    }).catch((reason) => {
-      this.errorCallback(reason)
-      console.log('failed', reason)
-    })
+  // 返回streamingVideo的dom实例
+  connect():Promise<HTMLElement> {
+    return new Promise((resolve,reject) => {
+      console.log(this.url)
+      let streamingVideo = null
+      // load(this.url)
+      load(this.url, this.domId).then((ws) => {
+        // 连接成功后 可以在这里给ue发消息，发送基本配置
+        emitUIInteraction({
+          // Category: "addPOIModel",
+          Category: "基本配置",
+          
+        })
+        this.successCallback(ws)
+        streamingVideo = document.getElementById("streamingVideo")
+        resolve(streamingVideo)
+      }).catch((reason) => {
+        this.errorCallback(reason)
+        console.log('failed', reason)
+      })
 
+    })
   }
+
   disconnect():void {
     // 底座关闭连接 
     closews()
@@ -54,6 +67,7 @@ export class initUE {
   }
   // 保存
   save(){
+    // savedataResponse
     emitUIInteraction({
       Category: "SaveMeshData"
     })

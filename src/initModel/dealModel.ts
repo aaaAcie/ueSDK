@@ -55,16 +55,17 @@ export function initMaterial(meshasset: Array<string>): Promise<{}> {
 }
 
 
-// 添加⽣命体 ue暂无返回值 里面的回调暂无法被调用
-export function addModel(meshasset: string): Promise<{}> {
+// 添加⽣命体  跟ue通信并向接口提交
+export function addModel(meshasset: {}): Promise<{}> {
   emitUIInteraction({
     Category: "addModel",
-    meshasset: meshasset
+    ...meshasset
   })
   let msg = ''
-  return new Promise<string>((resolve, reject) => {
-    addResponseEventListener("addModelResponse", (data?: string): string => {
-      msg = data
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("addModelResponse", (data?: string): {} => {
+      msg = JSON.parse(data)
+
       resolve(msg)
       // 二次校验，等ue做状态码后修改
       // if(msg){
@@ -77,21 +78,19 @@ export function addModel(meshasset: string): Promise<{}> {
   })
 }
 
-// 删除⽣命体 ue暂无返回值
+
+// 删除⽣命体  跟ue通信并向接口提交
 export function deleteModelById(id: number): Promise<{}> { 
   emitUIInteraction({
     Category: "deleteModelById",
     id: id
   })
   let msg = ''
-
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("deleteModelByIdResponse", (data?: string): string => {
-      msg = data
-      console.log(msg)
-      if(!data){
-        resolve(msg)
-      }
+      msg = JSON.parse(data)
+      resolve(msg)
+
       // 二次校验，等ue做状态码后修改
       // if(msg){
       //   resolve(msg)
@@ -103,8 +102,7 @@ export function deleteModelById(id: number): Promise<{}> {
   })
 }
 
-// 设置⽣命体属性
-// export function setModelPropsById(modelProps: Model): Array<Model>[] {
+// 设置⽣命体属性  只跟ue通信
 export function setModelPropsById(modelProps: Model): Promise<{}> {
   emitUIInteraction({
     Category: "setModelPropsById",
@@ -113,8 +111,27 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("setModelPropsByIdResponse", (data: string): string => {
-      msg = data
-      console.log(msg)
+      msg = JSON.parse(data)
+      // console.log(msg)
+      
+      // 二次校验，等ue做状态码后修改
+      if(msg){
+        resolve(msg)
+      }else{
+        reject(new Error('接收ue返回失败'))
+      }
+      return msg
+    })
+  })
+}
+// 设置⽣命体属性 走接口提交保存
+export function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
+  let msg = ''
+  return new Promise<string>((resolve, reject) => {
+    // 走接口 把接口回答返回给前端
+    addResponseEventListener("setModelPropsByIdResponse", (data: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
       
       // 二次校验，等ue做状态码后修改
       if(msg){
@@ -127,7 +144,7 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   })
 }
 
-// 选中⽣命体
+// 选中⽣命体  只跟ue通信
 export function selectModelById(id: number): Promise<{}> { 
   emitUIInteraction({
     Category: "selectModelById",
@@ -137,7 +154,7 @@ export function selectModelById(id: number): Promise<{}> {
 
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("SendSelectModelDataResponse", (data?: string): string => {
+    addResponseEventListener("selectModelById", (data?: string): string => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
@@ -152,7 +169,7 @@ export function selectModelById(id: number): Promise<{}> {
   })
 }
 
-// 选中⽣命体后，改变选择模式
+// 选中⽣命体后，改变选择模式  只跟ue通信
 export function selectModeChange(mode: string): Promise<{}> { 
   emitUIInteraction({
     Category: "SelectModeChange",
@@ -162,7 +179,7 @@ export function selectModeChange(mode: string): Promise<{}> {
 
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("SelectModeChangeResponse", (data?: string): string => {
+    addResponseEventListener("selectModeChangeResponse", (data?: string): string => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
@@ -177,7 +194,7 @@ export function selectModeChange(mode: string): Promise<{}> {
   })
 }
 
-// 取消选中 ue暂无返回值
+// 取消选中 只跟ue通信
 export function selectCancel(): Promise<{}> { 
   emitUIInteraction({
     Category: "SelectCancel",
@@ -186,10 +203,9 @@ export function selectCancel(): Promise<{}> {
 
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("selectCancelResponse", (data?: string): string => {
-      msg = data
-      if(!data){
-        resolve(msg)
-      }
+      msg = JSON.parse(data)
+
+      resolve(msg)
       // 二次校验，等ue做状态码后修改
       // if(msg){
       //   resolve(msg)
@@ -201,7 +217,7 @@ export function selectCancel(): Promise<{}> {
   })
 }
 
-// 获取单个生命体
+// 获取单个生命体 从接口拿到数据
 export function getModelById (id: string): Promise<Model> {
   emitUIInteraction({
     Category: "getModelById",
@@ -210,6 +226,31 @@ export function getModelById (id: string): Promise<Model> {
   let msg: Model
   return new Promise<Model>((resolve, reject) => {
     addResponseEventListener("getModelByIdResponse", (data?: string): Model => {
+      try {
+        msg = JSON.parse(data)
+        // msg = data
+        resolve(msg)
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return msg
+    })
+  })
+}
+
+interface showParams{
+  id: string; // 生命体id
+  showStatus: number; // 1可见 0隐藏
+}
+// 显示、隐藏生命体  跟ue通信并向接口提交
+export function showModelByIds (allParams: Array<showParams>): Promise<Model> {
+  emitUIInteraction({
+    Category: "showModelByIds",
+    allParams
+  })
+  let msg: Model
+  return new Promise<Model>((resolve, reject) => {
+    addResponseEventListener("showModelByIdsResponse", (data?: string): Model => {
       try {
         msg = JSON.parse(data)
         // msg = data

@@ -64,7 +64,7 @@ export function saveShotById(id: string): Promise<Object> {
   })
   let msg = {}
   return new Promise<Object>((resolve, reject) => {
-    addResponseEventListener("SaveShotById", (data?: string): Object => {
+    addResponseEventListener("saveShotByIdResponse", (data?: string): Object => {
       try {
         msg = JSON.parse(data)
         // msg = data
@@ -189,7 +189,7 @@ export function modifyShotProperty(modifyParam: modifyParam): Promise<Shot> {
   })
   let msg: Shot
   return new Promise<Shot>((resolve, reject) => {
-    addResponseEventListener("modifyShotPropertyResponse", (data?: string): Shot => {
+    addResponseEventListener("setModelPropsByIdResponse", (data?: string): Shot => {
       try {
         msg = JSON.parse(data)
         // msg = data

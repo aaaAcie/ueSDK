@@ -5,24 +5,23 @@ interface TextStyle {
   fontFamily: string;
   fontColor: string;
 }
-class POIModel extends Model {
-  textStyle: TextStyle; // 文字效果
-  // offset: { x: number; y: number }; // 位移
-  // effect: {}; // 特效，预留
+class effectModel extends Model {
+  color: string; // 文字效果
+
 }
 
-// 增加POI 跟ue通信并走接口提交保存
-// POItype: 标题式 图标式 文本弹窗 视频弹窗式
-export function addPOIModel (POItype: String): Promise<POIModel> {
+// 增加特效
+// effectType: 标题式 图标式 文本弹窗 视频弹窗式
+export function addEffect (effectType: String): Promise<effectModel> {
   // 增加POI 返回当前POI 属性
   emitUIInteraction({
     // Category: "addPOIModel",
     Category: "addModel",
-    ...POItype
+    ...effectType
   })
-  let msg: POIModel
-  return new Promise<POIModel>((resolve, reject) => {
-    addResponseEventListener("addPoiResponse", (data?: string): POIModel => {
+  let msg: effectModel
+  return new Promise<effectModel>((resolve, reject) => {
+    addResponseEventListener("addModelResponse", (data?: string): effectModel => {
       try {
         msg = JSON.parse(data)
         // msg = data
@@ -35,10 +34,6 @@ export function addPOIModel (POItype: String): Promise<POIModel> {
   })
 }
 
-
-// 修改POI属性
-// export function setModelPropsById(modelProps: Model): Promise<{}> {
-// }
 
 
 // 获取单个POI (在生命体中实现)
