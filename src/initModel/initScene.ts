@@ -1,87 +1,118 @@
 // 场景设置
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { operPoint, selectAllView } from '../api/api.js'
 
+interface WeatherParams{ 
+  weather: '晴天无云' | '多云' | '雾天' | '阴天' | '晴天有云' | '雨天' | '太阳雨' | '雷雨' | '沙尘' | '沙尘暴' | '雪天' | '暴风雪' | '太阳雪',
+  where_pass_id: string
+}
+interface TimeParams{ 
+  time: string,
+  where_pass_id: string
+}
+// 天气 跟ue通信并向接口提交 1
+export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
+  const { data } = await operPoint({
+    "oper_type": "updatePoint",
+    ...weatherParams
+  })
+  let Message: number
 
-// 天气
-export function changeWeather(weather: '晴天无云' | '多云' | '雾天' | '阴天' | '晴天有云' | '雨天' | '太阳雨' | '雷雨' | '沙尘' | '沙尘暴' | '雪天' | '暴风雪' | '太阳雪'): Promise<{}> {
+  if(data.code==200){
+    Message = data.data
+    // console.log(Message)
+  }
   emitUIInteraction({
     Category: "changeWeather",
-    weather
+    weather: weatherParams['weather']
   })
-  let msg: {}
+  let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("changeWeatherResponse", (data?: string): {} => {
+    addResponseEventListener("changeWeatherResponse", (uedata?: string): {} => {
       try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
+        ueMsg = JSON.parse(uedata)
+        resolve({ ueMsg, Message })
       } catch (error) {
         reject(new Error(error))
       }
-      return msg
+      return ueMsg
     })
   })
 }
 
 // 关卡
-// 读取关卡
-export function readPass(): Promise<{}> {
-  emitUIInteraction({
-    Category: "readPass"
+// 读取关卡 从接口拿到数据 给前端 1未测试
+export async function readPass(project_id: string): Promise<{}> {
+  project_id = project_id.toString()
+  const { data } = await operPoint({
+    "oper_type": "selectPoint",
+    project_id
   })
-  let msg: {}
+  let Message: []
+
+  if(data.code==200){
+    Message = data.data
+    // console.log(Message)
+  }
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("readPassResponse", (data?: string): {} => {
-      try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
-      } catch (error) {
-        reject(new Error(error))
-      }
-      return msg
-    })
+    if(Message.length>0){
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
+
   })
 }
 
-// 关卡切换
-export function changePass(pass: string): Promise<{}> {
+// 关卡切换 只跟ue通信 并向ue发消息
+export async function changePass(pass_id: string): Promise<{}> {
   emitUIInteraction({
     Category: "changePass",
-    pass
+    pass: pass_id
   })
-  let msg: {}
-  return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("changePassResponse", (data?: string): {} => {
-      try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
-      } catch (error) {
-        reject(new Error(error))
-      }
-      return msg
-    })
-  })
+  // let ueMsg: {}
+  // return new Promise<{}>((resolve, reject) => {
+  //   addResponseEventListener("changePassResponse", (uedata?: string): {} => {
+  //     try {
+  //       ueMsg = JSON.parse(uedata)['Message']
+  //       // msg = data
+  //       resolve(ueMsg)
+  //     } catch (error) {
+  //       reject(new Error(error))
+  //     }
+  //     return ueMsg
+  //   })
+  // })
+  return Promise.resolve({"Success":true})
 }
 
-// 修改时间
-export function changeTime(time: string): Promise<{}> {
+// 修改时间 跟ue通信并向接口提交 1
+export async function changeTime(timeParams: TimeParams): Promise<{}> {
+  const { data } = await operPoint({
+    "oper_type": "updatePoint",
+    ...timeParams
+  })
+  let Message: number
+
+  if(data.code==200){
+    Message = data.data
+    // console.log(Message)
+  }
   emitUIInteraction({
     Category: "changeTime",
-    time
+    time: timeParams['time']
   })
-  let msg: {}
+  let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("changeTimeResponse", (data?: string): {} => {
+    addResponseEventListener("changeTimeResponse", (uedata?: string): {} => {
       try {
-        msg = JSON.parse(data)
+        ueMsg = JSON.parse(uedata)
         // msg = data
-        resolve(msg)
+        resolve({ ueMsg, Message })
       } catch (error) {
         reject(new Error(error))
       }
-      return msg
+      return ueMsg
     })
   })
 }

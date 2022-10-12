@@ -1,5 +1,7 @@
 import { Model } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { operLifeEntity } from '../api/api.js'
+
 interface TextStyle {
   fontSize: number;
   fontFamily: string;
@@ -10,26 +12,50 @@ class effectModel extends Model {
 
 }
 
-// 增加特效
+// 增加特效 跟ue通信并走接口提交保存
 // effectType: 标题式 图标式 文本弹窗 视频弹窗式
-export function addEffect (effectType: String): Promise<effectModel> {
+export function addEffect (effectType: String): Promise<{}> {
   // 增加POI 返回当前POI 属性
   emitUIInteraction({
     // Category: "addPOIModel",
     Category: "addModel",
     ...effectType
   })
-  let msg: effectModel
-  return new Promise<effectModel>((resolve, reject) => {
-    addResponseEventListener("addModelResponse", (data?: string): effectModel => {
+      
+  let ueMsg: effectModel
+  let msg2: String
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("addModelResponse", (uedata?: string): effectModel => {
       try {
-        msg = JSON.parse(data)
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        ueMsg.showstatus = ueMsg.showstatus.toString()
+        // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
+        msg2 = JSON.parse(JSON.stringify(ueMsg))
+
+        console.log(msg2);
+        
+        operLifeEntity({
+          "oper_type": "insertLifeEntity",
+          ...msg2
+        }).then(bigdata => {
+          let data = bigdata.data
+          if(data.code==200){
+            let Message = data.data
+            console.log(Message)
+            resolve({uedata, Message})
+          }else{
+            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+          }
+        })
+        // let Message: Array<Model> = []
+
         // msg = data
-        resolve(msg)
+        
       } catch (error) {
         reject(new Error(error))
       }
-      return msg
+      return ueMsg
     })
   })
 }

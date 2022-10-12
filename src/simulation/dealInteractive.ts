@@ -1,4 +1,6 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { operInteractive } from '../api/api.js'
+
 interface Interactive {
   trigger: string; // 触发事件的方式 单击 双击
   event: string; // 触发的事件
@@ -8,13 +10,19 @@ interface AllInteractives {
   id: string; // 被绑定的生命体id
   interactives: Array<Interactive>;
 }
+
 // 给ue发也给接口发
-export function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}>{
+export async function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}>{
+  const { data } = await operInteractive({
+    "oper_type": "insertInteractive",
+    ...AllInteractives
+  })
   emitUIInteraction({
     // Category: "addPOIModel",
     Category: "makeInteractiveById",
     ...AllInteractives
   })
+
   let msg: {}
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("makeInteractivebyIdResponse", (data?: string): {} => {
@@ -30,6 +38,7 @@ export function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}
   })
 }
 
+// 查询交互
 export function queryInteractiveById(id: string): Promise<AllInteractives>{
   emitUIInteraction({
     Category: "queryInteractiveById",

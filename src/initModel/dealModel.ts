@@ -1,31 +1,42 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
-// import { addResponseEventListener, emitUIInteraction} from '../basic2/app.js'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { operLifeEntity } from '../api/api.js'
 
 
-// let descriptor = {
-//   Category: a,
-//   Item: b
-// }
-
-// 读取底座⽣命体 返回一个promise，用then和catch调用
-export function initModels(): Promise<ModelParams> { 
-  emitUIInteraction({
-    Category: "initModels"
+// 读取底座⽣命体 向接口查询 返回给前端 1
+export async function initModels(pass_id: string): Promise<Array<Model>> {
+  const { data } = await operLifeEntity({
+    "oper_type": "selectLifeEntity",
+    pass_id
   })
-  let msg: ModelParams
-  return new Promise<ModelParams>((resolve, reject) => {
+  let Message: Array<Model> = []
+
+  if(data.code==200){
+    Message = data.data
+    // console.log(Message)
+  }
+
+  return new Promise<Array<Model>>((resolve, reject) => {
+    if(Message.length>0){
+      // emitUIInteraction({
+      //   Category: "initModels",
+      //   Message 
+      // })
+      resolve(Message)
+    }else{
+      reject(new Error('生命体为空'))
+    }
     // 这里的response名字跟ue对上
-    addResponseEventListener("initModelsResponse", (data: string): ModelParams => {
-      msg = JSON.parse(data)
-      // 二次校验，等ue做状态码后修改
-      if(msg.Category == "initModelsResponse"){
-        resolve(msg)
-      }else{
-        reject(new Error('接收ue返回失败'))
-      }
-      return msg
-    })
+    // addResponseEventListener("initModelsResponse", (data: string): ModelParams => {
+    //   msg = JSON.parse(data)
+    //   // 二次校验，等ue做状态码后修改
+    //   if(msg.Category == "initModelsResponse"){
+    //     resolve(msg)
+    //   }else{
+    //     reject(new Error('接收ue返回失败'))
+    //   }
+    //   return msg
+    // })
   })
 }
 
@@ -61,35 +72,68 @@ export function addModel(meshasset: {}): Promise<{}> {
     Category: "addModel",
     ...meshasset
   })
-  let msg = ''
+    
+  let ueMsg: Model
+  let msg2: String
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("addModelResponse", (data?: string): {} => {
-      msg = JSON.parse(data)
+    addResponseEventListener("addModelResponse", (uedata?: string): {} => {
+      try {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        // ueMsg.showstatus = ueMsg.showstatus.toString()
+        // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
+        msg2 = JSON.parse(JSON.stringify(ueMsg))
 
-      resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
-      return msg
+        console.log(msg2);
+        
+        operLifeEntity({
+          "oper_type": "insertLifeEntity",
+          ...msg2
+        }).then(bigdata => {
+          let data = bigdata.data
+          if(data.code==200){
+            let Message = data.data
+            console.log(Message)
+            resolve({uedata, Message})
+          }else{
+            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+          }
+        })
+        // let Message: Array<Model> = []
+
+        // msg = data
+        
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return ueMsg
     })
   })
 }
 
 
-// 删除⽣命体  跟ue通信并向接口提交
-export function deleteModelById(id: number): Promise<{}> { 
+// 删除⽣命体  跟ue通信并向接口提交 1
+export async function deleteModelById(id: string): Promise<{}> {
+  id = id.toString()
+  const { data } = await operLifeEntity({
+    "oper_type": "deleteLifeEntity",
+    "life_entity_id": id
+  })
+  let Message: number
+
+  if(data.code==200){
+    Message = data.data
+    // console.log(Message)
+  }
   emitUIInteraction({
     Category: "deleteModelById",
     id: id
   })
-  let msg = ''
-  return new Promise<string>((resolve, reject) => {
-    addResponseEventListener("deleteModelByIdResponse", (data?: string): string => {
-      msg = JSON.parse(data)
-      resolve(msg)
+  let ueMsg
+  return new Promise<object>((resolve, reject) => {
+    addResponseEventListener("deleteModelByIdResponse", (uedata?: string): string => {
+      ueMsg = JSON.parse(uedata)
+      resolve({ ueMsg, Message })
 
       // 二次校验，等ue做状态码后修改
       // if(msg){
@@ -97,7 +141,7 @@ export function deleteModelById(id: number): Promise<{}> {
       // }else{
       //   reject(new Error('接收ue返回失败'))
       // }
-      return msg
+      return ueMsg
     })
   })
 }
@@ -124,23 +168,25 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
     })
   })
 }
-// 设置⽣命体属性 走接口提交保存
-export function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
+// 设置⽣命体属性 走接口提交保存 1未测试
+export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
+  const { data } = await operLifeEntity({
+    "oper_type": "updateLifeEntity",
+    ...modelProps
+  })
+  let Message: string = ''
+  if(data.code==200){
+    Message = data.data
+    console.log(Message)
+  }
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
-    addResponseEventListener("setModelPropsByIdResponse", (data: string): string => {
-      msg = JSON.parse(data)
-      // console.log(msg)
-      
-      // 二次校验，等ue做状态码后修改
-      if(msg){
-        resolve(msg)
-      }else{
-        reject(new Error('接收ue返回失败'))
-      }
-      return msg
-    })
+    if(Message){
+      resolve(Message)
+    }else{
+      reject(new Error('保存失败'))
+    }
   })
 }
 
@@ -217,48 +263,60 @@ export function selectCancel(): Promise<{}> {
   })
 }
 
-// 获取单个生命体 从接口拿到数据
-export function getModelById (id: string): Promise<Model> {
-  emitUIInteraction({
-    Category: "getModelById",
-    id
+// 获取单个生命体 从接口拿到数据 给前端 1
+export async function getModelById (id: string): Promise<Model> {
+  id = id.toString()
+  const { data } = await operLifeEntity({
+    "oper_type": "selectLifeEntity",
+    "life_entity_id": id
   })
-  let msg: Model
+  let Message: Model
+  if(data.code==200){
+    Message = data.data[0]
+    // console.log(Message)
+  }
   return new Promise<Model>((resolve, reject) => {
-    addResponseEventListener("getModelByIdResponse", (data?: string): Model => {
-      try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
-      } catch (error) {
-        reject(new Error(error))
-      }
-      return msg
-    })
+    if(Object.keys(Message).length>0){
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
+
   })
 }
 
 interface showParams{
   id: string; // 生命体id
-  showStatus: number; // 1可见 0隐藏
+  showStatus: string; // 1可见 0隐藏
 }
-// 显示、隐藏生命体  跟ue通信并向接口提交
-export function showModelByIds (allParams: Array<showParams>): Promise<Model> {
+// 显示、隐藏生命体  跟ue通信并向接口提交 1
+export async function showModelByIds (allParams: Array<showParams>): Promise<{}> {
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('id', 'where_life_entity_id'))
+  console.log(allParams2)
+
+  const { data } = await operLifeEntity({
+    "oper_type": "batchUpdateLifeEntity",
+    allParams: allParams2
+  })
+  let Message: number
+  if(data.code==200){
+    Message = data.data
+  }
   emitUIInteraction({
     Category: "showModelByIds",
     allParams
   })
-  let msg: Model
-  return new Promise<Model>((resolve, reject) => {
-    addResponseEventListener("showModelByIdsResponse", (data?: string): Model => {
+  let ueMsg
+  return new Promise<object>((resolve, reject) => {
+    addResponseEventListener("showModelByIdsResponse", (uedata?: string): Model => {
       try {
-        msg = JSON.parse(data)
+        ueMsg = JSON.parse(uedata)
         // msg = data
-        resolve(msg)
+        resolve({ueMsg, Message})
       } catch (error) {
-        reject(new Error(error))
+        reject(new Error(data))
       }
-      return msg
+      return ueMsg
     })
   })
 }

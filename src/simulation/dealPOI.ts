@@ -1,5 +1,7 @@
 import { Model } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { operLifeEntity } from '../api/api.js'
+
 interface TextStyle {
   fontSize: number;
   fontFamily: string;
@@ -13,24 +15,51 @@ class POIModel extends Model {
 
 // 增加POI 跟ue通信并走接口提交保存
 // POItype: 标题式 图标式 文本弹窗 视频弹窗式
-export function addPOIModel (POItype: String): Promise<POIModel> {
+export async function addPOIModel (POItype: String): Promise<{}> {
   // 增加POI 返回当前POI 属性
   emitUIInteraction({
     // Category: "addPOIModel",
     Category: "addModel",
     ...POItype
   })
-  let msg: POIModel
-  return new Promise<POIModel>((resolve, reject) => {
-    addResponseEventListener("addPoiResponse", (data?: string): POIModel => {
+  // operLifeEntity().then(data => console.log('0000000 ',data.data))
+  
+  let ueMsg: POIModel
+  let msg2: String
+
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
-        msg = JSON.parse(data)
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        ueMsg.showstatus = ueMsg.showstatus.toString()
+        // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
+        msg2 = JSON.parse(JSON.stringify(ueMsg))
+
+        console.log(msg2);
+        
+        operLifeEntity({
+          "oper_type": "insertLifeEntity",
+          ...msg2
+        }).then(bigdata => {
+          let data = bigdata.data
+          if(data.code==200){
+            let Message = data.data
+            console.log(Message)
+            resolve({uedata, Message})
+          }else{
+
+            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+          }
+        })
+        // let Message: Array<Model> = []
+
         // msg = data
-        resolve(msg)
+        
       } catch (error) {
         reject(new Error(error))
       }
-      return msg
+      return ueMsg
     })
   })
 }

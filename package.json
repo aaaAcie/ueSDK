@@ -1,6 +1,6 @@
 {
   "name": "mxxx",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,10 @@
     "typescript": "^4.7.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+    "axios": "^1.1.2",
+    "follow-redirects": "^1.15.2",
+    "require.js": "^1.0.0"
   }
 }

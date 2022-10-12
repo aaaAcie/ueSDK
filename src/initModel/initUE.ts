@@ -1,6 +1,6 @@
 // const { load,hideOverlay,closews } = require('../basic2/app')
-const { load,closews,passStats,emitUIInteraction } = require('../basic2/myApp')
-
+const { load,closews,passStats,emitUIInteraction,addResponseEventListener } = require('../basic2/myApp')
+import { selectAllView } from '../api/api.js'
 
 
 interface ConnectParams {
@@ -31,17 +31,33 @@ export class initUE {
     return new Promise((resolve,reject) => {
       console.log(this.url)
       let streamingVideo = null
+      let Message: {}
       // load(this.url)
       load(this.url, this.domId).then((ws) => {
-        // 连接成功后 可以在这里给ue发消息，发送基本配置
-        emitUIInteraction({
-          // Category: "addPOIModel",
-          Category: "基本配置",
-          
-        })
+        // 连接成功后 可以在这里给ue发消息，发送当前项目的默认关卡
+        // pass_id
+        setTimeout(() => {
+          addResponseEventListener("changePassResponse",(uedata) => {
+            uedata = JSON.parse(uedata)
+            let pass_id = uedata['Message']
+            selectAllView(pass_id).then((data) => {
+              Message = data.data
+              emitUIInteraction({
+                Category: "basicData",
+                Message
+              })
+            })
+          })
+          emitUIInteraction({
+            Category: "changePass",
+            pass: "demoProject_1"
+          })
+        },1000)
+
         this.successCallback(ws)
         streamingVideo = document.getElementById("streamingVideo")
         resolve(streamingVideo)
+
       }).catch((reason) => {
         this.errorCallback(reason)
         console.log('failed', reason)
