@@ -41,7 +41,7 @@ export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
 }
 
 // 关卡
-// 读取关卡 从接口拿到数据 给前端 1未测试
+// 读取关卡 从接口拿到数据 给前端 1
 export async function readPass(project_id: string): Promise<{}> {
   project_id = project_id.toString()
   const { data } = await operPoint({
@@ -50,12 +50,9 @@ export async function readPass(project_id: string): Promise<{}> {
   })
   let Message: []
 
-  if(data.code==200){
-    Message = data.data
-    // console.log(Message)
-  }
   return new Promise<{}>((resolve, reject) => {
-    if(Message.length>0){
+    if(data.code==200){
+      Message = data.data
       resolve(Message)
     }else{
       reject(new Error(data.msg))

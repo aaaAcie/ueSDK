@@ -14,7 +14,7 @@ export const operLifeEntity = (data) =>{
 export const operInteractive = (data) =>{
   return request({
     method: 'post',
-    url: '/OperInteractive',
+    url: '/operInteractive',
     data
   })
 }

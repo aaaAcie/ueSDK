@@ -11,20 +11,16 @@ export async function initModels(pass_id: string): Promise<Array<Model>> {
   })
   let Message: Array<Model> = []
 
-  if(data.code==200){
-    Message = data.data
-    // console.log(Message)
-  }
-
   return new Promise<Array<Model>>((resolve, reject) => {
-    if(Message.length>0){
+    if(data.code==200){
+      Message = data.data
       // emitUIInteraction({
       //   Category: "initModels",
       //   Message 
       // })
       resolve(Message)
     }else{
-      reject(new Error('生命体为空'))
+      reject(new Error(data.msg))
     }
     // 这里的response名字跟ue对上
     // addResponseEventListener("initModelsResponse", (data: string): ModelParams => {
@@ -271,12 +267,9 @@ export async function getModelById (id: string): Promise<Model> {
     "life_entity_id": id
   })
   let Message: Model
-  if(data.code==200){
-    Message = data.data[0]
-    // console.log(Message)
-  }
   return new Promise<Model>((resolve, reject) => {
-    if(Object.keys(Message).length>0){
+    if(data.code==200){
+      Message = data.data[0]
       resolve(Message)
     }else{
       reject(new Error(data.msg))

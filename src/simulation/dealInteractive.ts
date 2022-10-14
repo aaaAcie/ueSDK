@@ -7,54 +7,104 @@ interface Interactive {
   target: string; // 目标生命体的id
 }
 interface AllInteractives {
-  id: string; // 被绑定的生命体id
+  life_entity_id: string; // 被绑定的生命体id
   interactives: Array<Interactive>;
 }
+interface DetailInteractive {
+  life_entity_id?: string; // 被绑定的生命体id
+  interactive_id: string; // 对应的事件id
+  trigger: string; // 触发事件的方式 单击 双击
+  event: string; // 触发的事件
+  target: string; // 目标生命体的id
+}
 
-// 给ue发也给接口发
+// 批量添加交互 给ue发也给接口发 1
 export async function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}>{
   const { data } = await operInteractive({
-    "oper_type": "insertInteractive",
+    "oper_type": "batchInsertInteractive",
     ...AllInteractives
   })
+  let Message: []
   emitUIInteraction({
     // Category: "addPOIModel",
     Category: "makeInteractiveById",
     ...AllInteractives
   })
 
-  let msg: {}
+  let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("makeInteractivebyIdResponse", (data?: string): {} => {
-      try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
-      } catch (error) {
-        reject(new Error(error))
+    addResponseEventListener("makeInteractivebyIdResponse", (uedata?: string): {} => {
+      ueMsg = JSON.parse(uedata)
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
+        resolve({ueMsg, Message})
+      }else{
+        reject(new Error(data.msg))
       }
-      return msg
+      return ueMsg
     })
   })
 }
 
-// 查询交互
-export function queryInteractiveById(id: string): Promise<AllInteractives>{
-  emitUIInteraction({
-    Category: "queryInteractiveById",
-    id
+// 查询交互 从接口拿到数据 给前端 1
+export async function queryInteractiveById(id: string): Promise<{}>{
+  id = id.toString()
+  const { data } = await operInteractive({
+    "oper_type": "selectInteractive",
+    "life_entity_id": id
   })
-  let msg: AllInteractives
-  return new Promise<AllInteractives>((resolve, reject) => {
-    addResponseEventListener("queryInteractiveByIdResponse", (data?: string): AllInteractives => {
-      try {
-        msg = JSON.parse(data)
-        // msg = data
-        resolve(msg)
-      } catch (error) {
-        reject(new Error(error))
+  let Message: []
+  // emitUIInteraction({
+  //   Category: "queryInteractiveById",
+  //   id
+  // })
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
+  })
+}
+
+// 批量更新交互 给ue发也给接口发 1
+export async function setInteractive(DetailInteractive: Array<DetailInteractive>): Promise<{}>{
+  DetailInteractive = JSON.parse(JSON.stringify(DetailInteractive).replaceAll('interactive_id', 'where_interactive_id'))
+  const { data } = await operInteractive({
+    "oper_type": "batchUpdateInteractive",
+    "interactives": DetailInteractive
+  })
+
+  let Message: []
+  emitUIInteraction({
+    // Category: "addPOIModel",
+    Category: "setInteractive",
+    interactives: DetailInteractive
+  })
+
+  let ueMsg: {}
+  // return new Promise<{}>((resolve, reject) => {
+  //   if(data.code==200){
+  //     Message = data.data
+  //     // console.log(Message)
+  //     resolve(Message)
+  //   }else{
+  //     reject(new Error(data.msg))
+  //   }
+  // })
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("setInteractiveResponse", (uedata?: string): {} => {
+      ueMsg = JSON.parse(uedata)
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
+        resolve({ueMsg, Message})
+      }else{
+        reject(new Error(data.msg))
       }
-      return msg
+      return ueMsg
     })
   })
 }
