@@ -66,6 +66,15 @@ export const selectAllView = (pass_id) =>{
   })
 }
 
+// 查询所有 给ue发送
+export const selectSourceMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectSourceMaterial',
+    data
+  })
+}
+
 // module.exports = {
 //   getResource
 // }

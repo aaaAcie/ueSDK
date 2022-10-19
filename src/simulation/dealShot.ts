@@ -6,10 +6,6 @@ interface Shot {
   name: string // 镜头名称
   position: {} // 镜头参数等
 }
-interface getParam {
-  shot_id: string // 镜头id
-  callback?: () => {} // 参数处理
-}
 interface modifyParam {
   shot_id: string
   name: string
@@ -215,7 +211,7 @@ export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> 
       if(ueMsg){
         resolve(ueMsg)
       }else{
-        reject(new Error('接收ue返回失败'))
+        reject(new Error('ue接收失败'))
       }
       return ueMsg
     })

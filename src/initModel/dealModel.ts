@@ -1,6 +1,6 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operLifeEntity } from '../api/api.js'
+import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
 
 
 // 读取底座⽣命体 向接口查询 返回给前端 1
@@ -36,28 +36,21 @@ export async function initModels(pass_id: string): Promise<Array<Model>> {
   })
 }
 
-// 读取预置素材
-export function initMaterial(meshasset: Array<string>): Promise<{}> { 
-  emitUIInteraction({
-    Category: "initMaterial",
-    meshasset: meshasset
+// 读取预置素材  从接口拿到数据 给前端 1
+export async function initMaterial(project_id:string): Promise<{}> { 
+  project_id = project_id.toString()
+  const { data } = await selectSourceMaterial({
+    project_id
   })
-  let msg = ''
-  
-  return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("initMaterialResponse", (data: string): string => {
+  let Message: Model
+  return new Promise<Model>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
 
-      // msg = data
-      msg = JSON.parse(data)
-
-      // 二次校验，等ue做状态码后修改
-      if(msg){
-        resolve(msg)
-      }else{
-        reject(new Error('接收ue返回失败'))
-      }
-      return msg
-    })
   })
 }
 
