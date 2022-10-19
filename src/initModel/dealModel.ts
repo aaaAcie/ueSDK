@@ -315,7 +315,7 @@ export function focusModelById(life_entity_id: string): Promise<{}> {
 
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("focusModelByIdById", (data?: string): string => {
+    addResponseEventListener("focusModelByIdResponse", (data?: string): string => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
