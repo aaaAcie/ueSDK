@@ -5,8 +5,8 @@ import axios from 'axios'
 
 const request = axios.create({
   // timeout: 5000
-  baseURL: 'http://192.168.2.128:10010'
-  // baseURL: 'http://115.238.181.246:10010'
+  // baseURL: 'http://192.168.2.128:10010'
+  baseURL: 'http://115.238.181.246:10010'
 })
 
 function getBaseURL (url) {

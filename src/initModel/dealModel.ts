@@ -108,7 +108,6 @@ export function addModel(meshasset: {}): Promise<{}> {
 
 // 删除⽣命体  跟ue通信并向接口提交 1
 export async function deleteModelById(id: string): Promise<{}> {
-  id = id.toString()
   const { data } = await operLifeEntity({
     "oper_type": "deleteLifeEntity",
     "life_entity_id": id

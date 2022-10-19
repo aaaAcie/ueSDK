@@ -10,6 +10,10 @@ interface TimeParams{
   time: string,
   where_pass_id: string
 }
+interface InitShotParams{ 
+  initShot: string, // 镜头id
+  where_pass_id: string
+}
 // 天气 跟ue通信并向接口提交 1
 export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
   const { data } = await operPoint({
@@ -18,10 +22,6 @@ export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
   })
   let Message: number
 
-  if(data.code==200){
-    Message = data.data
-    // console.log(Message)
-  }
   emitUIInteraction({
     Category: "changeWeather",
     weather: weatherParams['weather']
@@ -29,11 +29,14 @@ export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
   let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("changeWeatherResponse", (uedata?: string): {} => {
-      try {
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
         ueMsg = JSON.parse(uedata)
         resolve({ ueMsg, Message })
-      } catch (error) {
-        reject(new Error(error))
+      }else{
+        reject(new Error(data.msg))
+        
       }
       return ueMsg
     })
@@ -91,10 +94,6 @@ export async function changeTime(timeParams: TimeParams): Promise<{}> {
   })
   let Message: number
 
-  if(data.code==200){
-    Message = data.data
-    // console.log(Message)
-  }
   emitUIInteraction({
     Category: "changeTime",
     time: timeParams['time']
@@ -102,12 +101,42 @@ export async function changeTime(timeParams: TimeParams): Promise<{}> {
   let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("changeTimeResponse", (uedata?: string): {} => {
-      try {
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
         ueMsg = JSON.parse(uedata)
-        // msg = data
         resolve({ ueMsg, Message })
-      } catch (error) {
-        reject(new Error(error))
+      }else{
+        reject(new Error(data.msg))
+        
+      }
+      return ueMsg
+    })
+  })
+}
+
+// 设置初始镜头
+export async function setInitShot(initShotParams: InitShotParams): Promise<{}> {
+  const { data } = await operPoint({
+    "oper_type": "updatePoint",
+    ...initShotParams
+  })
+  let Message: number
+  emitUIInteraction({
+    Category: "setInitShot",
+    shot_id: initShotParams['initShot']
+  })
+  let ueMsg: {}
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("setInitShotResponse", (uedata?: string): {} => {
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
+        ueMsg = JSON.parse(uedata)
+        resolve({ ueMsg, Message })
+      }else{
+        reject(new Error(data.msg))
+        
       }
       return ueMsg
     })
