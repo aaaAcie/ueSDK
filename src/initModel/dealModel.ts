@@ -180,10 +180,10 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
 }
 
 // 选中⽣命体  只跟ue通信
-export function selectModelById(id: number): Promise<{}> { 
+export function selectModelById(life_entity_id: string): Promise<{}> { 
   emitUIInteraction({
     Category: "selectModelById",
-    life_entity_id: id
+    life_entity_id
   })
   let msg = ''
 
@@ -301,6 +301,31 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
         reject(new Error(data.msg))
       }
       return ueMsg
+    })
+  })
+}
+
+// 镜头拉近生命体  只跟ue通信
+export function focusModelById(life_entity_id: string): Promise<{}> { 
+  emitUIInteraction({
+    Category: "focusModelById",
+    life_entity_id
+  })
+  let msg = ''
+
+  return new Promise<string>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("focusModelByIdById", (data?: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
+      // 二次校验，等ue做状态码后修改
+      // if(msg){
+      //   resolve(msg)
+      // }else{
+      //   reject(new Error('接收ue返回失败'))
+      // }
+      return msg
     })
   })
 }
