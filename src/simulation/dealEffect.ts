@@ -29,7 +29,7 @@ export function addEffect (effectType: String): Promise<{}> {
       try {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-        ueMsg.showstatus = ueMsg.showstatus.toString()
+        // ueMsg.showstatus = ueMsg.showstatus.toString()
         // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
         msg2 = JSON.parse(JSON.stringify(ueMsg))
 
@@ -45,7 +45,7 @@ export function addEffect (effectType: String): Promise<{}> {
             console.log(Message)
             resolve({uedata, Message})
           }else{
-            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+            reject(new Error(data.msg))
           }
         })
         // let Message: Array<Model> = []

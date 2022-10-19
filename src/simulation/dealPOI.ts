@@ -24,17 +24,21 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   })
   // operLifeEntity().then(data => console.log('0000000 ',data.data))
   
-  let ueMsg: POIModel
+  let ueMsg: string
   let msg2: String
 
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
+        console.log(uedata)
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-        ueMsg.showstatus = ueMsg.showstatus.toString()
+
+        // ueMsg.showstatus = ueMsg.showstatus.toString()
         // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
         msg2 = JSON.parse(JSON.stringify(ueMsg))
+        // msg2 = eval('('+ueMsg+')')
+
 
         console.log(msg2);
         
@@ -49,7 +53,7 @@ export async function addPOIModel (POItype: String): Promise<{}> {
             resolve({uedata, Message})
           }else{
 
-            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+            reject(new Error(data.msg))
           }
         })
         // let Message: Array<Model> = []

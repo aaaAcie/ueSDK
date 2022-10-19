@@ -76,8 +76,6 @@ export function addModel(meshasset: {}): Promise<{}> {
       try {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-        // ueMsg.showstatus = ueMsg.showstatus.toString()
-        // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
         msg2 = JSON.parse(JSON.stringify(ueMsg))
 
         console.log(msg2);
@@ -92,7 +90,7 @@ export function addModel(meshasset: {}): Promise<{}> {
             console.log(Message)
             resolve({uedata, Message})
           }else{
-            reject(new Error(data.msg+' 请将id改为life_entity_id或其他业务id'))
+            reject(new Error(data.msg))
           }
         })
         // let Message: Array<Model> = []
@@ -117,19 +115,23 @@ export async function deleteModelById(id: string): Promise<{}> {
   })
   let Message: number
 
-  if(data.code==200){
-    Message = data.data
-    // console.log(Message)
-  }
+
   emitUIInteraction({
     Category: "deleteModelById",
-    id: id
+    life_entity_id: id
   })
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("deleteModelByIdResponse", (uedata?: string): string => {
-      ueMsg = JSON.parse(uedata)
-      resolve({ ueMsg, Message })
+      if(data.code==200){
+        Message = data.data
+        // console.log(Message)
+        ueMsg = JSON.parse(uedata)
+        resolve({ ueMsg, Message })
+      }else{
+        reject(new Error(data.msg))
+        
+      }
 
       // 二次校验，等ue做状态码后修改
       // if(msg){
@@ -171,17 +173,16 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
     ...modelProps
   })
   let Message: string = ''
-  if(data.code==200){
-    Message = data.data
-    console.log(Message)
-  }
+
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
-    if(Message){
+    if(data.code==200){
+      Message = data.data
+      // console.log(Message)
       resolve(Message)
     }else{
-      reject(new Error('保存失败'))
+      reject(new Error(data.msg))
     }
   })
 }
@@ -190,7 +191,7 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
 export function selectModelById(id: number): Promise<{}> { 
   emitUIInteraction({
     Category: "selectModelById",
-    id: id
+    life_entity_id: id
   })
   let msg = ''
 
@@ -269,7 +270,7 @@ export async function getModelById (id: string): Promise<Model> {
   let Message: Model
   return new Promise<Model>((resolve, reject) => {
     if(data.code==200){
-      Message = data.data[0]
+      Message = data.data
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -284,7 +285,7 @@ interface showParams{
 }
 // 显示、隐藏生命体  跟ue通信并向接口提交 1
 export async function showModelByIds (allParams: Array<showParams>): Promise<{}> {
-  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('id', 'where_life_entity_id'))
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
   console.log(allParams2)
 
   const { data } = await operLifeEntity({
@@ -292,9 +293,7 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
     allParams: allParams2
   })
   let Message: number
-  if(data.code==200){
-    Message = data.data
-  }
+
   emitUIInteraction({
     Category: "showModelByIds",
     allParams
@@ -302,12 +301,12 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("showModelByIdsResponse", (uedata?: string): Model => {
-      try {
+      if(data.code==200){
+        Message = data.data
         ueMsg = JSON.parse(uedata)
-        // msg = data
         resolve({ueMsg, Message})
-      } catch (error) {
-        reject(new Error(data))
+      }else{
+        reject(new Error(data.msg))
       }
       return ueMsg
     })

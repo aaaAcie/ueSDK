@@ -19,11 +19,38 @@ export const operInteractive = (data) =>{
   })
 }
 
-// 操作交互
+// 操作关卡
 export const operPoint = (data) =>{
   return request({
     method: 'post',
     url: '/operPoint',
+    data
+  })
+}
+
+// 操作组
+export const operLifeEntityGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operLifeEntityGroup',
+    data
+  })
+}
+
+// 操作组index
+export const operLifeEntityGroupIndex = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operLifeEntityGroupIndex',
+    data
+  })
+}
+
+// 操作镜头
+export const operCamera = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operCamera',
     data
   })
 }

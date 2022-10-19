@@ -28,3 +28,6 @@ export * from './simulation/dealEffect'
 
 // 交互
 export * from './simulation/dealInteractive'
+
+// 组
+export * from './generalOperation/group'

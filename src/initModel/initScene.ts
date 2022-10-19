@@ -65,7 +65,7 @@ export async function readPass(project_id: string): Promise<{}> {
 export async function changePass(pass_id: string): Promise<{}> {
   emitUIInteraction({
     Category: "changePass",
-    pass: pass_id
+    pass_id
   })
   // let ueMsg: {}
   // return new Promise<{}>((resolve, reject) => {

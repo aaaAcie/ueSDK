@@ -40,6 +40,7 @@ export class initUE {
           addResponseEventListener("changePassResponse",(uedata) => {
             uedata = JSON.parse(uedata)
             let pass_id = uedata['Message']
+            console.log("ue: ",pass_id)
             selectAllView(pass_id).then((data) => {
               Message = data.data
               emitUIInteraction({
@@ -50,7 +51,7 @@ export class initUE {
           })
           emitUIInteraction({
             Category: "changePass",
-            pass: "demoProject_1"
+            pass_id: "demoProject_1"
           })
         },1000)
 
