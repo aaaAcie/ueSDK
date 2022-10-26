@@ -66,6 +66,24 @@ export const selectAllView = (pass_id) =>{
   })
 }
 
+// 操作page
+export const operPage = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operPage',
+    data
+  })
+}
+
+// 操作镜头
+export const queryMixedPageGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectMixedPageGroupLifeEntity',
+    data
+  })
+}
+
 // 查询所有 给ue发送
 export const selectSourceMaterial = (data) =>{
   return request({

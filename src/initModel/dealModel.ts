@@ -329,3 +329,53 @@ export function focusModelById(life_entity_id: string): Promise<{}> {
     })
   })
 }
+
+// 获取当前点击的生命体信息 只跟ue通信
+export function getModelClick(): Promise<{}> { 
+  emitUIInteraction({
+    Category: "getModelClick"
+  })
+  let msg = ''
+
+  return new Promise<string>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("getModelClickResponse", (data?: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
+      // 二次校验，等ue做状态码后修改
+      // if(msg){
+      //   resolve(msg)
+      // }else{
+      //   reject(new Error('接收ue返回失败'))
+      // }
+      return msg
+    })
+  })
+}
+
+// 实时获取指定生命体的信息 from ue
+export async function getModelByIdFromUE (life_entity_id: string, cb: Function): Promise<Model> {
+  emitUIInteraction({
+    Category: "getModelById",
+    life_entity_id
+  })
+  let msg:Model
+
+  return new Promise<Model>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("getModelByIdResponse", (data?: string): Model => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      cb(msg)
+      resolve(msg)
+      // 二次校验，等ue做状态码后修改
+      // if(msg){
+      //   resolve(msg)
+      // }else{
+      //   reject(new Error('接收ue返回失败'))
+      // }
+      return msg
+    })
+  })
+}

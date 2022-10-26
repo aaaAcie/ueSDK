@@ -1,6 +1,6 @@
 import { Model,DeleteParams,ModelParams } from '../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operLifeEntityGroup, operLifeEntityGroupIndex } from '../api/api.js'
+import { operLifeEntityGroup, operLifeEntityGroupIndex,queryMixedPageGroup } from '../api/api.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
   life_entity_id: Array<string>; // 新组的父级的group_id（嵌套的新组需要传）
@@ -50,13 +50,11 @@ export async function addGroup(GroupParam: GroupParam ): Promise<{}> {
   })
 }
 
-// 查询组信息  给数据库 
-export async function queryGroup(GroupParam: GroupParam ): Promise<{}> {
-  const { data } = await operLifeEntityGroupIndex({
-    "oper_type": "selectLifeEntityGroupIndex",
-    ...GroupParam
+// 根据页面id查询 组信息 给数据库 
+export async function queryGroupByPage(page_id: string): Promise<{}> {
+  const { data } = await queryMixedPageGroup({
+    page_id
   })
-  
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
     if(data.code==200){

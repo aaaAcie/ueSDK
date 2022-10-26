@@ -31,3 +31,6 @@ export * from './simulation/dealInteractive'
 
 // 组
 export * from './generalOperation/group'
+
+// 页面
+export * from './generalOperation/page'
