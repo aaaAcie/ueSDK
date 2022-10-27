@@ -19,29 +19,40 @@ export function addShot(name: string): Promise<Object> {
     name
   })
   let msg = {}
+  let uedata:{}
+  let successCallback = []
+  successCallback.push(() => {
+    return operCamera({
+      "oper_type": "insertCamera",
+      ...msg
+    }).then(bigdata => {
+      let data = bigdata.data
+      if(data.code==200){
+        let Message = data.data
+        return Message
+        // console.log(Message)
+        // resolve({uedata, Message})
+      }else{
+        throw (new Error(data.msg))
+      }
+    })
+  })
   return new Promise<Object>((resolve, reject) => {
-    addResponseEventListener("addShotResponse", (uedata?: string): Object => {
+    addResponseEventListener("addShotResponse", (uedata0?: string): Object => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(uedata0)
         msg = uedata['Message']
-        operCamera({
-          "oper_type": "insertCamera",
-          ...msg
-        }).then(bigdata => {
-          let data = bigdata.data
-          if(data.code==200){
-            let Message = data.data
-            console.log(Message)
-            resolve({uedata, Message})
-          }else{
-            reject(new Error(data.msg))
-          }
-        })
+        if(successCallback.length){
+          successCallback.shift()()
+          .then(Message => resolve({uedata, Message}))
+          .catch(err => reject(new Error(err)))
+        }
       } catch (error) {
         reject(new Error(error))
       }
       return msg
     })
+    
   })
 }
 

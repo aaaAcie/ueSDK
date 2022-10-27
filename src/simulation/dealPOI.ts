@@ -26,39 +26,35 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   
   let ueMsg: string
   let msg2: String
-
+  let successCallback = []
+  successCallback.push((msg2) => {
+    return operLifeEntity({
+      "oper_type": "insertLifeEntity",
+      ...msg2
+    }).then(bigdata => {
+      let data = bigdata.data
+      if(data.code==200){
+        let Message = data.data
+        return Message
+        // console.log(Message)
+        // resolve({uedata, Message})
+      }else{
+        // reject(new Error(data.msg))
+        throw (new Error(data.msg))
+      }
+    })
+  })
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
-        console.log(uedata)
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-
-        // ueMsg.showstatus = ueMsg.showstatus.toString()
-        // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
         msg2 = JSON.parse(JSON.stringify(ueMsg))
-        // msg2 = eval('('+ueMsg+')')
-
-
-        console.log(msg2);
-        
-        operLifeEntity({
-          "oper_type": "insertLifeEntity",
-          ...msg2
-        }).then(bigdata => {
-          let data = bigdata.data
-          if(data.code==200){
-            let Message = data.data
-            console.log(Message)
-            resolve({uedata, Message})
-          }else{
-
-            reject(new Error(data.msg))
-          }
-        })
-        // let Message: Array<Model> = []
-
-        // msg = data
+        if(successCallback.length){
+          successCallback.shift()(msg2)
+          .then(Message => resolve({uedata, Message}))
+          .catch(err => reject(new Error(err)))
+        }
         
       } catch (error) {
         reject(new Error(error))

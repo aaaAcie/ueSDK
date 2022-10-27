@@ -64,32 +64,35 @@ export function addModel(meshasset: {}): Promise<{}> {
     
   let ueMsg: Model
   let msg2: String
+  let successCallback = []
+  successCallback.push((msg2) => {
+    return operLifeEntity({
+      "oper_type": "insertLifeEntity",
+      ...msg2
+    }).then(bigdata => {
+      let data = bigdata.data
+      if(data.code==200){
+        let Message = data.data
+        return Message
+        // console.log(Message)
+        // resolve({uedata, Message})
+      }else{
+        // reject(new Error(data.msg))
+        throw (new Error(data.msg))
+      }
+    })
+  })
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
         msg2 = JSON.parse(JSON.stringify(ueMsg))
-
-        console.log(msg2);
-        
-        operLifeEntity({
-          "oper_type": "insertLifeEntity",
-          ...msg2
-        }).then(bigdata => {
-          let data = bigdata.data
-          if(data.code==200){
-            let Message = data.data
-            console.log(Message)
-            resolve({uedata, Message})
-          }else{
-            reject(new Error(data.msg))
-          }
-        })
-        // let Message: Array<Model> = []
-
-        // msg = data
-        
+        if(successCallback.length){
+          successCallback.shift()(msg2)
+          .then(Message => resolve({uedata, Message}))
+          .catch(err => reject(new Error(err)))
+        }
       } catch (error) {
         reject(new Error(error))
       }
@@ -138,6 +141,18 @@ export async function deleteModelById(id: string): Promise<{}> {
 
 // 设置⽣命体属性  只跟ue通信
 export function setModelPropsById(modelProps: Model): Promise<{}> {
+  if (!modelProps.hasOwnProperty('type')) {
+    let array = modelProps['life_entity_id'].split('_')
+    let tag = array[array.length-1]
+    // console.log(tag);
+    if(tag.startsWith("1")){
+      modelProps["type"] = "模型"
+    }else if(tag.startsWith("2")){
+      modelProps["type"] = "标签"
+    }else if(tag.startsWith("4")){
+      modelProps["type"] = "特效"
+    }
+  }
   emitUIInteraction({
     Category: "setModelPropsById",
     ...modelProps
@@ -180,7 +195,7 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
 }
 
 // 选中⽣命体  只跟ue通信
-export function selectModelById(life_entity_id: string): Promise<{}> { 
+export function selectModelById(life_entity_id: string | Array<string>): Promise<{}> { 
   emitUIInteraction({
     Category: "selectModelById",
     life_entity_id

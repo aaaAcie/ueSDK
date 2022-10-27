@@ -53,7 +53,7 @@ export async function addGroup(GroupParam: GroupParam ): Promise<{}> {
 // 根据页面id查询 组信息 给数据库 
 export async function queryGroupByPage(page_id: string): Promise<{}> {
   const { data } = await queryMixedPageGroup({
-    page_id
+    // page_id
   })
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
