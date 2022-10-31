@@ -93,6 +93,7 @@ export function addModel(meshasset: {}): Promise<{}> {
           .then(Message => resolve({uedata, Message}))
           .catch(err => reject(new Error(err)))
         }
+        
       } catch (error) {
         reject(new Error(error))
       }
@@ -175,6 +176,8 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
 }
 // 设置⽣命体属性 走接口提交保存 1未测试
 export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
+  modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
+  
   const { data } = await operLifeEntity({
     "oper_type": "updateLifeEntity",
     ...modelProps
@@ -196,6 +199,13 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
 
 // 选中⽣命体  只跟ue通信
 export function selectModelById(life_entity_id: string | Array<string>): Promise<{}> { 
+  let myarray = []
+  if (typeof life_entity_id == 'string') {
+    myarray.push(life_entity_id)
+  }else{
+    myarray = life_entity_id
+  }
+  console.log(myarray)
   emitUIInteraction({
     Category: "selectModelById",
     life_entity_id
