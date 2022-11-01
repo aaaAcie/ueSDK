@@ -198,34 +198,38 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
 }
 
 // 选中⽣命体  只跟ue通信
-export function selectModelById(life_entity_id: string | Array<string>): Promise<{}> { 
-  let myarray = []
+export function selectModelById(life_entity_id: string | Array<string>, cb:Function): Promise<{}> { 
+  let myarray: Array<string> = []
   if (typeof life_entity_id == 'string') {
     myarray.push(life_entity_id)
   }else{
     myarray = life_entity_id
   }
   console.log(myarray)
+  addResponseEventListener("selectModelDataResponse", (data?: string): string => {
+    msg = JSON.parse(data)['Message']
+    // 回调 让前端更新数字
+    cb(msg)
+
+    return msg
+  })
   emitUIInteraction({
     Category: "selectModelById",
-    life_entity_id
+    life_entity_id: myarray
   })
   let msg = ''
 
+  
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("selectModelById", (data?: string): string => {
+    addResponseEventListener("selectModelByIdResponse", (data?: string): string => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
+
       return msg
     })
+
   })
 }
 
@@ -402,5 +406,26 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
       // }
       return msg
     })
+  })
+}
+
+// 批量更新生命体数据 提交到数据库
+export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{}> {
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  console.log(allParams2)
+
+  const { data } = await operLifeEntity({
+    "oper_type": "batchUpdateLifeEntity",
+    allParams: allParams2
+  })
+  let Message: Array<Number>
+
+  return new Promise<object>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
   })
 }
