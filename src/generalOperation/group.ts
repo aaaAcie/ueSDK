@@ -1,50 +1,105 @@
 import { Model,DeleteParams,ModelParams } from '../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operLifeEntityGroup, operLifeEntityGroupIndex,queryMixedPageGroup } from '../api/api.js'
+import { 
+  operLifeEntityGroup,
+  operLifeEntityGroupIndex,
+  queryMixedPageGroup,
+  operLifeEntityCommonGroup,
+  operLifeEntityCommonGroupIndex
+} from '../api/api.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
   life_entity_id: Array<string>; // 新组的父级的group_id（嵌套的新组需要传）
 }
 interface GroupParam  {
   group_name: string; // 新组的名字
-  parent_id: string; // 新组的父级的group_id
-  ancestors: string; // 新组的父级的ancestors
+  parent_id: string; // 新组的父级的group_id（嵌套的新组需要传）
+  ancestors: string; // 新组的父级的ancestors（嵌套的新组需要传）
+  isCommon: string; // '0'为私有组，'1'为公共组
+  page_id: string; // (创建私有组必传) 新组的所属页面id
+  pass_id: string; // (创建公共组必传) 新组的所属关卡id
 }
 interface moveSingle{
   where_life_entity_id: string, // 要移动的生命体id
   group_id: string // 目标组id
 }
-// 给组添加成员  给数据库 返回当前的groupId 1
-export async function addGroupIndex (idGroup: Array<GroupIndexParams>): Promise<{}> {
-  const { data } = await operLifeEntityGroupIndex({
-    "oper_type": "batchInsertLifeEntityGroupIndex",
-    "life_entity_group_index_list": idGroup
-  })
+
+// 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
+export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  isCommon = isCommon.toString()
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "batchInsertLifeEntityCommonGroupIndex",
+      "life_entity_common_group_index_list": idGroup
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "batchInsertLifeEntityGroupIndex",
+      "life_entity_group_index_list": idGroup
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
-      resolve(Message)
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
     }else{
-      reject(new Error(data.msg))
+      reject(new Error(finalData.msg))
     }
 
   })
 }
 
-// 新建组  给数据库 
-export async function addGroup(GroupParam: GroupParam ): Promise<{}> {
-  const { data } = await operLifeEntityGroup({
-    "oper_type": "insertLifeEntityGroup",
-    ...GroupParam
-  })
+// 新建【私有】【公有】组  给数据库 
+export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
+  let isCo: string
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  // 默认为公有组
+  isCo =  GroupParam['isCommon'] ? GroupParam['isCommon'].toString() : '1'
+  if (isCo =='1') {
+    // 共有组
+    let {isCommon,page_id,...finalParam} = GroupParam
+    // console.log('公有insertLifeEntityCommonGroup')
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "insertLifeEntityCommonGroup",
+      ...finalParam
+    })
+    finalData = data
+  } else {
+    // 私有组
+    let {isCommon,pass_id,...finalParam} = GroupParam
+    // console.log('私有insertLifeEntityGroup')
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "insertLifeEntityGroup",
+      ...finalParam
+    })
+    finalData = data
+  }
+
   let Message: {}
+  let ueMsg: {}
+
   return new Promise<{}>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
-      resolve(Message)
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
     }else{
-      reject(new Error(data.msg))
+      reject(new Error(finalData.msg))
     }
 
   })

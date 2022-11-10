@@ -1,12 +1,15 @@
 // const { request } = require('../utils/request.js')
 import request from '../utils/request.js'
 
-// 操作生命体
-export const operLifeEntity = (data) =>{
+// 批量新增生命体
+export const importBatchManagementList = (data) =>{
   return request({
     method: 'post',
-    url: '/operLifeEntity',
-    data
+    url: '/importBatchManagementList',
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
   })
 }
 
@@ -28,7 +31,7 @@ export const operPoint = (data) =>{
   })
 }
 
-// 操作私有组
+// 操作组
 export const operLifeEntityGroup = (data) =>{
   return request({
     method: 'post',
@@ -37,29 +40,11 @@ export const operLifeEntityGroup = (data) =>{
   })
 }
 
-// 操作公共组
-export const operLifeEntityCommonGroup = (data) =>{
-  return request({
-    method: 'post',
-    url: '/operLifeEntityCommonGroup',
-    data
-  })
-}
-
-// 操作私有组index
+// 操作组index
 export const operLifeEntityGroupIndex = (data) =>{
   return request({
     method: 'post',
     url: '/operLifeEntityGroupIndex',
-    data
-  })
-}
-
-// 操作公有组index
-export const operLifeEntityCommonGroupIndex = (data) =>{
-  return request({
-    method: 'post',
-    url: '/operLifeEntityCommonGroupIndex',
     data
   })
 }

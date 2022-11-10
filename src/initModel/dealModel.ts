@@ -1,6 +1,7 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
+import { importBatchManagementList } from '../api/detail.js'
 
 
 // 读取底座⽣命体 向接口查询 返回给前端 1
@@ -176,7 +177,7 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
 }
 // 设置⽣命体属性 走接口提交保存 1未测试
 export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
-  modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
+  // modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
   
   const { data } = await operLifeEntity({
     "oper_type": "updateLifeEntity",
@@ -306,7 +307,9 @@ interface showParams{
 }
 // 显示、隐藏生命体  跟ue通信并向接口提交 1
 export async function showModelByIds (allParams: Array<showParams>): Promise<{}> {
-  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
+
   console.log(allParams2)
 
   const { data } = await operLifeEntity({
@@ -411,7 +414,8 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
 
 // 批量更新生命体数据 提交到数据库
 export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{}> {
-  let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
   console.log(allParams2)
 
   const { data } = await operLifeEntity({
@@ -428,4 +432,39 @@ export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{
       reject(new Error(data.msg))
     }
   })
+}
+
+// 批量添加⽣命体  跟ue通信并向接口提交
+export async function addModelInBulk(file, pass_id): Promise<{}> {
+  console.log({
+    file,
+    pass_id
+  })
+  const { data } = await importBatchManagementList({
+    file,
+    pass_id
+  })
+  const allParams = data.data
+  emitUIInteraction({
+    Category: "addModelInBulk",
+    allParams
+  })
+    
+  let ueMsg: Model
+  let Message: {}
+
+  return new Promise<object>((resolve, reject) => {
+    if(data.code==200){
+      addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+
+      })
+      Message = allParams
+      resolve({Message, ueMsg})
+    }else{
+      reject(new Error(data.msg))
+    }
+  })
+
 }
