@@ -93,11 +93,20 @@ export const operPage = (data) =>{
   })
 }
 
-// 操作镜头
-export const queryMixedPageGroup = (data) =>{
+// 按照页面查私有组
+export const queryPrivateGroup = (data) =>{
   return request({
     method: 'post',
     url: '/selectMixedPageGroupLifeEntity',
+    data
+  })
+}
+
+// 按照关卡查公有组
+export const queryCommonGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectMixedCommonGroupLifeEntityByPoint',
     data
   })
 }

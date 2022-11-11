@@ -3,9 +3,10 @@ import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
   operLifeEntityGroup,
   operLifeEntityGroupIndex,
-  queryMixedPageGroup,
+  queryPrivateGroup,
   operLifeEntityCommonGroup,
-  operLifeEntityCommonGroupIndex
+  operLifeEntityCommonGroupIndex,
+  queryCommonGroup
 } from '../api/api.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
@@ -23,7 +24,10 @@ interface moveSingle{
   where_life_entity_id: string, // 要移动的生命体id
   group_id: string // 目标组id
 }
-
+interface queryGroupParams{
+  pass_id: string; // 关卡的id
+  page_id?: string; // 页面的id
+}
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
   let finalData: {
@@ -105,20 +109,35 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
   })
 }
 
-// 根据页面id查询 组信息 给数据库 
-export async function queryGroupByPage(page_id: string): Promise<{}> {
-  const { data } = await queryMixedPageGroup({
-    // page_id
-  })
+// 根据页面id查询 【私有】【公有】组信息 给数据库
+export async function queryGroup(queryGroupParams: queryGroupParams): Promise<{}> {
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  if (queryGroupParams['page_id']) {
+    // 查页面的私有组
+    const { data } = await queryPrivateGroup({
+      ...queryGroupParams
+    })
+    finalData = data
+  } else {
+    // 查关卡的公有组
+    const { data } = await queryCommonGroup({
+      ...queryGroupParams
+    })
+    finalData = data
+  }
+
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(finalData.code==200){
+      Message = finalData.data
       resolve(Message)
     }else{
-      reject(new Error(data.msg))
+      reject(new Error(finalData.msg))
     }
-
   })
 }
 
