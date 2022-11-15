@@ -21,8 +21,8 @@ interface GroupParam  {
   pass_id: string; // (创建公共组必传) 新组的所属关卡id
 }
 interface moveSingle{
-  where_life_entity_id: string, // 要移动的生命体id
-  group_id: string // 目标组id
+  where_life_entity_id: string; // 要移动的生命体id
+  group_id: string; // 目标组id
   isCommon: string // '0'为私有组，'1'为公共组
 }
 interface queryGroupParams{
@@ -30,8 +30,18 @@ interface queryGroupParams{
   page_id?: string; // 页面的id
 }
 interface deleteGroupCntParams {
-  group_id: string, // 组id
+  group_id: string; // 组id
   isCommon: string // '0'为私有组，'1'为公共组
+}
+interface deleteGroupParam{
+  group_id: string; // 要操作的组id
+  isCommon: string // 要操作的组类型 '0'为私有组，'1'为公共组
+}
+interface moveGroupParam{
+  group_id: string; // 要操作的组id
+  isCommon: string; // 要操作的组类型 '0'为私有组，'1'为公共组
+  parent_group_id: string; // 目标组的id
+  parent_ancestors: string // 目标组的ancestors
 }
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
@@ -114,7 +124,7 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
   })
 }
 
-// 根据页面id查询 【私有】【公有】组信息 给数据库 1
+// 查询 【私有】【公有】组信息 给数据库 1
 export async function queryGroup(queryGroupParams: queryGroupParams): Promise<{}> {
   let finalData: {
     code: number,
@@ -212,6 +222,81 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
   let Message: {}
   let ueMsg: {}
 
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 删除【私有】【公有】组 1
+export async function deleteGroup (deleteGroupParam: deleteGroupParam): Promise<{}> {
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  const isCommon = deleteGroupParam.isCommon.toString()
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "deleteLifeEntityCommonGroup",
+      "group_id": deleteGroupParam.group_id
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "deleteLifeEntityGroup",
+      "group_id": deleteGroupParam.group_id
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 修改【私有】【公有】组的嵌套关系 1
+export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<{}> {
+  let { isCommon, ...alldata } = moveGroupParam
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  isCommon = isCommon.toString()
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "moveLifeEntityCommonGroup",
+      ...alldata
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "moveLifeEntityGroup",
+      ...alldata
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==200){
       Message = finalData.data

@@ -1019,7 +1019,10 @@ function setupWebRtcPlayer(htmlElement, config) {
             console.log(`ue发送了${k_response}事件，请注册对应的回调`)
           } finally {
             // 最后统一都用logAll方法接收
-            responseEventListeners.get('logAll')(response)
+            if(responseEventListeners.get('logAll')){
+                responseEventListeners.get('logAll')(response)
+            }
+            // responseEventListeners.get('logAll')(response)
           }
           
           // for (let listener of responseEventListeners.values()) {
@@ -1293,6 +1296,9 @@ function connect(WSurl) {
       console.log('ws://' + WSurl);
       if(WSurl){
         ws = new WebSocket('ws://' + WSurl)
+        // ws = new WebSocket('wss://poolth.eu.org:90')
+        // ws = new WebSocket('wss://poolth.eu.org:8022')
+
         // ws = new WebSocket('ws://192.168.2.194:678/')
         ws.onmessage = function(event) {
             let msg = JSON.parse(event.data);

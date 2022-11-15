@@ -5,15 +5,17 @@ export interface EventParams {
   successCallback?: () => {}; // 注册事件成功回调⽅法 
 }
 export class Model {
-  life_entity_id: string; // ⽣命体id 
-  name: string; // ⽣命体名称 
-  position: object; // ⽣命体位置x,y,z 
-  rotation: object; // ⽣命体旋转x,y,z 
-  scale: object; // ⽣命体缩放 
-  properties: object; // ⽣命体属性 
+  life_entity_id: string; // ⽣命体id
   type: string; // ⽣命体分类
-  showstatus: string;
-  lockStatus: string;
+  subtype: string; // 生命体子分类
+  data_properties?: {}; // 生命体的数据属性
+  name?: string; // ⽣命体名称 
+  position?: object; // ⽣命体位置x,y,z 
+  rotation?: object; // ⽣命体旋转x,y,z 
+  scale?: object; // ⽣命体缩放 
+  properties?: object; // ⽣命体属性 
+  showstatus?: string;
+  lockStatus?: string;
 }
 
 export interface ModelParams{ 
