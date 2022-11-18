@@ -23,8 +23,8 @@ export * from './simulation/dealPOI'
 // 特效
 export * from './simulation/dealEffect'
 
-// 模型
-// export * from './simulation/dealMyModel'
+// 特殊生命体
+export * from './simulation/dealSpecial'
 
 // 交互
 export * from './simulation/dealInteractive'

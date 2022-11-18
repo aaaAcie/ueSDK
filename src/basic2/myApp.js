@@ -1293,9 +1293,14 @@ function connect(WSurl) {
       // console.log("name",wsconfig.WSurl)
       // ws = new WebSocket('ws://192.168.2.85:778/')
       // ws = new WebSocket('ws://' + wsconfig.WSurl)
-      console.log('ws://' + WSurl);
       if(WSurl){
-        ws = new WebSocket('ws://' + WSurl)
+          if (WSurl.startsWith('ws')) {
+            ws = new WebSocket(WSurl)
+            console.log(WSurl);
+        }else{
+            ws = new WebSocket('ws://' + WSurl)
+            console.log('ws://' + WSurl);
+        }
         // ws = new WebSocket('wss://poolth.eu.org:90')
         // ws = new WebSocket('wss://poolth.eu.org:8022')
 

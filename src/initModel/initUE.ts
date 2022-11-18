@@ -1,7 +1,7 @@
 // const { load,hideOverlay,closews } = require('../basic2/app')
 const { load,closews,passStats,emitUIInteraction,addResponseEventListener } = require('../basic2/myApp')
 import { selectAllView } from '../api/api.js'
-
+import { BASE_URL } from '../utils/basic.js'
 
 interface ConnectParams {
   url: string // 底座连接地址
@@ -45,13 +45,15 @@ export class initUE {
               Message = data.data
               emitUIInteraction({
                 Category: "basicData",
-                Message
+                // Message
               })
+              console.log(Message)
             })
           })
           emitUIInteraction({
             Category: "changePass",
-            pass_id: "demoProject_1"
+            pass_id: "demoProject_1",
+            baseURL: BASE_URL
           })
         },1000)
 

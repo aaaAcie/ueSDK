@@ -1,6 +1,7 @@
 // 场景设置
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operPoint, selectAllView } from '../api/api.js'
+import { BASE_URL } from '../utils/basic.js'
 
 interface WeatherParams{ 
   weather: '晴天无云' | '多云' | '雾天' | '阴天' | '晴天有云' | '雨天' | '太阳雨' | '雷雨' | '沙尘' | '沙尘暴' | '雪天' | '暴风雪' | '太阳雪',
@@ -68,7 +69,8 @@ export async function readPass(project_id: string): Promise<{}> {
 export async function changePass(pass_id: string): Promise<{}> {
   emitUIInteraction({
     Category: "changePass",
-    pass_id
+    pass_id,
+    baseURL: BASE_URL
   })
   // let ueMsg: {}
   // return new Promise<{}>((resolve, reject) => {

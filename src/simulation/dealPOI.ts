@@ -1,13 +1,14 @@
 import { Model } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity } from '../api/api.js'
-
 interface TextStyle {
   fontSize: number;
   fontFamily: string;
   fontColor: string;
 }
 class POIModel extends Model {
+  belong: string;
+  group: string;
   textStyle: TextStyle; // 文字效果
   // offset: { x: number; y: number }; // 位移
   // effect: {}; // 特效，预留
@@ -24,8 +25,8 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   })
   // operLifeEntity().then(data => console.log('0000000 ',data.data))
   
-  let ueMsg: string
-  let msg2: String
+  let ueMsg: POIModel
+  let msg2: {}
   let successCallback = []
   successCallback.push((msg2) => {
     return operLifeEntity({
@@ -49,7 +50,9 @@ export async function addPOIModel (POItype: String): Promise<{}> {
       try {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-        msg2 = JSON.parse(JSON.stringify(ueMsg))
+
+        let { belong, group, ...msg2} = ueMsg
+        // msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
           successCallback.shift()(msg2)
           .then(Message => resolve({uedata, Message}))
