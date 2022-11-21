@@ -55,6 +55,13 @@ interface sortGroupParam{
   where_sort_index: number, // 原来的顺序
   sort_index: number // 期望的顺序
 }
+interface sortLifeEntityInGroupParam{
+  group_id: string, // 组id
+  isCommon: string, // 组类型 '0'为私有组，'1'为公共组
+  life_entity_id?: string, // 生命体id
+  where_sort_index: number | string, // 原来的顺序
+  sort_index: number | string // 期望的顺序
+}
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
   let finalData: {
@@ -343,6 +350,47 @@ export async function sortGroup(sortGroupParam: sortGroupParam): Promise<{}> {
     // 私有组
     const { data } = await sortPrivateGroup({
       "oper_type": "updatePageGroupIndex",
+      ...alldata2
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 修改【私有】【公有】组内的生命体顺序 0
+export async function sortLifeEntityInGroup(sortLifeEntityInGroupParam: sortLifeEntityInGroupParam): Promise<{}> {
+  let { isCommon, ...alldata } = sortLifeEntityInGroupParam
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+
+  let alldata2 = JSON.parse(JSON.stringify(alldata).replace(/life_entity_id/g, 'where_life_entity_id').replace(/group_id/g, 'where_group_id'))
+  isCommon = isCommon.toString()
+
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await sortCommonGroupLifeEntity({
+      "oper_type": "updateLifeEntityCommonGroupIndex",
+      ...alldata2
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await sortPrivateGroupLifeEntity({
+      "oper_type": "updateLifeEntityGroupIndex",
       ...alldata2
     })
     finalData = data
