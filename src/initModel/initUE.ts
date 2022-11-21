@@ -41,19 +41,19 @@ export class initUE {
             uedata = JSON.parse(uedata)
             let pass_id = uedata['Message']
             console.log("ue: ",pass_id)
-            selectAllView(pass_id).then((data) => {
-              Message = data.data
-              emitUIInteraction({
-                Category: "basicData",
-                // Message
-              })
-              console.log(Message)
-            })
+            // selectAllView(pass_id).then((data) => {
+            //   Message = data.data
+            //   emitUIInteraction({
+            //     Category: "basicData",
+            //     // Message
+            //   })
+            //   console.log(Message)
+            // })
           })
           emitUIInteraction({
             Category: "changePass",
             pass_id: "demoProject_1",
-            baseURL: BASE_URL
+            baseURL: BASE_URL + '/selectAllView'
           })
         },1000)
 

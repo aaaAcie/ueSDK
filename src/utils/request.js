@@ -2,10 +2,11 @@
 // const axios = require('axios').default
 
 import axios from 'axios'
+import { BASE_URL } from './basic.js'
 
 const request = axios.create({
   // timeout: 5000
-  baseURL: 'http://192.168.2.128:10010'
+  baseURL: BASE_URL
   // baseURL: 'http://115.238.181.246:10010'
 })
 

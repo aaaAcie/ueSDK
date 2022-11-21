@@ -6,7 +6,11 @@ import {
   queryPrivateGroup,
   operLifeEntityCommonGroup,
   operLifeEntityCommonGroupIndex,
-  queryCommonGroup
+  queryCommonGroup,
+  sortPrivateGroup,
+  sortCommonGroup,
+  sortPrivateGroupLifeEntity,
+  sortCommonGroupLifeEntity
 } from '../api/api.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
@@ -42,6 +46,14 @@ interface moveGroupParam{
   isCommon: string; // 要操作的组类型 '0'为私有组，'1'为公共组
   parent_group_id: string; // 目标组的id
   parent_ancestors: string // 目标组的ancestors
+}
+interface sortGroupParam{
+  group_id: string, // 要操作的组id
+  isCommon: string, // 要操作的组类型 '0'为私有组，'1'为公共组
+  pass_id?: string, // 组所在的关卡（公有组必传）
+  page_id?: string, // 组所在的页面（私有组必传）
+  where_sort_index: number, // 原来的顺序
+  sort_index: number // 期望的顺序
 }
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
@@ -291,6 +303,47 @@ export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<
     const { data } = await operLifeEntityGroup({
       "oper_type": "moveLifeEntityGroup",
       ...alldata
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message, ueMsg})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 修改【私有】【公有】组顺序 0
+export async function sortGroup(sortGroupParam: sortGroupParam): Promise<{}> {
+  let { isCommon, ...alldata } = sortGroupParam
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+
+  let alldata2 = JSON.parse(JSON.stringify(alldata).replace(/page_id/g, 'where_page_id').replace(/group_id/g, 'where_group_id'))
+  isCommon = isCommon.toString()
+
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await sortCommonGroup({
+      "oper_type": "updatePointGroupIndex",
+      ...alldata2
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await sortPrivateGroup({
+      "oper_type": "updatePageGroupIndex",
+      ...alldata2
     })
     finalData = data
   }

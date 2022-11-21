@@ -18,7 +18,7 @@ export async function getSliceDataById (life_entity_id: String): Promise<{}> {
     addResponseEventListener("getSliceDataByIdResponse", (uedata?: string): string => {
       try{
         ueMsg = JSON.parse(uedata)
-        console.log(ueMsg)
+        // console.log(ueMsg)
         resolve({ ueMsg })
       }catch(e){
         reject(new Error(e))
@@ -42,7 +42,7 @@ export async function sliceByFloor (sliceParams: sliceParams): Promise<{}> {
     addResponseEventListener("sliceByFloorResponse", (uedata?: string): string => {
       try{
         ueMsg = JSON.parse(uedata)
-        console.log(ueMsg)
+        // console.log(ueMsg)
         resolve({ ueMsg })
       }catch(e){
         reject(new Error(e))

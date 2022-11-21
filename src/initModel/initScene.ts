@@ -70,7 +70,7 @@ export async function changePass(pass_id: string): Promise<{}> {
   emitUIInteraction({
     Category: "changePass",
     pass_id,
-    baseURL: BASE_URL
+    baseURL: BASE_URL + '/selectAllView'
   })
   // let ueMsg: {}
   // return new Promise<{}>((resolve, reject) => {

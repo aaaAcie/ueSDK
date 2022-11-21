@@ -111,6 +111,39 @@ export const queryCommonGroup = (data) =>{
   })
 }
 
+// 修改私有组顺序
+export const sortPrivateGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operPageGroupIndex',
+    data
+  })
+}
+// 修改公有组顺序
+export const sortCommonGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operPointGroupIndex',
+    data
+  })
+}
+// 修改私有组内生命体顺序
+export const sortPrivateGroupLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operPageGroupIndex',
+    data
+  })
+}
+// 修改公有组内生命体顺序
+export const sortCommonGroupLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operPointGroupIndex',
+    data
+  })
+}
+
 // 查询所有 给ue发送
 export const selectSourceMaterial = (data) =>{
   return request({
