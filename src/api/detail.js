@@ -13,6 +13,15 @@ export const importBatchManagementList = (data) =>{
   })
 }
 
+// 下载模板
+export const downloadExcel = (data) =>{
+  return request({
+    method: 'post',
+    url: '/downloadBatchManagementTemplateExcel',
+    data
+  })
+}
+
 // 操作交互
 export const operInteractive = (data) =>{
   return request({

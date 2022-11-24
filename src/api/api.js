@@ -73,6 +73,15 @@ export const operCamera = (data) =>{
   })
 }
 
+// 操作镜头belong
+export const operCameraBelong = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operCameraBelong',
+    data
+  })
+}
+
 // 查询所有 给ue发送
 export const selectAllView = (pass_id) =>{
   return request({
@@ -152,6 +161,7 @@ export const selectSourceMaterial = (data) =>{
     data
   })
 }
+
 
 // module.exports = {
 //   getResource

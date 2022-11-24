@@ -1,7 +1,7 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-import { importBatchManagementList } from '../api/detail.js'
+import { importBatchManagementList,downloadExcel } from '../api/detail.js'
 
 
 // 读取底座⽣命体 向接口查询 返回给前端 1
@@ -467,4 +467,22 @@ export async function addModelInBulk(file, pass_id): Promise<{}> {
     }
   })
 
+}
+
+
+// 批量添加生命体的excel模板下载 fileType: '通用式' | '视频弹窗式'
+export async function downloadTemplateExcel(fileType: string): Promise<{}> {
+  const { data } = await downloadExcel({
+    fileType
+  })
+  let Message: Array<Number>
+
+  return new Promise<object>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
+  })
 }

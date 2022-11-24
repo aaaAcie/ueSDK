@@ -1,4 +1,6 @@
 import { operPage } from '../api/api.js'
+import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+
 interface pageParams {
   pass_id: string;
   page_id: string;
@@ -54,5 +56,27 @@ export async function deletePage(page_list: Array<pageParams>): Promise<{}> {
       reject(new Error(data.msg))
     }
 
+  })
+}
+
+// 切换页面 给ue 
+export async function changePage(page_id: string): Promise<{}> {
+  emitUIInteraction({
+    Category: "changePage",
+    page_id
+  })
+  let ueMsg: {}
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("changePageResponse", (uedata?: string): {} => {
+      try {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        resolve(ueMsg)
+        
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return ueMsg
+    })
   })
 }

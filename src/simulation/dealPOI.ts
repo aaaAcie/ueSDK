@@ -50,8 +50,8 @@ export async function addPOIModel (POItype: String): Promise<{}> {
       try {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
-
-        let { belong, group, ...msg2} = ueMsg
+        msg2 = ueMsg
+        // let { belong, group, ...msg2} = ueMsg
         // msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
           successCallback.shift()(msg2)

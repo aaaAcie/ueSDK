@@ -1,5 +1,5 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operCamera } from '../api/api.js'
+import { operCamera, operCameraBelong } from '../api/api.js'
 
 interface Shot {
   shot_id: string // 镜头id
@@ -11,7 +11,10 @@ interface modifyParam {
   name: string
   position: {}
 }
-
+interface cameraBelong{
+  shot_id: string; // 镜头id
+  page_id: string; // 绑定的页面id
+}
 // 添加镜头 跟ue通信并向接口提交 1
 export function addShot(name: string): Promise<Object> {
   emitUIInteraction({
@@ -226,5 +229,34 @@ export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> 
       }
       return ueMsg
     })
+  })
+}
+
+// 获取单个镜头 向接口请求数据返回给前端 1
+export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Promise<{}> {
+  const { data } = await operCameraBelong({
+    "oper_type": "insertOrUpdateCameraBelong",
+    camera_belongs
+  })
+
+  let ueMsg
+  let Message: Shot
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      emitUIInteraction({
+        Category: "addCameraBelong",
+        ...Message
+      })
+
+      addResponseEventListener("addCameraBelongResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata
+        resolve({Message, ueMsg})
+      })
+    }else{
+      reject(new Error(data.msg))
+    }
+
   })
 }

@@ -29,6 +29,11 @@ interface moveSingle{
   group_id: string; // 目标组id
   isCommon: string // '0'为私有组，'1'为公共组
 }
+interface deleteSingle{
+  life_entity_id: string; // 要移动的生命体id
+  group_id: string; // 目标组id
+  isCommon: string // '0'为私有组，'1'为公共组
+}
 interface queryGroupParams{
   pass_id: string; // 关卡的id
   page_id?: string; // 页面的id
@@ -62,7 +67,8 @@ interface sortLifeEntityInGroupParam{
   where_sort_index: number | string, // 原来的顺序
   sort_index: number | string // 期望的顺序
 }
-// 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1
+// 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1 
+// 接收数据库消息，是否改变了该成员的页面归属信息
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
   let finalData: {
     code: number,
@@ -85,16 +91,29 @@ export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon:
     })
     finalData = data
   }
-
   let ueMsg: {}
   let Message: {}
+
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==200){
-      Message = finalData.data
-      resolve({Message, ueMsg})
-    }else{
-      reject(new Error(finalData.msg))
+    try {
+      if(finalData.code==200){
+        Message = finalData.data
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      }else{
+        reject(new Error(finalData.msg))
+      }
+    } catch (error) {
+      reject(new Error(error))
     }
+    
 
   })
 }
@@ -324,6 +343,71 @@ export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<
       reject(new Error(finalData.msg))
     }
 
+  })
+}
+
+// 删除【私有】【公有】组的里的单个生命体 0
+export async function deleteGroupIndex(deleteSingle: deleteSingle): Promise<{}> {
+  // let allParams = JSON.parse(JSON.stringify(moveSingle).replace(/life_entity_id/g, 'where_life_entity_id'))
+  const { isCommon, ...alldata } = deleteSingle
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  if (isCommon.toString() =='0') {
+    // 查页面的私有组
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "deleteLifeEntityGroupIndex",
+      ...alldata
+    })
+    finalData = data
+  } else {
+    // 查关卡的公有组
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "deleteLifeEntityCommonGroupIndex",
+      ...alldata
+    })
+    finalData = data
+  }
+  
+  let Message: {}
+  let ueMsg: {}
+
+  // return new Promise<{}>((resolve, reject) => {
+  //   if(finalData.code==200){
+  //     Message = finalData.data
+  //     resolve({Message, ueMsg})
+  //   }else{
+  //     reject(new Error(finalData.msg))
+  //   }
+  // })
+  return new Promise<{}>((resolve, reject) => {
+    try {
+      if(finalData.code==200){
+        Message = finalData.data
+        // 私有组 给ue发送更新belong的信息
+        if (isCommon.toString() =='0') {
+          emitUIInteraction({
+            Category: "addBelong",
+            Message
+          })
+          addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+            uedata = JSON.parse(uedata)
+            ueMsg = uedata
+            resolve({Message, ueMsg})
+          })
+        } else {
+          // 公有组
+          resolve({Message, ueMsg})
+        }
+
+      }else{
+        reject(new Error(finalData.msg))
+      }
+    } catch (error) {
+      reject(new Error(error))
+    }
   })
 }
 
