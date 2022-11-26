@@ -246,7 +246,7 @@ export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Prom
       Message = data.data
       emitUIInteraction({
         Category: "addCameraBelong",
-        ...Message
+        Message
       })
 
       addResponseEventListener("addCameraBelongResponse", (uedata?: string): void => {

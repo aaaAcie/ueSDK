@@ -47,10 +47,13 @@ interface deleteGroupParam{
   isCommon: string // 要操作的组类型 '0'为私有组，'1'为公共组
 }
 interface moveGroupParam{
+  pass_id?: string, // 组所在的关卡（公有组必传）
+  page_id?: string, // 组所在的页面（私有组必传）
   group_id: string; // 要操作的组id
   isCommon: string; // 要操作的组类型 '0'为私有组，'1'为公共组
   parent_group_id: string; // 目标组的id
-  parent_ancestors: string // 目标组的ancestors
+  parent_ancestors: string; // 目标组的ancestors
+  target_sort_index: number // 在目标组的位置
 }
 interface sortGroupParam{
   group_id: string, // 要操作的组id
