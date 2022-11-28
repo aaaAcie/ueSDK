@@ -178,10 +178,11 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
 // 设置⽣命体属性 走接口提交保存 1未测试
 export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   // modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
+  let allParams2 = JSON.parse(JSON.stringify(modelProps).replace(/life_entity_id/g, 'where_life_entity_id'))
   
   const { data } = await operLifeEntity({
     "oper_type": "updateLifeEntity",
-    ...modelProps
+    ...allParams2
   })
   let Message: string = ''
 

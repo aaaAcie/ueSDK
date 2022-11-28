@@ -152,6 +152,22 @@ export const sortCommonGroupLifeEntity = (data) =>{
     data
   })
 }
+// 批量复制私有组内的生命体
+export const batchCopyPrivateLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/batchCopyLifeEntity',
+    data
+  })
+}
+// 复制私有组
+export const copyLifeEntityPrivateGroup = (data) =>{
+  return request({
+    method: 'post',
+    url: '/copyLifeEntityGroup',
+    data
+  })
+}
 
 // 查询所有 给ue发送
 export const selectSourceMaterial = (data) =>{

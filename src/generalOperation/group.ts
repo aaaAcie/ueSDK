@@ -10,7 +10,9 @@ import {
   sortPrivateGroup,
   sortCommonGroup,
   sortPrivateGroupLifeEntity,
-  sortCommonGroupLifeEntity
+  sortCommonGroupLifeEntity,
+  batchCopyPrivateLifeEntity,
+  copyLifeEntityPrivateGroup
 } from '../api/api.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
@@ -25,9 +27,11 @@ interface GroupParam  {
   pass_id: string; // (创建公共组必传) 新组的所属关卡id
 }
 interface moveSingle{
-  where_life_entity_id: string; // 要移动的生命体id
-  group_id: string; // 目标组id
-  isCommon: string // '0'为私有组，'1'为公共组
+  life_entity_id: string, // 要移动的生命体id
+  param_group_id: string, // 原组的id
+  isCommon: string, // 目标组的类型 '0'为私有组，'1'为公共组
+  target_group_id: string, // 目标组的id
+  target_sort_index: number, // 在目标组的顺序
 }
 interface deleteSingle{
   life_entity_id: string; // 要移动的生命体id
@@ -70,6 +74,17 @@ interface sortLifeEntityInGroupParam{
   where_sort_index: number | string, // 原来的顺序
   sort_index: number | string // 期望的顺序
 }
+interface copyLifeEntityParam{
+  life_entity_id: string, // 要删除关联关系的生命体id
+  group_id: string, // 组id
+  sort_index: number, // 期望的顺序   
+}
+interface copyGroupParam{
+  page_id?: string, // 私有组所在的页面id （复制私有组必传）
+  pass_id?: string, // 公有组所在的关卡id（复制公有组必传）
+  group_id: string, // 组id
+  sort_index: number, // 期望的顺序
+}
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1 
 // 接收数据库消息，是否改变了该成员的页面归属信息
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
@@ -101,15 +116,21 @@ export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon:
     try {
       if(finalData.code==200){
         Message = finalData.data
-        emitUIInteraction({
-          Category: "addBelong",
-          Message
-        })
-        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
-          ueMsg = uedata
+        if (isCommon =='0') {
+          // 私有组
+          emitUIInteraction({
+            Category: "addBelong",
+            Message
+          })
+          addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+            uedata = JSON.parse(uedata)
+            ueMsg = uedata
+            resolve({Message, ueMsg})
+          })
+        } else {
+          // 公有组
           resolve({Message, ueMsg})
-        })
+        }
       }else{
         reject(new Error(finalData.msg))
       }
@@ -237,8 +258,8 @@ export async function deleteGroupConnection(deleteGroupCntParams: deleteGroupCnt
 
 // 移出单个生命体到别的【私有】【公有】组 1
 export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
-  let allParams = JSON.parse(JSON.stringify(moveSingle).replace(/life_entity_id/g, 'where_life_entity_id'))
-  const { isCommon, ...alldata } = allParams
+  // let allParams = JSON.parse(JSON.stringify(moveSingle).replace(/life_entity_id/g, 'where_life_entity_id'))
+  const { isCommon, ...alldata } = moveSingle
   let finalData: {
     code: number,
     data: [],
@@ -247,14 +268,14 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
   if (isCommon.toString() =='0') {
     // 查页面的私有组
     const { data } = await operLifeEntityGroupIndex({
-      "oper_type": "updateLifeEntityGroupIndex",
+      "oper_type": "moveLifeEntityGroupIndex",
       ...alldata
     })
     finalData = data
   } else {
     // 查关卡的公有组
     const { data } = await operLifeEntityCommonGroupIndex({
-      "oper_type": "updateLifeEntityCommonGroupIndex",
+      "oper_type": "moveLifeEntityCommonGroupIndex",
       ...alldata
     })
     finalData = data
@@ -489,6 +510,108 @@ export async function sortLifeEntityInGroup(sortLifeEntityInGroupParam: sortLife
     if(finalData.code==200){
       Message = finalData.data
       resolve({Message, ueMsg})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 批量复制【私有】组内的生命体 0000  缺返回值
+export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEntityParam): Promise<{}> {
+  let isCommon = '0'
+  let alldata = copyLifeEntityInBulkParam
+  // let { isCommon, ...alldata } = copyLifeEntityInBulkParam
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+
+  // let alldata2 = JSON.parse(JSON.stringify(alldata).replace(/life_entity_id/g, 'where_life_entity_id').replace(/group_id/g, 'where_group_id'))
+  isCommon = isCommon.toString()
+
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await sortCommonGroupLifeEntity({
+      ...alldata
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await batchCopyPrivateLifeEntity({
+      ...alldata
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      // 发送给ue复制出来的生命体
+      emitUIInteraction({
+        Category: "addModelInBulk",
+        allParams: Message
+      })
+      addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        resolve({Message, ueMsg})
+      })
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 复制【私有】组 0000 缺返回值
+export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promise<{}> {
+  let isCommon = '0'
+  let alldata = copyGroupParam
+
+  // let alldata = copyGroupParam
+  // let { isCommon, ...alldata } = copyGroupParam
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+
+  // let alldata2 = JSON.parse(JSON.stringify(alldata).replace(/life_entity_id/g, 'where_life_entity_id').replace(/group_id/g, 'where_group_id'))
+  isCommon = isCommon.toString()
+
+  if (isCommon =='1') {
+    // 共有组
+    const { data } = await sortCommonGroupLifeEntity({
+      ...alldata
+    })
+    finalData = data
+  } else {
+    // 私有组
+    const { data } = await copyLifeEntityPrivateGroup({
+      ...alldata
+    })
+    finalData = data
+  }
+
+  let ueMsg: {}
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      // 发送给ue复制出来的生命体
+      emitUIInteraction({
+        Category: "addModelInBulk",
+        allParams: Message
+      })
+      addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        resolve({Message, ueMsg})
+      })
     }else{
       reject(new Error(finalData.msg))
     }
