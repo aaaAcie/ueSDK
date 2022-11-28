@@ -85,6 +85,10 @@ interface copyGroupParam{
   group_id: string, // 组id
   sort_index: number, // 期望的顺序
 }
+interface querySingleGroupParam{
+  group_id: string, // 组id
+  isCommon: string // 组的类型 '0'为私有组，'1'为公共组
+}
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1 
 // 接收数据库消息，是否改变了该成员的页面归属信息
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
@@ -266,14 +270,14 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
     msg: ''
   }
   if (isCommon.toString() =='0') {
-    // 查页面的私有组
+    // 私有组
     const { data } = await operLifeEntityGroupIndex({
       "oper_type": "moveOtherLifeEntityGroupIndex",
       ...alldata
     })
     finalData = data
   } else {
-    // 查关卡的公有组
+    // 公有组
     const { data } = await operLifeEntityCommonGroupIndex({
       "oper_type": "moveOtherLifeEntityCommonGroupIndex",
       ...alldata
@@ -289,7 +293,7 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
       Message = finalData.data
       resolve({Message, ueMsg})
     }else{
-      reject(new Error(finalData.msg))
+      reject(new Error(finalData.msg+': '+finalData.data))
     }
 
   })
@@ -616,5 +620,41 @@ export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promi
       reject(new Error(finalData.msg))
     }
 
+  })
+}
+
+// 查询单个【私有】【公有】组信息 111
+export async function querySingleGroup(queryGroupParam: querySingleGroupParam): Promise<{}> {
+  let { isCommon, group_id } = queryGroupParam
+
+  let finalData: {
+    code: number,
+    data: [],
+    msg: ''
+  }
+  if (isCommon.toString() == '0') {
+    // 查页面的私有组
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "selectLifeEntityGroup",
+      group_id
+    })
+    finalData = data
+  } else {
+    // 查关卡的公有组
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "selectLifeEntityCommonGroup",
+      group_id
+    })
+    finalData = data
+  }
+
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==200){
+      Message = finalData.data
+      resolve({Message})
+    }else{
+      reject(new Error(finalData.msg))
+    }
   })
 }
