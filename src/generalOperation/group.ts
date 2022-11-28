@@ -268,14 +268,14 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
   if (isCommon.toString() =='0') {
     // 查页面的私有组
     const { data } = await operLifeEntityGroupIndex({
-      "oper_type": "moveLifeEntityGroupIndex",
+      "oper_type": "moveOtherLifeEntityGroupIndex",
       ...alldata
     })
     finalData = data
   } else {
     // 查关卡的公有组
     const { data } = await operLifeEntityCommonGroupIndex({
-      "oper_type": "moveLifeEntityCommonGroupIndex",
+      "oper_type": "moveOtherLifeEntityCommonGroupIndex",
       ...alldata
     })
     finalData = data
