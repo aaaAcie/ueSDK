@@ -6,11 +6,8 @@ interface pageParams {
   page_id: string;
 }
 interface belongShowStatus {
-  life_entity_id: string;
-  belong: Array<{
-    page_id: string;
-    showStatus: string; // "0"表示隐藏 "1"表示显示
-  }>
+  life_entity_ids: Array<string>;
+  page_id: string;
 }
 //  根据页面id查询 组信息 给数据库 
 export async function queryPage(pass_id: string): Promise<{}> {
@@ -101,8 +98,8 @@ export async function setBelongShowStatus(belongShowStatus: belongShowStatus): P
       console.log(data)
       Message = data
 
-      // if(data.code==200){
-        // Message = data.data
+      if(data.code==200){
+        Message = data.data
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -112,9 +109,9 @@ export async function setBelongShowStatus(belongShowStatus: belongShowStatus): P
           ueMsg = uedata
           resolve({Message, ueMsg})
         })
-      // }else{
-      //   reject(new Error(data.msg))
-      // }
+      }else{
+        reject(new Error(data.msg))
+      }
     } catch (error) {
       reject(new Error(error))
     }
