@@ -178,6 +178,14 @@ export const selectSourceMaterial = (data) =>{
   })
 }
 
+// 批量设置生命体在页面上的显隐状态
+export const batchUpdateLifeEntityBelongShowStatus = (data) =>{
+  return request({
+    method: 'post',
+    url: '/batchUpdateLifeEntityBelongShowStatus',
+    data
+  })
+}
 
 // module.exports = {
 //   getResource

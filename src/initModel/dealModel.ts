@@ -37,23 +37,7 @@ export async function initModels(pass_id: string): Promise<Array<Model>> {
   })
 }
 
-// 读取预置素材  从接口拿到数据 给前端 1
-export async function initMaterial(project_id:string): Promise<{}> { 
-  project_id = project_id.toString()
-  const { data } = await selectSourceMaterial({
-    project_id
-  })
-  let Message: Model
-  return new Promise<Model>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
-      resolve(Message)
-    }else{
-      reject(new Error(data.msg))
-    }
 
-  })
-}
 
 
 // 添加⽣命体  跟ue通信并向接口提交

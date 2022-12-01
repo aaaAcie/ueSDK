@@ -37,24 +37,32 @@ export class initUE {
         // 连接成功后 可以在这里给ue发消息，发送当前项目的默认关卡
         // pass_id
         setTimeout(() => {
-          addResponseEventListener("changePassResponse",(uedata) => {
+          addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
             uedata = JSON.parse(uedata)
             let pass_id = uedata['Message']
             console.log("ue: ",pass_id)
-            selectAllView("demoProject_1").then((data) => {
-              Message = data.data
-              // emitUIInteraction({
-              //   Category: "basicData",
-              //   // Message
-              // })
-              console.log(Message)
-            })
+            // selectAllView("demoProject_1").then((data) => {
+            //   Message = data.data
+            //   // emitUIInteraction({
+            //   //   Category: "basicData",
+            //   //   // Message
+            //   // })
+            //   console.log(Message)
+            // })
           })
           emitUIInteraction({
-            Category: "changePass",
+            Category: "sendMaterialAndChangePass",
             pass_id: "demoProject_1",
-            baseURL: BASE_URL + '/selectAllView'
+            baseURL: BASE_URL + '/selectAllView',
+            project_id: "1",
+            baseURL2: BASE_URL + '/operMaterial'
           })
+
+          // emitUIInteraction({
+          //   Category: "sendMaterial",
+          //   pass_id: "demoProject_1",
+          //   baseURL: BASE_URL + '/selectAllView'
+          // })
         },1000)
 
         this.successCallback(ws)

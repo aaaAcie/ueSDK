@@ -96,7 +96,7 @@ export const queryMixedPageGroup = (data) =>{
   })
 }
 
-// 查询所有 给ue发送
+// 查询Material 给ue发送
 export const selectSourceMaterial = (data) =>{
   return request({
     method: 'post',
@@ -104,6 +104,40 @@ export const selectSourceMaterial = (data) =>{
     data
   })
 }
+
+// 上传缩略图
+export const uploadMaterialImages = (data) =>{
+  return request({
+    method: 'post',
+    url: '/materialManagementUploadImages',
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
+// 上传素材
+export const uploadMaterialFile = (data) =>{
+  return request({
+    method: 'post',
+    url: '/materialManagementUploadFile',
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
+// 操作素材
+export const operMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operMaterial',
+    data
+  })
+}
+
 
 // module.exports = {
 //   getResource

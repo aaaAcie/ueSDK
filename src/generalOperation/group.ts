@@ -538,13 +538,13 @@ export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEn
   if (isCommon =='1') {
     // 共有组
     const { data } = await sortCommonGroupLifeEntity({
-      ...alldata
+      data: alldata
     })
     finalData = data
   } else {
     // 私有组
     const { data } = await batchCopyPrivateLifeEntity({
-      ...alldata
+      data: alldata
     })
     finalData = data
   }
@@ -557,11 +557,11 @@ export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEn
       // 发送给ue复制出来的生命体
       emitUIInteraction({
         Category: "addModelInBulk",
-        allParams: Message
+        allParams: {"lifeEntityList": Message}
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
         uedata = JSON.parse(uedata)
-        ueMsg = uedata['Message']
+        ueMsg = uedata
         resolve({Message, ueMsg})
       })
     }else{
@@ -609,11 +609,11 @@ export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promi
       // 发送给ue复制出来的生命体
       emitUIInteraction({
         Category: "addModelInBulk",
-        allParams: Message
+        allParams: {"lifeEntityList": Message}
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
         uedata = JSON.parse(uedata)
-        ueMsg = uedata['Message']
+        ueMsg = uedata
         resolve({Message, ueMsg})
       })
     }else{

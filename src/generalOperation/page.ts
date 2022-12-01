@@ -1,11 +1,17 @@
-import { operPage } from '../api/api.js'
+import { operPage, batchUpdateLifeEntityBelongShowStatus } from '../api/api.js'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 
 interface pageParams {
   pass_id: string;
   page_id: string;
 }
-
+interface belongShowStatus {
+  life_entity_id: string;
+  belong: Array<{
+    page_id: string;
+    showStatus: string; // "0"表示隐藏 "1"表示显示
+  }>
+}
 //  根据页面id查询 组信息 给数据库 
 export async function queryPage(pass_id: string): Promise<{}> {
   const { data } = await operPage({
@@ -78,5 +84,41 @@ export async function changePage(page_id: string): Promise<{}> {
       }
       return ueMsg
     })
+  })
+}
+
+// 设置生命体在页面的显隐状态 数据库 给ue 
+export async function setBelongShowStatus(belongShowStatus: belongShowStatus): Promise<{}> {
+  const { data } = await batchUpdateLifeEntityBelongShowStatus({
+    ...belongShowStatus
+  })
+
+  let Message: {}
+  let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    try {
+      console.log(data)
+      Message = data
+
+      // if(data.code==200){
+        // Message = data.data
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      // }else{
+      //   reject(new Error(data.msg))
+      // }
+    } catch (error) {
+      reject(new Error(error))
+    }
+    
+
   })
 }
