@@ -187,6 +187,15 @@ export const batchUpdateLifeEntityBelongShowStatus = (data) =>{
   })
 }
 
+// 操作类 执行者组
+export const operLifeEntityExecutor = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operLifeEntityExecutor',
+    data
+  })
+}
+
 // module.exports = {
 //   getResource
 // }

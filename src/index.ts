@@ -34,3 +34,9 @@ export * from './generalOperation/group'
 
 // 页面
 export * from './generalOperation/page'
+
+// 素材
+export * from './generalOperation/material'
+
+// 操作类 执行者组
+export * from './generalOperation/label'
