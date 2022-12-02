@@ -1,6 +1,8 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
-  operLifeEntityExecutor
+  operLifeEntityExecutor,
+  resetLabel,
+  batchInsertLabel
 } from '../api/api.js'
 
 interface lifeEntityExecutor{
@@ -23,7 +25,16 @@ interface treeLifeEntityExecutorList{
   pass_id: string, // 关卡id
   exec_type: string, // 类的exec_type
 }
-
+interface resetExecutorLifeEntityIndexParam{
+  exec_id_list: Array<string>, // 类id的数组
+  life_entity_id: string, // 生命体id 
+  page_id: string, // 关卡id
+}
+interface appendExecutorLifeEntityIndexParam{
+  exec_id_list: Array<string>, // 类id的数组
+  life_entity_id: string, // 生命体id 
+  page_id: string, // 关卡id
+}
 // 新增类
 export async function addLifeEntityExecutor(lifeEntityExecutor: lifeEntityExecutor): Promise<{}> {
   const { data } = await operLifeEntityExecutor({
@@ -82,6 +93,40 @@ export async function addExecutorLifeEntityIndex(executorLifeEntityIndex: execut
 export async function queryTreeLifeEntityExecutorList(treeLifeEntityExecutorList: treeLifeEntityExecutorList): Promise<{}> {
   const { data } = await operLifeEntityExecutor({
     ...treeLifeEntityExecutorList
+  })
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve({Message})
+    }else{
+      reject(new Error(data.msg))
+    }
+
+  })
+}
+
+// 给生命体设置类
+export async function resetExecutorLifeEntityIndex(resetExecutorLifeEntityIndexParam: resetExecutorLifeEntityIndexParam): Promise<{}> {
+  const { data } = await resetLabel({
+    ...resetExecutorLifeEntityIndexParam
+  })
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve({Message})
+    }else{
+      reject(new Error(data.msg))
+    }
+
+  })
+}
+
+// 给生命体设置类
+export async function appendExecutorLifeEntityIndex(appendExecutorLifeEntityIndexParam: appendExecutorLifeEntityIndexParam): Promise<{}> {
+  const { data } = await batchInsertLabel({
+    ...appendExecutorLifeEntityIndexParam
   })
   let Message: {}
   return new Promise<{}>((resolve, reject) => {

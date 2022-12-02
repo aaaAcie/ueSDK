@@ -195,7 +195,22 @@ export const operLifeEntityExecutor = (data) =>{
     data
   })
 }
-
+// 单个生命体设置类
+export const resetLabel = (data) =>{
+  return request({
+    method: 'post',
+    url: '/resetExecutorLifeEntityIndex',
+    data
+  })
+}
+// 单个生命体新增类
+export const batchInsertLabel = (data) =>{
+  return request({
+    method: 'post',
+    url: '/batchInsertExecutorLifeEntityIndex',
+    data
+  })
+}
 // module.exports = {
 //   getResource
 // }
