@@ -57,7 +57,7 @@ export class initUE {
             project_id: "1",
             baseURL2: BASE_URL + '/operMaterial'
           })
-
+          this.successCallback(ws)
           // emitUIInteraction({
           //   Category: "sendMaterial",
           //   pass_id: "demoProject_1",
@@ -65,7 +65,7 @@ export class initUE {
           // })
         },1000)
 
-        this.successCallback(ws)
+        // this.successCallback(ws)
         streamingVideo = document.getElementById("streamingVideo")
         resolve(streamingVideo)
 

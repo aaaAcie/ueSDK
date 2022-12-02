@@ -232,7 +232,7 @@ export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> 
   })
 }
 
-// 获取单个镜头 向接口请求数据返回给前端 1
+// 建立镜头与页面的关联关系  向接口请求数据返回给前端 1
 export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Promise<{}> {
   const { data } = await operCameraBelong({
     "oper_type": "insertOrUpdateCameraBelong",

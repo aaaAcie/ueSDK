@@ -1,9 +1,12 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-import { importBatchManagementList,downloadExcel } from '../api/detail.js'
+import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
 
-
+interface pageLifeEntity{
+  name: string;
+  page_id: string;
+}
 // 读取底座⽣命体 向接口查询 返回给前端 1
 export async function initModels(pass_id: string): Promise<Array<Model>> {
   const { data } = await operLifeEntity({
@@ -466,6 +469,24 @@ export async function downloadTemplateExcel(fileType: string): Promise<{}> {
     if(data.code==200){
       Message = data.data
       resolve(Message)
+    }else{
+      reject(new Error(data.msg))
+    }
+  })
+}
+
+
+// 模糊查询指定页面下对应的生命体
+export async function queryPageLifeEntityByName(pageLifeEntity: pageLifeEntity): Promise<{}> {
+  const { data } = await selectPageLifeEntityListByName({
+    ...pageLifeEntity
+  })
+  let Message: Array<Number>
+
+  return new Promise<object>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve({Message})
     }else{
       reject(new Error(data.msg))
     }

@@ -138,6 +138,14 @@ export const operMaterial = (data) =>{
   })
 }
 
+// 模糊查询当前页面下对应的生命体
+export const selectPageLifeEntityListByName = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectPageLifeEntityListByName',
+    data
+  })
+}
 
 // module.exports = {
 //   getResource
