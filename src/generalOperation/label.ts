@@ -25,14 +25,9 @@ interface treeLifeEntityExecutorList{
   pass_id: string, // 关卡id
   exec_type: string, // 类的exec_type
 }
-interface resetExecutorLifeEntityIndexParam{
+interface executorLifeEntityIndexParam{
   exec_id_list: Array<string>, // 类id的数组
-  life_entity_id: string, // 生命体id 
-  page_id: string, // 关卡id
-}
-interface appendExecutorLifeEntityIndexParam{
-  exec_id_list: Array<string>, // 类id的数组
-  life_entity_id: string, // 生命体id 
+  life_entity_id_list: Array<string>, // 生命体id 
   page_id: string, // 关卡id
 }
 // 新增类
@@ -107,9 +102,9 @@ export async function queryTreeLifeEntityExecutorList(treeLifeEntityExecutorList
 }
 
 // 给生命体设置类
-export async function resetExecutorLifeEntityIndex(resetExecutorLifeEntityIndexParam: resetExecutorLifeEntityIndexParam): Promise<{}> {
+export async function resetExecutorLifeEntityIndex(executorLifeEntityIndexParam: executorLifeEntityIndexParam): Promise<{}> {
   const { data } = await resetLabel({
-    ...resetExecutorLifeEntityIndexParam
+    ...executorLifeEntityIndexParam
   })
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
@@ -123,10 +118,10 @@ export async function resetExecutorLifeEntityIndex(resetExecutorLifeEntityIndexP
   })
 }
 
-// 给生命体设置类
-export async function appendExecutorLifeEntityIndex(appendExecutorLifeEntityIndexParam: appendExecutorLifeEntityIndexParam): Promise<{}> {
+// 给生命体追加类
+export async function appendExecutorLifeEntityIndex(executorLifeEntityIndexParam: executorLifeEntityIndexParam): Promise<{}> {
   const { data } = await batchInsertLabel({
-    ...appendExecutorLifeEntityIndexParam
+    ...executorLifeEntityIndexParam
   })
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
