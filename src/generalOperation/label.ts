@@ -2,7 +2,9 @@ import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
   operLifeEntityExecutor,
   resetLabel,
-  batchInsertLabel
+  batchInsertLabel,
+  selectTreeLifeEntityExecutorList,
+  selectLifeEntityTriggerExecList
 } from '../api/api.js'
 
 interface lifeEntityExecutor{
@@ -86,7 +88,7 @@ export async function addExecutorLifeEntityIndex(executorLifeEntityIndex: execut
 
 // 查询类的树形结构
 export async function queryTreeLifeEntityExecutorList(treeLifeEntityExecutorList: treeLifeEntityExecutorList): Promise<{}> {
-  const { data } = await operLifeEntityExecutor({
+  const { data } = await selectTreeLifeEntityExecutorList({
     ...treeLifeEntityExecutorList
   })
   let Message: {}
@@ -122,6 +124,23 @@ export async function resetExecutorLifeEntityIndex(executorLifeEntityIndexParam:
 export async function appendExecutorLifeEntityIndex(executorLifeEntityIndexParam: executorLifeEntityIndexParam): Promise<{}> {
   const { data } = await batchInsertLabel({
     ...executorLifeEntityIndexParam
+  })
+  let Message: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      resolve({Message})
+    }else{
+      reject(new Error(data.msg))
+    }
+
+  })
+}
+
+// 查询生命体对应的执行者链路
+export async function queryLifeEntityTriggerExecList(life_entity_id_list: Array<string>): Promise<{}> {
+  const { data } = await selectLifeEntityTriggerExecList({
+    life_entity_id_list
   })
   let Message: {}
   return new Promise<{}>((resolve, reject) => {

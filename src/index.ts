@@ -40,3 +40,6 @@ export * from './generalOperation/material'
 
 // 操作类 执行者组
 export * from './generalOperation/label'
+
+// 操作项目
+export * from './generalOperation/project'

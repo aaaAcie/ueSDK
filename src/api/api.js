@@ -140,7 +140,7 @@ export const sortCommonGroup = (data) =>{
 export const sortPrivateGroupLifeEntity = (data) =>{
   return request({
     method: 'post',
-    url: '/operPageGroupIndex',
+    url: '/operLifeEntityGroupIndex',
     data
   })
 }
@@ -148,7 +148,7 @@ export const sortPrivateGroupLifeEntity = (data) =>{
 export const sortCommonGroupLifeEntity = (data) =>{
   return request({
     method: 'post',
-    url: '/operPointGroupIndex',
+    url: '/operLifeEntityCommonGroupIndex',
     data
   })
 }
@@ -208,6 +208,30 @@ export const batchInsertLabel = (data) =>{
   return request({
     method: 'post',
     url: '/batchInsertExecutorLifeEntityIndex',
+    data
+  })
+}
+// 查询执行者组树形结构
+export const selectTreeLifeEntityExecutorList = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectTreeLifeEntityExecutorList',
+    data
+  })
+}
+// 查询生命体对应的执行者链路
+export const selectLifeEntityTriggerExecList = (data) =>{
+  return request({
+    method: 'post',
+    url: '/selectLifeEntityTriggerExecList',
+    data
+  })
+}
+// 操作项目
+export const operProject = (data) =>{
+  return request({
+    method: 'post',
+    url: '/operProject',
     data
   })
 }

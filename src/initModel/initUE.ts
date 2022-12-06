@@ -27,7 +27,17 @@ export class initUE {
     this.errorCallback = parameters.errorCallback
   }
   // 返回streamingVideo的dom实例
-  connect():Promise<HTMLElement> {
+  connect(projectData={project_id: '1', pass_id: 'demoProject_1'}):Promise<HTMLElement> {
+    let { project_id, pass_id } = projectData
+    console.log({
+      Category: "sendMaterialAndChangePass",
+      // pass_id: "demoProject_1",
+      pass_id,
+      baseURL: BASE_URL + '/selectAllView',
+      project_id,
+      // project_id: "1",
+      baseURL2: BASE_URL + '/operMaterial'
+    })
     return new Promise((resolve,reject) => {
       console.log(this.url)
       let streamingVideo = null
@@ -39,8 +49,8 @@ export class initUE {
         setTimeout(() => {
           addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
             uedata = JSON.parse(uedata)
-            let pass_id = uedata['Message']
-            console.log("ue: ",pass_id)
+            // let pass_id = uedata['Message']
+            // console.log("ue: ",pass_id)
             // selectAllView("demoProject_1").then((data) => {
             //   Message = data.data
             //   // emitUIInteraction({
@@ -52,9 +62,11 @@ export class initUE {
           })
           emitUIInteraction({
             Category: "sendMaterialAndChangePass",
-            pass_id: "demoProject_1",
+            // pass_id: "demoProject_1",
+            pass_id,
             baseURL: BASE_URL + '/selectAllView',
-            project_id: "1",
+            project_id,
+            // project_id: "1",
             baseURL2: BASE_URL + '/operMaterial'
           })
           this.successCallback(ws)

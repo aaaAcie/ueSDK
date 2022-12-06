@@ -89,6 +89,10 @@ interface querySingleGroupParam{
   group_id: string, // 组id
   isCommon: string // 组的类型 '0'为私有组，'1'为公共组
 }
+interface deleteGroupLifeEntityInBulkParams{
+  group_id: string, // 组id
+  life_entity_id_list: Array<string> // 要删除关联关系的生命体id
+}
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1 
 // 接收数据库消息，是否改变了该成员的页面归属信息
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
@@ -521,7 +525,7 @@ export async function sortLifeEntityInGroup(sortLifeEntityInGroupParam: sortLife
   })
 }
 
-// 批量复制【私有】组内的生命体 0000  缺返回值
+// 批量复制【私有】组内的生命体
 export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEntityParam): Promise<{}> {
   let isCommon = '0'
   let alldata = copyLifeEntityInBulkParam
@@ -571,7 +575,7 @@ export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEn
   })
 }
 
-// 复制【私有】组 0000 缺返回值
+// 复制【私有】组
 export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   let isCommon = '0'
   let alldata = copyGroupParam
@@ -656,5 +660,32 @@ export async function querySingleGroup(queryGroupParam: querySingleGroupParam): 
     }else{
       reject(new Error(finalData.msg))
     }
+  })
+}
+
+// 私有组内批量删除生命体关联关系
+export async function deleteGroupLifeEntityInBulk(param_list: Array<deleteGroupLifeEntityInBulkParams>): Promise<{}> {
+  const { data } = await operLifeEntityGroup({
+    "oper_type": "batchDeleteLifeEntityGroupIndex",
+    param_list
+  })
+  let Message: {}
+  let ueMsg: {}
+  return new Promise<{}>((resolve, reject) => {
+    if(data.code==200){
+      Message = data.data
+      emitUIInteraction({
+        Category: "addBelong",
+        Message
+      })
+      addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata
+        resolve({Message, ueMsg})
+      })
+    }else{
+      reject(new Error(data.msg))
+    }
+
   })
 }
