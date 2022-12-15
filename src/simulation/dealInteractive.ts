@@ -17,7 +17,10 @@ interface DetailInteractive {
   event: string; // 触发的事件
   target: string; // 目标生命体的id
 }
-
+interface listenToExecutorParams{
+  ancestors: string, // 类的 ancestors
+  event: string // 需要类去执行的事件
+}
 // 批量添加交互 给ue发也给接口发 1未测试
 export async function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}>{
   const { data } = await operInteractive({
@@ -101,16 +104,16 @@ export async function setInteractive(DetailInteractive: Array<DetailInteractive>
 }
 
 // 删除交互 给ue发也给接口发 1
-export async function deleteInteractive(life_entity_id: string): Promise<{}>{
+export async function deleteInteractive(interactive_id: string): Promise<{}>{
   const { data } = await operInteractive({
     "oper_type": "deleteInteractive",
-    life_entity_id
+    interactive_id
   })
 
   let Message
   emitUIInteraction({
     Category: "deleteInteractive",
-    life_entity_id
+    interactive_id
   })
 
   let ueMsg: {}
@@ -126,6 +129,31 @@ export async function deleteInteractive(life_entity_id: string): Promise<{}>{
         reject(new Error(data.msg))
       }
       return ueMsg
+    })
+  })
+}
+
+// ue底座响应类的命令  ==>   发送 类的ancestors+动作 -> ue执行
+export function listenToExecutor(listenToExecutorParams:listenToExecutorParams): Promise<{}> { 
+  emitUIInteraction({
+    Category: "listenToExecutor",
+    ...listenToExecutorParams
+  })
+  let msg = ''
+
+  return new Promise<string>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("listenToExecutorResponse", (data?: string): string => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
+      // 二次校验，等ue做状态码后修改
+      // if(msg){
+      //   resolve(msg)
+      // }else{
+      //   reject(new Error('接收ue返回失败'))
+      // }
+      return msg
     })
   })
 }

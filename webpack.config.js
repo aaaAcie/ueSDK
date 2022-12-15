@@ -1,16 +1,17 @@
 const path = require("path")
 const resolve = path.resolve
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   mode: "development",
   optimization:{
-      minimize: false // 关闭代码压缩，可选
+    minimize: false // 关闭代码压缩，可选
   },
   target: 'web',
   entry: "./src/index.ts",
   output: {
     filename: 'bundle.js',
     // path: [path.resolve(__dirname, "dist"), path.resolve('../.vite-ptoject/')],
-    path: path.resolve('../vite-project/'),
+    path: path.resolve('../vite-project/public/static'),
 
     libraryTarget: "umd",
     globalObject: "this",
@@ -43,5 +44,20 @@ module.exports = {
   },
   stats: {
     errorDetails: true
-  }
+  },
+  // plugins: [
+  //   //   new CopyWebpackPlugin([
+  //   //     {
+  //   //       from: resolve(__dirname, './static'), // 不打包直接输出的文件
+  //   //       to: 'static', // 打包后静态文件放置位置
+  //   //       ignore: ['.*'] // 忽略规则。（这种写法表示将该文件夹下的所有文件都复制）
+  //   //     }
+  //   // ])
+  //   new CopyWebpackPlugin({
+  //     patterns: [
+  //       { from: resolve(__dirname, './src/static'), to: 'static' }
+  //     ],
+  //   }
+  // )
+  // ]
 }
