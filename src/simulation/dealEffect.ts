@@ -78,12 +78,13 @@ export function addSpecialEffect (life_entity_id: String): Promise<{}> {
         ueMsg = uedata['Message']
         // ueMsg.showstatus = ueMsg.showstatus.toString()
         // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
-        msg2 = JSON.parse(JSON.stringify(ueMsg))
+        // msg2 = JSON.parse(JSON.stringify(ueMsg))
+        msg2 = JSON.parse(JSON.stringify(ueMsg).replace(/life_entity_id/g, 'where_life_entity_id'))
 
         console.log(msg2);
-        
+        // 调用修改生命体属性的接口
         operLifeEntity({
-          "oper_type": "insertLifeEntity",
+          "oper_type": "updateLifeEntity",
           ...msg2
         }).then(bigdata => {
           let data = bigdata.data

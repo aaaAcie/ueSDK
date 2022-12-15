@@ -22,9 +22,9 @@ interface updateMaterialParams {
   project_id?: string;
 }
 interface getMaterialParams {
-  name?: string;
-  type?: string;
-  project_id?: string;
+  query?: string; // name的模糊搜索
+  project_id?: string; // 项目id
+  sortByModifyTime?: boolean; // false为降序 true为升序
 }
 // 读取预置素材  从接口拿到数据 给前端 1
 export async function initMaterial(project_id:string): Promise<{}> { 
