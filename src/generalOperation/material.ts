@@ -10,21 +10,21 @@ interface addMaterialParams {
   name: string;
   type: string;
   img: string;
-  material_url: string; 
-  project_id: string;
+  material_url: Array<string>; 
+  project_id: Array<string>; // ['0']代表权限为全部
 }
 interface updateMaterialParams {
-  where_material_id: string;
+  material_id: string; 
   name?: string;
-  type?: string;
   img?: string;
-  material_url?: string; 
-  project_id?: string;
+  material_url?: Array<string>; 
+  project_id?: Array<string>;
 }
 interface getMaterialParams {
   query?: string; // name的模糊搜索
   project_id?: string; // 项目id
   sortByModifyTime?: boolean; // false为降序 true为升序
+  sortByName?: boolean; // false为降序 true为升序
 }
 // 读取预置素材  从接口拿到数据 给前端 1
 export async function initMaterial(project_id:string): Promise<{}> { 

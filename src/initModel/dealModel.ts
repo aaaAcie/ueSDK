@@ -195,13 +195,13 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
     myarray = life_entity_id
   }
   console.log(myarray)
-  addResponseEventListener("selectModelDataResponse", (data?: string): string => {
-    msg = JSON.parse(data)['Message']
-    // 回调 让前端更新数字
-    cb(msg)
+  // addResponseEventListener("selectModelDataResponse", (data?: string): string => {
+  //   msg = JSON.parse(data)['Message']
+  //   // 回调 让前端更新数字
+  //   cb(msg)
 
-    return msg
-  })
+  //   return msg
+  // })
   emitUIInteraction({
     Category: "selectModelById",
     life_entity_id: myarray
@@ -213,7 +213,10 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
     // SendSelectModelDataResponse
     addResponseEventListener("selectModelByIdResponse", (data?: string): string => {
       msg = JSON.parse(data)
-      // console.log(msg)
+      console.log(msg)
+      if (msg['Message']) {
+        cb(msg['Message'])
+      }
       resolve(msg)
 
       return msg
