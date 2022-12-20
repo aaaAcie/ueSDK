@@ -107,6 +107,50 @@ export function addSpecialEffect (life_entity_id: String): Promise<{}> {
     })
   })
 }
+// 隐藏所有的线节点
+export function hideSpecialEffectPoint (): Promise<{}> {
+  emitUIInteraction({
+    Category: "hideSpecialEffectPoint"
+  })
+
+  let ueMsg: effectModel
+  let msg2: String
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("hideSpecialEffectPointResponse", (uedata?: string): effectModel => {
+      try {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        resolve({ueMsg})
+        
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return ueMsg
+    })
+  })
+}
+// 展示所有的线节点
+export function showSpecialEffectPoint (): Promise<{}> {
+  emitUIInteraction({
+    Category: "showSpecialEffectPoint"
+  })
+
+  let ueMsg: effectModel
+  let msg2: String
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("showSpecialEffectPointResponse", (uedata?: string): effectModel => {
+      try {
+        uedata = JSON.parse(uedata)
+        ueMsg = uedata['Message']
+        resolve({ueMsg})
+        
+      } catch (error) {
+        reject(new Error(error))
+      }
+      return ueMsg
+    })
+  })
+}
 // 获取单个POI (在生命体中实现)
 // function getModelById(id: string): Promise<Model>{
 //   // 暂无实时数据，需要自己主动获取
