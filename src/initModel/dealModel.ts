@@ -195,13 +195,21 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
     myarray = life_entity_id
   }
   console.log(myarray)
-  // addResponseEventListener("selectModelDataResponse", (data?: string): string => {
-  //   msg = JSON.parse(data)['Message']
-  //   // 回调 让前端更新数字
-  //   cb(msg)
-
-  //   return msg
-  // })
+  addResponseEventListener("selectModelDataResponse", (data?: string): string => {
+    msg = JSON.parse(data)['Message']
+    console.log(msg)
+    // 如果是linechild 不再给回调传值
+    if(msg[0]['subtype']!='linechild' && msg[0]['subtype']!='line'){
+      cb(msg)
+    }
+    return msg
+  })
+  addResponseEventListener("moveSpecialEffectResponse", (data?: string): string => {
+    msg = JSON.parse(data)['Message']
+    // 回调 让前端更新数字
+    cb(msg)
+    return msg
+  })
   emitUIInteraction({
     Category: "selectModelById",
     life_entity_id: myarray

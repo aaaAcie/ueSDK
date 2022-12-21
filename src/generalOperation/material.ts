@@ -10,6 +10,7 @@ interface addMaterialParams {
   name: string;
   type: string;
   img: string;
+  userName: string; // 创建者
   material_url: Array<string>; 
   project_id: Array<string>; // ['0']代表权限为全部
 }
