@@ -412,8 +412,15 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
 }
 
 // 批量更新生命体数据 提交到数据库
-export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{}> {
+export async function setModelPropsByIdsSave(allParams0: Array<Model>): Promise<{}> {
   // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  // 检查是不是数组
+  let allParams = []
+  if(!Array.isArray(allParams0)){
+    allParams.push(allParams0)
+  }else{
+    allParams = allParams0
+  }
   let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
   console.log(allParams2)
 

@@ -220,7 +220,7 @@ export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> 
   })
   let ueMsg
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("setModelPropsByIdResponse", (uedata?: string): {} => {
+    addResponseEventListener("modifyShotPropertyResponse", (uedata?: string): {} => {
       ueMsg = JSON.parse(uedata)
       if(ueMsg){
         resolve(ueMsg)
