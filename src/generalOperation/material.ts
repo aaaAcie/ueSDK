@@ -1,5 +1,17 @@
 import { Model } from '../initModel/initModel'
-import { selectSourceMaterial, uploadMaterialImages, uploadMaterialFile, operMaterial } from '../api/detail.js'
+import { 
+  selectSourceMaterial, 
+  // uploadMaterialImages, 
+  // uploadMaterialFile, 
+  operMaterial 
+} from '../api/detail.js'
+
+import { 
+  // selectSourceMaterial, 
+  uploadMaterialImages, 
+  uploadMaterialFile, 
+  // operMaterial 
+} from '../api/material.js'
 
 interface uploadMaterialParams {
   files: File; // 文件（素材或缩略图）
