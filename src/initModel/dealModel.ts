@@ -1,7 +1,10 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
+// import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
+import { importBatchManagementList,downloadExcel } from '../api/detail.js'
+
+import {selectPageLifeEntityListByName} from '../api/lifeEntity.js'
 
 interface pageLifeEntity{
   name: string;
@@ -502,8 +505,8 @@ export async function queryPageLifeEntityByName(pageLifeEntity: pageLifeEntity):
   let Message: Array<Number>
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve({Message})
     }else{
       reject(new Error(data.msg))
