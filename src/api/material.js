@@ -22,3 +22,42 @@ export const uploadMaterialFile = (data) =>{
     }
   })
 }
+// 查询Material 给ue发送
+export const selectSourceMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/material/selectSourceMaterial',
+    data
+  })
+}
+
+// 新增素材
+export const insertMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/material/insertMaterial',
+    data
+  })
+}
+// 更新素材
+export const updateMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/material/updateMaterial',
+    data
+  })
+}// 删除素材
+export const deleteMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/material/deleteMaterial',
+    data
+  })
+}// 查询素材
+export const selectMaterial = (data) =>{
+  return request({
+    method: 'post',
+    url: '/material/selectMaterial',
+    data
+  })
+}

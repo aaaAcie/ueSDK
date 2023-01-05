@@ -33,7 +33,7 @@ export class initUE {
       Category: "sendMaterialAndChangePass",
       // pass_id: "demoProject_1",
       pass_id,
-      baseURL: BASE_URL + '/selectAllView',
+      baseURL: BASE_URL + '/mix/selectAllView',
       project_id,
       // project_id: "1",
       baseURL2: BASE_URL + '/operMaterial'
@@ -49,22 +49,12 @@ export class initUE {
         setTimeout(() => {
           addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
             uedata = JSON.parse(uedata)
-            // let pass_id = uedata['Message']
-            // console.log("ue: ",pass_id)
-            // selectAllView("demoProject_1").then((data) => {
-            //   Message = data.data
-            //   // emitUIInteraction({
-            //   //   Category: "basicData",
-            //   //   // Message
-            //   // })
-            //   console.log(Message)
-            // })
           })
           emitUIInteraction({
             Category: "sendMaterialAndChangePass",
             // pass_id: "demoProject_1",
             pass_id,
-            baseURL: BASE_URL + '/selectAllView',
+            baseURL: BASE_URL + '/mix/selectAllView',
             project_id,
             // project_id: "1",
             baseURL2: BASE_URL + '/operMaterial'

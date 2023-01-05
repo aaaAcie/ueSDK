@@ -1,16 +1,19 @@
 import { Model } from '../initModel/initModel'
 import { 
-  selectSourceMaterial, 
+  // selectSourceMaterial, 
   // uploadMaterialImages, 
   // uploadMaterialFile, 
   operMaterial 
 } from '../api/detail.js'
 
 import { 
-  // selectSourceMaterial, 
+  selectSourceMaterial, 
   uploadMaterialImages, 
-  uploadMaterialFile, 
-  // operMaterial 
+  uploadMaterialFile,
+  insertMaterial,
+  updateMaterialById,
+  deleteMaterialById,
+  selectMaterial
 } from '../api/material.js'
 
 interface uploadMaterialParams {
@@ -39,7 +42,7 @@ interface getMaterialParams {
   sortByModifyTime?: boolean; // false为降序 true为升序
   sortByName?: boolean; // false为降序 true为升序
 }
-// 读取预置素材  从接口拿到数据 给前端 1
+// 读取预置素材  从接口拿到数据 给前端 1 已重构
 export async function initMaterial(project_id:string): Promise<{}> { 
   project_id = project_id.toString()
   const { data } = await selectSourceMaterial({
@@ -47,8 +50,8 @@ export async function initMaterial(project_id:string): Promise<{}> {
   })
   let Message: Model
   return new Promise<Model>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -58,11 +61,11 @@ export async function initMaterial(project_id:string): Promise<{}> {
 }
 
 
-// 上传自定义素材与缩略图
+// 上传自定义素材与缩略图 已重构
 export async function uploadMaterial(uploadMaterialParams: uploadMaterialParams): Promise<{}> {
   let finalData: {
     code: number,
-    data: [],
+    value: [],
     msg: ''
   }
   let { files, isThumbnail } = uploadMaterialParams
@@ -82,8 +85,8 @@ export async function uploadMaterial(uploadMaterialParams: uploadMaterialParams)
   }
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if (finalData.code==200) {
-      Message = finalData.data
+    if (finalData.code==1001) {
+      Message = finalData.value
       resolve({Message})
     } else {
       reject(new Error(finalData.msg))
@@ -91,23 +94,23 @@ export async function uploadMaterial(uploadMaterialParams: uploadMaterialParams)
   })
 }
 
-// 新增素材
+// 新增素材 已重构
 export async function addMaterial(addMaterialParams: addMaterialParams): Promise<{}> {
   let finalData: {
     code: number,
-    data: [],
+    value: [],
     msg: ''
   }
-  const { data } = await operMaterial({
-    "oper_type": "insertMaterial",
+  const { data } = await insertMaterial({
+    // "oper_type": "insertMaterial",
     ...addMaterialParams
   })
   finalData = data
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if (finalData.code==200) {
-      Message = finalData.data
+    if (finalData.code==1001) {
+      Message = finalData.value
       resolve({Message})
     } else {
       reject(new Error(finalData.msg))
@@ -115,23 +118,23 @@ export async function addMaterial(addMaterialParams: addMaterialParams): Promise
   })
 }
 
-// 修改素材
+// 修改素材 已重构
 export async function updateMaterial(updateMaterialParams: updateMaterialParams): Promise<{}> {
   let finalData: {
     code: number,
-    data: [],
+    value: [],
     msg: ''
   }
-  const { data } = await operMaterial({
-    "oper_type": "updateMaterial",
+  const { data } = await updateMaterialById({
+    // "oper_type": "updateMaterial",
     ...updateMaterialParams
   })
   finalData = data
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if (finalData.code==200) {
-      Message = finalData.data
+    if (finalData.code==1001) {
+      Message = finalData.value
       resolve({Message})
     } else {
       reject(new Error(finalData.msg))
@@ -139,23 +142,23 @@ export async function updateMaterial(updateMaterialParams: updateMaterialParams)
   })
 }
 
-// 删除素材
+// 删除素材 已重构
 export async function deleteMaterial(material_id: string): Promise<{}> {
   let finalData: {
     code: number,
-    data: [],
+    value: [],
     msg: ''
   }
-  const { data } = await operMaterial({
-    "oper_type": "deleteMaterial",
+  const { data } = await deleteMaterialById({
+    // "oper_type": "deleteMaterial",
     material_id
   })
   finalData = data
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if (finalData.code==200) {
-      Message = finalData.data
+    if (finalData.code==1001) {
+      Message = finalData.value
       resolve({Message})
     } else {
       reject(new Error(finalData.msg))
@@ -163,23 +166,23 @@ export async function deleteMaterial(material_id: string): Promise<{}> {
   })
 }
 
-// 查询素材
+// 查询素材 已重构
 export async function getMaterial(getMaterialParams: getMaterialParams): Promise<{}> {
   let finalData: {
     code: number,
-    data: [],
+    value: [],
     msg: ''
   }
-  const { data } = await operMaterial({
-    "oper_type": "selectMaterial",
+  const { data } = await selectMaterial({
+    // "oper_type": "selectMaterial",
     ...getMaterialParams
   })
   finalData = data
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if (finalData.code==200) {
-      Message = finalData.data
+    if (finalData.code==1001) {
+      Message = finalData.value
       resolve({Message})
     } else {
       reject(new Error(finalData.msg))
