@@ -36,7 +36,7 @@ export class initUE {
       baseURL: BASE_URL + '/mix/selectAllView',
       project_id,
       // project_id: "1",
-      baseURL2: BASE_URL + '/operMaterial'
+      baseURL2: BASE_URL + '/material/selectMaterial'
     })
     return new Promise((resolve,reject) => {
       console.log(this.url)
@@ -57,7 +57,7 @@ export class initUE {
             baseURL: BASE_URL + '/mix/selectAllView',
             project_id,
             // project_id: "1",
-            baseURL2: BASE_URL + '/operMaterial'
+            baseURL2: BASE_URL + '/material/selectMaterial'
           })
           this.successCallback(ws)
           // emitUIInteraction({
