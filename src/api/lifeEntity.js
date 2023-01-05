@@ -18,11 +18,38 @@ export const downloadExcel = (data) =>{
   })
 }
 
-// 操作生命体
-export const operLifeEntity = (data) =>{
+// 查询生命体
+export const selectLifeEntity = (data) =>{
   return request({
     method: 'post',
-    url: '/operLifeEntity',
+    url: '/executorLifeEntity/selectLifeEntity',
+    data
+  })
+}
+
+// 新增生命体
+export const insertLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/executorLifeEntity/insertLifeEntity',
+    data
+  })
+}
+
+// 删除生命体
+export const deleteLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/executorLifeEntity/deleteLifeEntity',
+    data
+  })
+}
+
+// 批量更新生命体
+export const batchUpdateLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/executorLifeEntity/batchUpdateLifeEntity',
     data
   })
 }
