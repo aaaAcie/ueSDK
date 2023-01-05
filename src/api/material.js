@@ -40,14 +40,14 @@ export const insertMaterial = (data) =>{
   })
 }
 // 更新素材
-export const updateMaterial = (data) =>{
+export const updateMaterialById = (data) =>{
   return request({
     method: 'post',
     url: '/material/updateMaterial',
     data
   })
 }// 删除素材
-export const deleteMaterial = (data) =>{
+export const deleteMaterialById = (data) =>{
   return request({
     method: 'post',
     url: '/material/deleteMaterial',
