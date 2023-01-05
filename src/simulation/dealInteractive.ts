@@ -1,10 +1,16 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operInteractive } from '../api/api.js'
+// import { operInteractive } from '../api/api.js'
+import { 
+  selectInteractive,
+  deleteInteractiveById,
+  insertInteractive,
+  updateInteractive
+} from '../api/Interactive.js'
 
 interface Interactive {
   trigger: string; // 触发事件的方式 单击 双击
   event: string; // 触发的事件
-  target: string; // 目标生命体的id
+  target: Array<string>; // 目标生命体的id
 }
 interface AllInteractives {
   life_entity_id: string; // 被绑定的生命体id
@@ -15,21 +21,21 @@ interface DetailInteractive {
   interactive_id: string; // 对应的事件id
   trigger: string; // 触发事件的方式 单击 双击
   event: string; // 触发的事件
-  target: string; // 目标生命体的id
+  target: Array<string>; // 目标生命体的id
 }
 interface listenToExecutorParams{
   ancestors: string, // 类的 ancestors
   event: string // 需要类去执行的事件
 }
-// 批量添加交互 给ue发也给接口发 1未测试
+// 批量添加交互 给ue发也给接口发 1未测试 已重构
 export async function makeInteractiveById(AllInteractives:AllInteractives): Promise<{}>{
-  const { data } = await operInteractive({
-    "oper_type": "batchInsertInteractive",
+  const { data } = await insertInteractive({
+    // "oper_type": "batchInsertInteractive",
     ...AllInteractives
   })
   let Message: []
-  if(data.code==200){
-    Message = data.data
+  if(data.code==1001){
+    Message = data.value
     emitUIInteraction({
       // Category: "addPOIModel",
       Category: "makeInteractiveById",
@@ -51,11 +57,11 @@ export async function makeInteractiveById(AllInteractives:AllInteractives): Prom
   })
 }
 
-// 查询交互 从接口拿到数据 给前端 1
+// 查询交互 从接口拿到数据 给前端 1 已重构
 export async function queryInteractiveById(id: string): Promise<{}>{
   id = id.toString()
-  const { data } = await operInteractive({
-    "oper_type": "selectInteractive",
+  const { data } = await selectInteractive({
+    // "oper_type": "selectInteractive",
     "life_entity_id": id
   })
   let Message: []
@@ -64,8 +70,8 @@ export async function queryInteractiveById(id: string): Promise<{}>{
   //   id
   // })
   return new Promise<{}>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -73,11 +79,11 @@ export async function queryInteractiveById(id: string): Promise<{}>{
   })
 }
 
-// 批量更新交互 给ue发也给接口发 1
+// 批量更新交互 给ue发也给接口发 1 已重构
 export async function setInteractive(DetailInteractive: Array<DetailInteractive>): Promise<{}>{
   let DetailInteractive2 = JSON.parse(JSON.stringify(DetailInteractive).replaceAll('interactive_id', 'where_interactive_id'))
-  const { data } = await operInteractive({
-    "oper_type": "batchUpdateInteractive",
+  const { data } = await updateInteractive({
+    // "oper_type": "batchUpdateInteractive",
     "interactives": DetailInteractive2
   })
 
@@ -91,8 +97,8 @@ export async function setInteractive(DetailInteractive: Array<DetailInteractive>
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("setInteractiveResponse", (uedata?: string): {} => {
       ueMsg = JSON.parse(uedata)
-      if(data.code==200){
-        Message = data.data
+      if(data.code==1001){
+        Message = data.value
         // console.log(Message)
         resolve({ueMsg, Message})
       }else{
@@ -103,10 +109,10 @@ export async function setInteractive(DetailInteractive: Array<DetailInteractive>
   })
 }
 
-// 删除交互 给ue发也给接口发 1
+// 删除交互 给ue发也给接口发 1 已重构
 export async function deleteInteractive(interactive_id: string): Promise<{}>{
-  const { data } = await operInteractive({
-    "oper_type": "deleteInteractive",
+  const { data } = await deleteInteractiveById({
+    // "oper_type": "deleteInteractive",
     interactive_id
   })
 
@@ -121,8 +127,8 @@ export async function deleteInteractive(interactive_id: string): Promise<{}>{
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("deleteInteractiveResponse", (uedata?: string): {} => {
       ueMsg = JSON.parse(uedata)
-      if(data.code==200){
-        Message = data.data
+      if(data.code==1001){
+        Message = data.value
         // console.log(Message)
         resolve({ueMsg, Message})
       }else{
