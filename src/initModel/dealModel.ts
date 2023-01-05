@@ -13,7 +13,8 @@ import {
   selectLifeEntity,
   insertLifeEntity,
   deleteLifeEntity,
-  batchUpdateLifeEntity
+  batchUpdateLifeEntity,
+  updateLifeEntity
 } from '../api/lifeEntity.js'
 
 interface pageLifeEntity{
@@ -178,8 +179,8 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   // modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
   let allParams2 = JSON.parse(JSON.stringify(modelProps).replace(/life_entity_id/g, 'where_life_entity_id'))
   
-  const { data } = await operLifeEntity({
-    "oper_type": "updateLifeEntity",
+  const { data } = await updateLifeEntity({
+    // "oper_type": "updateLifeEntity",
     ...allParams2
   })
   let Message: string = ''
@@ -187,8 +188,8 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       // console.log(Message)
       resolve(Message)
     }else{

@@ -53,3 +53,12 @@ export const batchUpdateLifeEntity = (data) =>{
     data
   })
 }
+
+// 更新单个生命体
+export const updateLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/executorLifeEntity/updateLifeEntity',
+    data
+  })
+}
