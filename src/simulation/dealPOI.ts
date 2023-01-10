@@ -1,6 +1,8 @@
 import { Model } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operLifeEntity } from '../api/api.js'
+// import { operLifeEntity } from '../api/api.js'
+import { insertLifeEntity,updateLifeEntity } from '../api/lifeEntity.js'
+
 interface TextStyle {
   fontSize: number;
   fontFamily: string;
@@ -14,7 +16,7 @@ class POIModel extends Model {
   // effect: {}; // 特效，预留
 }
 
-// 增加POI 跟ue通信并走接口提交保存
+// 增加POI 跟ue通信并走接口提交保存 已重构
 // POItype: 标题式 图标式 文本弹窗 视频弹窗式
 export async function addPOIModel (POItype: String): Promise<{}> {
   // 增加POI 返回当前POI 属性
@@ -29,13 +31,13 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   let msg2: {}
   let successCallback = []
   successCallback.push((msg2) => {
-    return operLifeEntity({
-      "oper_type": "insertLifeEntity",
+    return insertLifeEntity({
+      // "oper_type": "insertLifeEntity",
       ...msg2
     }).then(bigdata => {
       let data = bigdata.data
-      if(data.code==200){
-        let Message = data.data
+      if(data.code==1001){
+        let Message = data.value
         return Message
         // console.log(Message)
         // resolve({uedata, Message})
