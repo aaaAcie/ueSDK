@@ -1,6 +1,6 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
-  operLifeEntityExecutor,
+  // operLifeEntityExecutor,
   // resetLabel,
   // batchInsertLabel,
   // selectTreeLifeEntityExecutorList,
@@ -76,22 +76,22 @@ export async function addLifeEntityExecutor(lifeEntityExecutor: lifeEntityExecut
 }
 
 // 给页面绑定类
-export async function addPageExecutorIndex(pageExecutorIndex: pageExecutorIndex): Promise<{}> {
-  const { data } = await operLifeEntityExecutor({
-    "oper_type": "insertPageExecutorIndex",
-    ...pageExecutorIndex
-  })
-  let Message: {}
-  return new Promise<{}>((resolve, reject) => {
-    if(data.code==1001){
-      Message = data.value
-      resolve({Message})
-    }else{
-      reject(new Error(data.msg))
-    }
+// export async function addPageExecutorIndex(pageExecutorIndex: pageExecutorIndex): Promise<{}> {
+//   const { data } = await operLifeEntityExecutor({
+//     "oper_type": "insertPageExecutorIndex",
+//     ...pageExecutorIndex
+//   })
+//   let Message: {}
+//   return new Promise<{}>((resolve, reject) => {
+//     if(data.code==1001){
+//       Message = data.value
+//       resolve({Message})
+//     }else{
+//       reject(new Error(data.msg))
+//     }
 
-  })
-}
+//   })
+// }
 
 // 给类添加生命体 已重构
 export async function addExecutorLifeEntityIndex(executorLifeEntityIndex: executorLifeEntityIndex): Promise<{}> {

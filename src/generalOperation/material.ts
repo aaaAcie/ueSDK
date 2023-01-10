@@ -3,7 +3,7 @@ import {
   // selectSourceMaterial, 
   // uploadMaterialImages, 
   // uploadMaterialFile, 
-  operMaterial 
+  // operMaterial 
 } from '../api/detail.js'
 
 import { 
