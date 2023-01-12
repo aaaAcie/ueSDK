@@ -46,14 +46,16 @@ export const updateMaterialById = (data) =>{
     url: '/material/updateMaterial',
     data
   })
-}// 删除素材
+}
+// 删除素材
 export const deleteMaterialById = (data) =>{
   return request({
     method: 'post',
     url: '/material/deleteMaterial',
     data
   })
-}// 查询素材
+}
+// 查询素材
 export const selectMaterial = (data) =>{
   return request({
     method: 'post',
