@@ -32,7 +32,9 @@ export * from './simulation/dealInteractive'
 // 组
 // export * from './generalOperation/group'
 // 原版组
-export * from './generalOperation/group0'
+// export * from './generalOperation/group0'
+// 重构组
+export * from './generalOperation/groupNew'
 
 // 页面
 export * from './generalOperation/page'

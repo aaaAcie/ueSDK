@@ -1,5 +1,4 @@
-import { Model,DeleteParams,ModelParams } from '../initModel/initModel'
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
   addTree,
   getNewbieTree,
