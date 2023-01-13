@@ -7,7 +7,8 @@ import {
   drillTree,
   insertTreeWorkIndex,
   deleteTreeWorkIndex,
-  deleteByRootNode
+  deleteByRootNode,
+  removeSysTree
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -51,6 +52,12 @@ interface cancelAddParams{
   businessId: string, // 私有组传页面id
   dirId: string, //  根组id（name为‘-’的组）
   workId: number // 生命体id
+}
+interface deleteGroupParam{
+  projectId: string, //  项目id
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  id: string, // 要操作的组id
+  model: number // 所属模块： 1-共有组 2-私有组
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -133,6 +140,32 @@ export async  function setGroupName(groupName: groupName): Promise<{}> {
   })
 }
 
+// 删除组
+export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await removeSysTree({
+    ...deleteGroupParam
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
 // 移动组
 export async  function moveGroup(moveGroupParam: moveGroupParam): Promise<{}> {
   let finalData: {

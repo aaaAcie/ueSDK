@@ -27,7 +27,13 @@ export const updateTree = (data) =>{
 }
 
 // 删除组
-
+export const removeSysTree = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/removeSysTree',
+    data
+  })
+}
 // 移动组
 export const moveDirNode = (data) =>{
   return request({
