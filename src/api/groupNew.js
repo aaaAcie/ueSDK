@@ -75,3 +75,29 @@ export const deleteByRootNode = (data) =>{
     data
   })
 }
+
+// 解散组
+export const dismissSysTreeWorkIndex = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/dismissSysTreeWorkIndex',
+    data
+  })
+}
+// 复制组
+export const copySysTree = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/copySysTree',
+    data
+  })
+}
+
+// 复制组内生命体
+export const copySysTreeWorkIndex = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/copySysTreeWorkIndex',
+    data
+  })
+}

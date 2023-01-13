@@ -8,7 +8,10 @@ import {
   insertTreeWorkIndex,
   deleteTreeWorkIndex,
   deleteByRootNode,
-  removeSysTree
+  removeSysTree,
+  dismissSysTreeWorkIndex,
+  copySysTree,
+  copySysTreeWorkIndex
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -58,6 +61,26 @@ interface deleteGroupParam{
   businessId: string, // 私有组传页面id，公共组传关卡id
   id: string, // 要操作的组id
   model: number // 所属模块： 1-共有组 2-私有组
+}
+interface disbandGroupParams {
+  projectId: string, //  项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id
+  id: string // 组id
+}
+interface copyGroupParam{
+  projectId: string, //  项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  treeNodeIds: Array<string> // 树节点以及对应的所有子节点ID
+}
+interface copyLifeEntityParam{
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  copySysTreeWorkIndexReqList: [{
+    dirId: string, // 树节点ID/组ID
+    workId: string // 生命体ID
+  }]
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -283,6 +306,87 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
   }
   const { data } = await deleteByRootNode({
     ...cancelAddParams
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 解散组
+export async  function disbandGroup(disbandGroupParams: disbandGroupParams): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await dismissSysTreeWorkIndex({
+    ...disbandGroupParams
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 复制组
+export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await copySysTree({
+    ...copyGroupParam
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 复制组内生命体
+export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityParam): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await copySysTreeWorkIndex({
+    ...copyLifeEntityParam
   })
   finalData = data
 
