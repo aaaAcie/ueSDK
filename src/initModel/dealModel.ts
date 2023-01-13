@@ -3,12 +3,13 @@ import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
 // import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
 import { 
-  importBatchManagementList,
+  // importBatchManagementList,
   // downloadExcel 
 } from '../api/detail.js'
 
 import {
   selectPageLifeEntityListByName,
+  importBatchManagementList,
   downloadExcel,
   selectLifeEntity,
   insertLifeEntity,
@@ -452,13 +453,13 @@ export async function setModelPropsByIdsSave(allParams0: Array<Model>): Promise<
   })
 }
 
-// 批量添加⽣命体  跟ue通信并向接口提交
+// 批量添加⽣命体  跟ue通信并向接口提交 已重构
 export async function addModelInBulk(file: File, pass_id: string): Promise<{}> {
   const { data } = await importBatchManagementList({
     file,
     pass_id
   })
-  const allParams = data.data
+  const allParams = data.value
   emitUIInteraction({
     Category: "addModelInBulk",
     allParams
@@ -468,7 +469,7 @@ export async function addModelInBulk(file: File, pass_id: string): Promise<{}> {
   let Message: {}
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
+    if(data.code==1001){
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']

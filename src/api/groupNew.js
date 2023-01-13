@@ -36,3 +36,11 @@ export const moveDirNode = (data) =>{
     data
   })
 }
+// 下钻组
+export const drillTree = (data) =>{
+  return request({
+    method: 'post',
+    url: '/systree/v1/drill',
+    data
+  })
+}

@@ -8,6 +8,18 @@ export const selectPageLifeEntityListByName = (data) =>{
     data
   })
 }
+// 批量新增生命体
+export const importBatchManagementList = (data) =>{
+  return request({
+    method: 'post',
+    url: '/materialManagement/importBatchManagementList',
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
 
 // 下载模板
 export const downloadExcel = (data) =>{

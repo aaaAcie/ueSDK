@@ -3,7 +3,8 @@ import {
   addTree,
   getNewbieTree,
   updateTree,
-  moveDirNode
+  moveDirNode,
+  drillTree
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -30,6 +31,12 @@ interface moveGroupParam{
   moveStep?: number, // 移动步数
   dirTargetId?: string, // 移动目标的父节点id 可以不传或者为空
   targetDirSeq?: number // 移动目标的父节点下的位次seq, 在目标组的位置。不传默认为是顺序最后的节点。
+}
+interface drillGroupParam{
+  projectId: string, //  项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  directParentId: string, // 要操作的组id
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -138,3 +145,31 @@ export async  function moveGroup(moveGroupParam: moveGroupParam): Promise<{}> {
 
   })
 }
+
+// 下钻组
+export async  function drillGroup(drillGroupParam: drillGroupParam): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await drillTree({
+    ...drillGroupParam
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
