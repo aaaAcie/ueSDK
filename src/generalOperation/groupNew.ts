@@ -4,7 +4,10 @@ import {
   getNewbieTree,
   updateTree,
   moveDirNode,
-  drillTree
+  drillTree,
+  insertTreeWorkIndex,
+  deleteTreeWorkIndex,
+  deleteByRootNode
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -37,6 +40,17 @@ interface drillGroupParam{
   model: number, // 所属模块： 1-共有组 2-私有组
   businessId: string, // 私有组传页面id，公共组传关卡id
   directParentId: string, // 要操作的组id
+}
+interface idGroup{
+  dirId: string, //  根组id（name为‘-’的组）
+  workId: number // 生命体id
+}
+interface cancelAddParams{
+  projectId: string, //  项目id
+  model: 2, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id
+  dirId: string, //  根组id（name为‘-’的组）
+  workId: number // 生命体id
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -173,3 +187,83 @@ export async  function drillGroup(drillGroupParam: drillGroupParam): Promise<{}>
   })
 }
 
+// 私有组引入生命体
+export async  function addGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await insertTreeWorkIndex({
+    sysTreeWorkIndexReqList
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 私有组删除生命体的关联关系
+export async  function deleteGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await deleteTreeWorkIndex({
+    sysTreeWorkIndexReqList
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 私有组取消引入
+export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await deleteByRootNode({
+    ...cancelAddParams
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}

@@ -44,3 +44,28 @@ export const drillTree = (data) =>{
     data
   })
 }
+
+// 私有组引入生命体
+export const insertTreeWorkIndex = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/batchInsertSysTreeWorkIndex',
+    data
+  })
+}
+// 私有组删除生命体的关联关系
+export const deleteTreeWorkIndex = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/batchDeleteSysTreeWorkIndex',
+    data
+  })
+}
+// 私有组取消引入
+export const deleteByRootNode = (data) =>{
+  return request({
+    method: 'post',
+    url: '/sysTreeWorkIndex/batchDeleteByRootNode',
+    data
+  })
+}
