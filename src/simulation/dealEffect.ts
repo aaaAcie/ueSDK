@@ -1,6 +1,7 @@
 import { Model } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { operLifeEntity } from '../api/api.js'
+// import { operLifeEntity } from '../api/api.js'
+import { insertLifeEntity,updateLifeEntity } from '../api/lifeEntity.js'
 
 interface TextStyle {
   fontSize: number;
@@ -12,8 +13,8 @@ class effectModel extends Model {
 
 }
 
-// 增加特效 跟ue通信并走接口提交保存
-// effectType: 标题式 图标式 文本弹窗 视频弹窗式
+// 增加特效 跟ue通信并走接口提交保存 已重构
+// effectType: 标题式 图标式 文本弹窗 视频弹窗式 
 export function addEffect (effectType: String): Promise<{}> {
   // 增加POI 返回当前POI 属性
   emitUIInteraction({
@@ -33,13 +34,13 @@ export function addEffect (effectType: String): Promise<{}> {
         // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
         msg2 = JSON.parse(JSON.stringify(ueMsg))
 
-        operLifeEntity({
-          "oper_type": "insertLifeEntity",
+        insertLifeEntity({
+          // "oper_type": "insertLifeEntity",
           ...msg2
         }).then(bigdata => {
           let data = bigdata.data
-          if(data.code==200){
-            let Message = data.data
+          if(data.code==1001){
+            let Message = data.value
             console.log(Message)
             resolve({uedata, Message})
           }else{
@@ -58,7 +59,7 @@ export function addEffect (effectType: String): Promise<{}> {
   })
 }
 
-
+// 已重构
 export function addSpecialEffect (life_entity_id: String): Promise<{}> {
   emitUIInteraction({
     // Category: "addPOIModel",
@@ -83,13 +84,13 @@ export function addSpecialEffect (life_entity_id: String): Promise<{}> {
 
         console.log(msg2);
         // 调用修改生命体属性的接口
-        operLifeEntity({
-          "oper_type": "updateLifeEntity",
+        updateLifeEntity({
+          // "oper_type": "updateLifeEntity",
           ...msg2
         }).then(bigdata => {
           let data = bigdata.data
-          if(data.code==200){
-            let Message = data.data
+          if(data.code==1001){
+            let Message = data.value
             // console.log(Message)
             resolve({uedata, Message})
           }else{

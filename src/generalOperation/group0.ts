@@ -1,12 +1,12 @@
-import { Model,DeleteParams,ModelParams } from '../initModel/initModel'
+// import { Model,DeleteParams,ModelParams } from '../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
   operLifeEntityGroup,
   operLifeEntityGroupIndex,
-  // queryPrivateGroup,
+  queryPrivateGroup,
   operLifeEntityCommonGroup,
   operLifeEntityCommonGroupIndex,
-  // queryCommonGroup,
+  queryCommonGroup,
   sortPrivateGroup,
   sortCommonGroup,
   sortPrivateGroupLifeEntity,
@@ -14,28 +14,6 @@ import {
   batchCopyPrivateLifeEntity,
   copyLifeEntityPrivateGroup
 } from '../api/api.js'
-import {
-  insertLifeEntityGroup,
-  deleteLifeEntityGroup,
-  selectLifeEntityGroup,
-  updateLifeEntityGroup,
-  insertLifeEntityCommonGroup,
-  deleteLifeEntityCommonGroup,
-  selectLifeEntityCommonGroup,
-  updateLifeEntityCommonGroup,
-  queryPrivateGroup,
-  queryCommonGroup,
-  moveOtherLifeEntityGroupIndex,
-  moveOtherLifeEntityCommonGroupIndex,
-  batchInsertLifeEntityGroupIndex,
-  batchInsertLifeEntityCommonGroupIndex,
-  moveParentLifeEntityGroupIndex,
-  moveParentLifeEntityCommonGroupIndex,
-  moveLifeEntityGroup,
-  moveLifeEntityCommonGroup,
-  deleteLifeEntityGroupIndex,
-  deleteLifeEntityCommonGroupIndex
-} from '../api/group.js'
 interface GroupIndexParams{
   group_id: string; // 新组的名字
   life_entity_id: Array<string>; // 新组的父级的group_id（嵌套的新组需要传）
@@ -116,25 +94,25 @@ interface deleteGroupLifeEntityInBulkParams{
   life_entity_id_list: Array<string> // 要删除关联关系的生命体id
 }
 // 给【私有】【公有】组添加成员  给数据库 返回当前的groupId 1 
-// 接收数据库消息，是否改变了该成员的页面归属信息  已重构，后端需要调整返回值
+// 接收数据库消息，是否改变了该成员的页面归属信息
 export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon: string = "1"): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   isCommon = isCommon.toString()
   if (isCommon =='1') {
     // 共有组
-    const { data } = await batchInsertLifeEntityCommonGroupIndex({
-      // "oper_type": "batchInsertLifeEntityCommonGroupIndex",
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "batchInsertLifeEntityCommonGroupIndex",
       "life_entity_common_group_index_list": idGroup
     })
     finalData = data
   } else {
     // 私有组
-    const { data } = await batchInsertLifeEntityGroupIndex({
-      // "oper_type": "batchInsertLifeEntityGroupIndex",
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "batchInsertLifeEntityGroupIndex",
       "life_entity_group_index_list": idGroup
     })
     finalData = data
@@ -144,8 +122,8 @@ export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon:
 
   return new Promise<{}>((resolve, reject) => {
     try {
-      if(finalData.code==1001){
-        Message = finalData.value
+      if(finalData.code==200){
+        Message = finalData.data
         if (isCommon =='0') {
           // 私有组
           emitUIInteraction({
@@ -172,12 +150,12 @@ export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon:
   })
 }
 
-// 新建【私有】【公有】组  给数据库 1 已重构
+// 新建【私有】【公有】组  给数据库 1
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
   let isCo: string
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   // 默认为公有组
@@ -186,8 +164,8 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
     // 共有组
     let {isCommon,page_id,...finalParam} = GroupParam
     // console.log('公有insertLifeEntityCommonGroup')
-    const { data } = await insertLifeEntityCommonGroup({
-      // "oper_type": "insertLifeEntityCommonGroup",
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "insertLifeEntityCommonGroup",
       ...finalParam
     })
     finalData = data
@@ -195,8 +173,8 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
     // 私有组
     let {isCommon,pass_id,...finalParam} = GroupParam
     // console.log('私有insertLifeEntityGroup')
-    const { data } = await insertLifeEntityGroup({
-      // "oper_type": "insertLifeEntityGroup",
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "insertLifeEntityGroup",
       ...finalParam
     })
     finalData = data
@@ -206,8 +184,8 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve({Message, ueMsg})
     }else{
       reject(new Error(finalData.msg))
@@ -216,11 +194,11 @@ export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
   })
 }
 
-// 查询 【私有】【公有】组信息 给数据库 1 已重构
+// 查询 【私有】【公有】组信息 给数据库 1
 export async function queryGroup(queryGroupParams: queryGroupParams): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   if (queryGroupParams['page_id']) {
@@ -239,8 +217,8 @@ export async function queryGroup(queryGroupParams: queryGroupParams): Promise<{}
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve(Message)
     }else{
       reject(new Error(finalData.msg))
@@ -248,25 +226,25 @@ export async function queryGroup(queryGroupParams: queryGroupParams): Promise<{}
   })
 }
 
-// 移出【私有】【公有】组下的所有关联关系 到其父组 1 已重构
+// 移出【私有】【公有】组下的所有关联关系 到其父组 1
 export async function deleteGroupConnection(deleteGroupCntParams: deleteGroupCntParams): Promise<{}> {
   const group_id = deleteGroupCntParams['group_id']
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   if (deleteGroupCntParams['isCommon'].toString() =='0') {
     // 查页面的私有组
-    const { data } = await moveParentLifeEntityGroupIndex({
-      // "oper_type": "moveParentLifeEntityGroupIndex",
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "moveParentLifeEntityGroupIndex",
       group_id
     })
     finalData = data
   } else {
     // 查关卡的公有组
-    const { data } = await moveParentLifeEntityCommonGroupIndex({
-      // "oper_type": "moveParentLifeEntityCommonGroupIndex",
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "moveParentLifeEntityCommonGroupIndex",
       group_id
     })
     finalData = data
@@ -276,8 +254,8 @@ export async function deleteGroupConnection(deleteGroupCntParams: deleteGroupCnt
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve({Message, ueMsg})
     }else{
       reject(new Error(finalData.msg))
@@ -286,26 +264,26 @@ export async function deleteGroupConnection(deleteGroupCntParams: deleteGroupCnt
   })
 }
 
-// 移出单个生命体到别的【私有】【公有】组 1 已重构,公有组还没有
+// 移出单个生命体到别的【私有】【公有】组 1
 export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
   // let allParams = JSON.parse(JSON.stringify(moveSingle).replace(/life_entity_id/g, 'where_life_entity_id'))
   const { isCommon, ...alldata } = moveSingle
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   if (isCommon.toString() =='0') {
     // 私有组
-    const { data } = await moveOtherLifeEntityGroupIndex({
-      // "oper_type": "moveOtherLifeEntityGroupIndex",
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "moveOtherLifeEntityGroupIndex",
       ...alldata
     })
     finalData = data
   } else {
     // 公有组
-    const { data } = await moveOtherLifeEntityCommonGroupIndex({
-      // "oper_type": "moveOtherLifeEntityCommonGroupIndex",
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "moveOtherLifeEntityCommonGroupIndex",
       ...alldata
     })
     finalData = data
@@ -316,34 +294,34 @@ export async function moveSingle2Group(moveSingle: moveSingle): Promise<{}> {
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==200){
-      Message = finalData.value
+      Message = finalData.data
       resolve({Message, ueMsg})
     }else{
-      reject(new Error(finalData.msg+': '+finalData.value))
+      reject(new Error(finalData.msg+': '+finalData.data))
     }
 
   })
 }
 
-// 删除【私有】【公有】组 1 已重构
+// 删除【私有】【公有】组 1
 export async function deleteGroup (deleteGroupParam: deleteGroupParam): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   const isCommon = deleteGroupParam.isCommon.toString()
   if (isCommon =='1') {
     // 共有组
-    const { data } = await deleteLifeEntityCommonGroup({
-      // "oper_type": "deleteLifeEntityCommonGroup",
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "deleteLifeEntityCommonGroup",
       "group_id": deleteGroupParam.group_id
     })
     finalData = data
   } else {
     // 私有组
-    const { data } = await deleteLifeEntityGroup({
-      // "oper_type": "deleteLifeEntityGroup",
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "deleteLifeEntityGroup",
       "group_id": deleteGroupParam.group_id
     })
     finalData = data
@@ -352,8 +330,8 @@ export async function deleteGroup (deleteGroupParam: deleteGroupParam): Promise<
   let ueMsg: {}
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve({Message, ueMsg})
     }else{
       reject(new Error(finalData.msg))
@@ -362,26 +340,26 @@ export async function deleteGroup (deleteGroupParam: deleteGroupParam): Promise<
   })
 }
 
-// 修改【私有】【公有】组的嵌套关系 1 已重构 有bug
+// 修改【私有】【公有】组的嵌套关系 1
 export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<{}> {
   let { isCommon, ...alldata } = moveGroupParam
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   isCommon = isCommon.toString()
   if (isCommon =='1') {
     // 共有组
-    const { data } = await moveLifeEntityCommonGroup({
-      // "oper_type": "moveLifeEntityCommonGroup",
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "moveLifeEntityCommonGroup",
       ...alldata
     })
     finalData = data
   } else {
     // 私有组
-    const { data } = await moveLifeEntityGroup({
-      // "oper_type": "moveLifeEntityGroup",
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "moveLifeEntityGroup",
       ...alldata
     })
     finalData = data
@@ -390,8 +368,8 @@ export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<
   let ueMsg: {}
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve({Message, ueMsg})
     }else{
       reject(new Error(finalData.msg))
@@ -400,26 +378,26 @@ export async function moveGroup2Group (moveGroupParam: moveGroupParam): Promise<
   })
 }
 
-// 删除【私有】【公有】组的里的单个生命体 0 已重构 有bug
+// 删除【私有】【公有】组的里的单个生命体 0
 export async function deleteGroupIndex(deleteSingle: deleteSingle): Promise<{}> {
   // let allParams = JSON.parse(JSON.stringify(moveSingle).replace(/life_entity_id/g, 'where_life_entity_id'))
   const { isCommon, ...alldata } = deleteSingle
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   if (isCommon.toString() =='0') {
     // 查页面的私有组
-    const { data } = await deleteLifeEntityGroupIndex({
-      // "oper_type": "deleteLifeEntityGroupIndex",
+    const { data } = await operLifeEntityGroupIndex({
+      "oper_type": "deleteLifeEntityGroupIndex",
       ...alldata
     })
     finalData = data
   } else {
     // 查关卡的公有组
-    const { data } = await deleteLifeEntityCommonGroupIndex({
-      // "oper_type": "deleteLifeEntityCommonGroupIndex",
+    const { data } = await operLifeEntityCommonGroupIndex({
+      "oper_type": "deleteLifeEntityCommonGroupIndex",
       ...alldata
     })
     finalData = data
@@ -428,10 +406,18 @@ export async function deleteGroupIndex(deleteSingle: deleteSingle): Promise<{}> 
   let Message: {}
   let ueMsg: {}
 
+  // return new Promise<{}>((resolve, reject) => {
+  //   if(finalData.code==200){
+  //     Message = finalData.data
+  //     resolve({Message, ueMsg})
+  //   }else{
+  //     reject(new Error(finalData.msg))
+  //   }
+  // })
   return new Promise<{}>((resolve, reject) => {
     try {
-      if(finalData.code==1001){
-        Message = finalData.value
+      if(finalData.code==200){
+        Message = finalData.data
         // 私有组 给ue发送更新belong的信息
         if (isCommon.toString() =='0') {
           emitUIInteraction({
@@ -641,26 +627,26 @@ export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promi
   })
 }
 
-// 查询单个【私有】【公有】组信息 111 已重构
+// 查询单个【私有】【公有】组信息 111
 export async function querySingleGroup(queryGroupParam: querySingleGroupParam): Promise<{}> {
   let { isCommon, group_id } = queryGroupParam
 
   let finalData: {
     code: number,
-    value: [],
+    data: [],
     msg: ''
   }
   if (isCommon.toString() == '0') {
     // 查页面的私有组
-    const { data } = await selectLifeEntityGroup({
-      // "oper_type": "selectLifeEntityGroup",
+    const { data } = await operLifeEntityGroup({
+      "oper_type": "selectLifeEntityGroup",
       group_id
     })
     finalData = data
   } else {
     // 查关卡的公有组
-    const { data } = await selectLifeEntityCommonGroup({
-      // "oper_type": "selectLifeEntityCommonGroup",
+    const { data } = await operLifeEntityCommonGroup({
+      "oper_type": "selectLifeEntityCommonGroup",
       group_id
     })
     finalData = data
@@ -668,8 +654,8 @@ export async function querySingleGroup(queryGroupParam: querySingleGroupParam): 
 
   let Message: {}
   return new Promise<{}>((resolve, reject) => {
-    if(finalData.code==1001){
-      Message = finalData.value
+    if(finalData.code==200){
+      Message = finalData.data
       resolve({Message})
     }else{
       reject(new Error(finalData.msg))

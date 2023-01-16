@@ -1,23 +1,38 @@
 import { Model,DeleteParams,ModelParams } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
+// import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
+import { 
+  // importBatchManagementList,
+  // downloadExcel 
+} from '../api/detail.js'
+
+import {
+  selectPageLifeEntityListByName,
+  importBatchManagementList,
+  downloadExcel,
+  selectLifeEntity,
+  insertLifeEntity,
+  deleteLifeEntity,
+  batchUpdateLifeEntity,
+  updateLifeEntity
+} from '../api/lifeEntity.js'
 
 interface pageLifeEntity{
   name: string;
   page_id: string;
 }
-// 读取底座⽣命体 向接口查询 返回给前端 1
+// 读取底座⽣命体 向接口查询 返回给前端 1 已重构
 export async function initModels(pass_id: string): Promise<Array<Model>> {
-  const { data } = await operLifeEntity({
-    "oper_type": "selectLifeEntity",
+  const { data } = await selectLifeEntity({
+    // "oper_type": "selectLifeEntity",
     pass_id
   })
   let Message: Array<Model> = []
 
   return new Promise<Array<Model>>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       // emitUIInteraction({
       //   Category: "initModels",
       //   Message 
@@ -41,9 +56,7 @@ export async function initModels(pass_id: string): Promise<Array<Model>> {
 }
 
 
-
-
-// 添加⽣命体  跟ue通信并向接口提交
+// 添加⽣命体  跟ue通信并向接口提交 已重构
 export function addModel(meshasset: {}): Promise<{}> {
   emitUIInteraction({
     Category: "addModel",
@@ -54,13 +67,13 @@ export function addModel(meshasset: {}): Promise<{}> {
   let msg2: String
   let successCallback = []
   successCallback.push((msg2) => {
-    return operLifeEntity({
-      "oper_type": "insertLifeEntity",
+    return insertLifeEntity({
+      // "oper_type": "insertLifeEntity",
       ...msg2
     }).then(bigdata => {
       let data = bigdata.data
-      if(data.code==200){
-        let Message = data.data
+      if(data.code==1001){
+        let Message = data.value
         return Message
         // console.log(Message)
         // resolve({uedata, Message})
@@ -91,10 +104,10 @@ export function addModel(meshasset: {}): Promise<{}> {
 }
 
 
-// 删除⽣命体  跟ue通信并向接口提交 1
+// 删除⽣命体  跟ue通信并向接口提交 1 已重构
 export async function deleteModelById(id: string): Promise<{}> {
-  const { data } = await operLifeEntity({
-    "oper_type": "deleteLifeEntity",
+  const { data } = await deleteLifeEntity({
+    // "oper_type": "deleteLifeEntity",
     "life_entity_id": id
   })
   let Message: number
@@ -107,8 +120,8 @@ export async function deleteModelById(id: string): Promise<{}> {
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("deleteModelByIdResponse", (uedata?: string): string => {
-      if(data.code==200){
-        Message = data.data
+      if(data.code==1001){
+        Message = data.value
         // console.log(Message)
         ueMsg = JSON.parse(uedata)
         resolve({ ueMsg, Message })
@@ -167,8 +180,8 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   // modelProps = JSON.parse(JSON.stringify(modelProps).replace('life_entity_id', 'where_life_entity_id'))
   let allParams2 = JSON.parse(JSON.stringify(modelProps).replace(/life_entity_id/g, 'where_life_entity_id'))
   
-  const { data } = await operLifeEntity({
-    "oper_type": "updateLifeEntity",
+  const { data } = await updateLifeEntity({
+    // "oper_type": "updateLifeEntity",
     ...allParams2
   })
   let Message: string = ''
@@ -176,8 +189,8 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       // console.log(Message)
       resolve(Message)
     }else{
@@ -281,17 +294,17 @@ export function selectCancel(): Promise<{}> {
   })
 }
 
-// 获取单个生命体 从接口拿到数据 给前端 1
+// 获取单个生命体 从接口拿到数据 给前端 1 已重构
 export async function getModelById (id: string): Promise<Model> {
   id = id.toString()
-  const { data } = await operLifeEntity({
-    "oper_type": "selectLifeEntity",
+  const { data } = await selectLifeEntity({
+    // "oper_type": "selectLifeEntity",
     "life_entity_id": id
   })
   let Message: Model
   return new Promise<Model>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -301,18 +314,18 @@ export async function getModelById (id: string): Promise<Model> {
 }
 
 interface showParams{
-  id: string; // 生命体id
+  life_entity_id: string; // 生命体id
   showStatus: string; // 1可见 0隐藏
 }
-// 显示、隐藏生命体  跟ue通信并向接口提交 1
+// 显示、隐藏生命体  跟ue通信并向接口提交 1 已重构
 export async function showModelByIds (allParams: Array<showParams>): Promise<{}> {
   // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
   let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
 
   console.log(allParams2)
 
-  const { data } = await operLifeEntity({
-    "oper_type": "batchUpdateLifeEntity",
+  const { data } = await batchUpdateLifeEntity({
+    // "oper_type": "batchUpdateLifeEntity",
     allParams: allParams2
   })
   let Message: number
@@ -324,8 +337,8 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("showModelByIdsResponse", (uedata?: string): Model => {
-      if(data.code==200){
-        Message = data.data
+      if(data.code==1001){
+        Message = data.value
         ueMsg = JSON.parse(uedata)
         resolve({ueMsg, Message})
       }else{
@@ -411,21 +424,28 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
   })
 }
 
-// 批量更新生命体数据 提交到数据库
-export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{}> {
+// 批量更新生命体数据 提交到数据库 已重构
+export async function setModelPropsByIdsSave(allParams0: Array<Model>): Promise<{}> {
   // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  // 检查是不是数组
+  let allParams = []
+  if(!Array.isArray(allParams0)){
+    allParams.push(allParams0)
+  }else{
+    allParams = allParams0
+  }
   let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
   console.log(allParams2)
 
-  const { data } = await operLifeEntity({
-    "oper_type": "batchUpdateLifeEntity",
+  const { data } = await batchUpdateLifeEntity({
+    // "oper_type": "batchUpdateLifeEntity",
     allParams: allParams2
   })
   let Message: Array<Number>
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -433,17 +453,13 @@ export async function setModelPropsByIdsSave(allParams: Array<Model>): Promise<{
   })
 }
 
-// 批量添加⽣命体  跟ue通信并向接口提交
-export async function addModelInBulk(file, pass_id): Promise<{}> {
-  console.log({
-    file,
-    pass_id
-  })
+// 批量添加⽣命体  跟ue通信并向接口提交 已重构
+export async function addModelInBulk(file: File, pass_id: string): Promise<{}> {
   const { data } = await importBatchManagementList({
     file,
     pass_id
   })
-  const allParams = data.data
+  const allParams = data.value
   emitUIInteraction({
     Category: "addModelInBulk",
     allParams
@@ -453,7 +469,7 @@ export async function addModelInBulk(file, pass_id): Promise<{}> {
   let Message: {}
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
+    if(data.code==1001){
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
         uedata = JSON.parse(uedata)
         ueMsg = uedata['Message']
@@ -469,7 +485,7 @@ export async function addModelInBulk(file, pass_id): Promise<{}> {
 }
 
 
-// 批量添加生命体的excel模板下载 fileType: '通用式' | '视频弹窗式'
+// 批量添加生命体的excel模板下载 fileType: '通用式' | '视频弹窗式' 已重构
 export async function downloadTemplateExcel(fileType: string): Promise<{}> {
   const { data } = await downloadExcel({
     fileType
@@ -477,8 +493,8 @@ export async function downloadTemplateExcel(fileType: string): Promise<{}> {
   let Message: Array<Number>
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve(Message)
     }else{
       reject(new Error(data.msg))
@@ -487,7 +503,7 @@ export async function downloadTemplateExcel(fileType: string): Promise<{}> {
 }
 
 
-// 模糊查询指定页面下对应的生命体
+// 模糊查询指定页面下对应的生命体 已重构
 export async function queryPageLifeEntityByName(pageLifeEntity: pageLifeEntity): Promise<{}> {
   const { data } = await selectPageLifeEntityListByName({
     ...pageLifeEntity
@@ -495,8 +511,8 @@ export async function queryPageLifeEntityByName(pageLifeEntity: pageLifeEntity):
   let Message: Array<Number>
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==200){
-      Message = data.data
+    if(data.code==1001){
+      Message = data.value
       resolve({Message})
     }else{
       reject(new Error(data.msg))
