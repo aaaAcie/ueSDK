@@ -1,4 +1,4 @@
-// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { 
   addTree,
   getNewbieTree,
@@ -48,6 +48,12 @@ interface drillGroupParam{
 interface idGroup{
   dirId: string, //  根组id（name为‘-’的组）
   workId: number // 生命体id
+}
+interface groupIndexParam{
+  projectId: string, // 项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  sysTreeWorkIndexDTOList: Array<idGroup> 
 }
 interface cancelAddParams{
   projectId: string, //  项目id
@@ -163,7 +169,7 @@ export async  function setGroupName(groupName: groupName): Promise<{}> {
   })
 }
 
-// 删除组
+// 删除组 发送给ue 0
 export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -176,13 +182,28 @@ export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<
   finalData = data
 
   let Message: {}
-  // let ueMsg: {}
+  let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
-      resolve({Message, code})
+      // resolve({Message, code})
+      if (deleteGroupParam.model.toString() === '2') {
+        // 私有组
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      } else {
+        // 公有组
+        resolve({Message, code})
+      }
     }else{
       reject(new Error(finalData.msg))
     }
@@ -243,26 +264,40 @@ export async  function drillGroup(drillGroupParam: drillGroupParam): Promise<{}>
   })
 }
 
-// 私有组引入生命体
-export async  function addGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>): Promise<{}> {
+// 私有组引入生命体 发送给ue 1
+export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<{}> {
   let finalData: {
     code: number,
     value: [],
     msg: ''
   }
   const { data } = await insertTreeWorkIndex({
-    sysTreeWorkIndexReqList
+    ...groupIndexParam
   })
   finalData = data
 
   let Message: {}
-  // let ueMsg: {}
+  let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
-      resolve({Message, code})
+      if (groupIndexParam.model.toString() === '2') {
+        // 私有组
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      } else {
+        // 公有组
+        resolve({Message, code})
+      }
     }else{
       reject(new Error(finalData.msg))
     }
@@ -270,26 +305,40 @@ export async  function addGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>): P
   })
 }
 
-// 私有组删除生命体的关联关系
-export async  function deleteGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>): Promise<{}> {
+// 私有组删除生命体的关联关系 发给ue 1
+export async  function deleteGroupIndex(groupIndexParam: groupIndexParam): Promise<{}> {
   let finalData: {
     code: number,
     value: [],
     msg: ''
   }
   const { data } = await deleteTreeWorkIndex({
-    sysTreeWorkIndexReqList
+    ...groupIndexParam
   })
   finalData = data
 
   let Message: {}
-  // let ueMsg: {}
+  let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
-      resolve({Message, code})
+      if (groupIndexParam.model.toString() === '2') {
+        // 私有组
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      } else {
+        // 公有组
+        resolve({Message, code})
+      }
     }else{
       reject(new Error(finalData.msg))
     }
@@ -297,7 +346,7 @@ export async  function deleteGroupIndex(sysTreeWorkIndexReqList: Array<idGroup>)
   })
 }
 
-// 私有组取消引入
+// 私有组取消引入 发给ue 0
 export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Promise<{}> {
   let finalData: {
     code: number,
@@ -310,13 +359,27 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
   finalData = data
 
   let Message: {}
-  // let ueMsg: {}
+  let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
-      resolve({Message, code})
+      if (cancelAddParams.model.toString() === '2') {
+        // 私有组
+        emitUIInteraction({
+          Category: "addBelong",
+          Message
+        })
+        addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg})
+        })
+      } else {
+        // 公有组
+        resolve({Message, code})
+      }
     }else{
       reject(new Error(finalData.msg))
     }
@@ -351,7 +414,7 @@ export async  function disbandGroup(disbandGroupParams: disbandGroupParams): Pro
   })
 }
 
-// 复制组
+// 复制组 发给ue 0
 export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -378,7 +441,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   })
 }
 
-// 复制组内生命体
+// 复制组内生命体 发给ue 0
 export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityParam): Promise<{}> {
   let finalData: {
     code: number,
