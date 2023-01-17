@@ -101,3 +101,12 @@ export const copySysTreeWorkIndex = (data) =>{
     data
   })
 }
+
+// 移动叶子
+export const moveLeaf = (data) =>{
+  return request({
+    method: 'post',
+    url: '/systree/v1/move',
+    data
+  })
+}

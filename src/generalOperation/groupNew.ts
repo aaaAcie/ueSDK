@@ -11,7 +11,8 @@ import {
   removeSysTree,
   dismissSysTreeWorkIndex,
   copySysTree,
-  copySysTreeWorkIndex
+  copySysTreeWorkIndex,
+  moveLeaf
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -25,6 +26,7 @@ interface queryGroupParams{
   model: string | number; // '1'为公共组,'2'为私有组
   businessId: string; // 私有组传页面id，公共组传关卡id
   projectId: string; // 项目id
+  name: string; // 模糊查询，匹配组名。不传或为空代表全部
 }
 interface groupName{
   id: string; // 组id
@@ -97,6 +99,16 @@ interface copyLifeEntityParam{
     dirId: string, // 树节点ID/组ID
     workId: string // 生命体ID
   }]
+}
+interface moveSingle{
+  projectId: string, // 项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  preWorkId: string, // 要移动的生命体id
+  preDirId: string, // 原组的id
+  preSortIndex: number, // 原组的顺序
+  afterDirId: string, // 目标组的id
+  afterDirPath: string, // 目标组的ancestorChainPathNames
+  afterSortIndex: number, // 在目标组的顺序
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -179,7 +191,7 @@ export async  function setGroupName(groupName: groupName): Promise<{}> {
   })
 }
 
-// 删除组 发送给ue 0
+// 删除组 发送给ue 1
 export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -208,7 +220,7 @@ export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
-          resolve({Message, ueMsg})
+          resolve({Message, ueMsg, code})
         })
       } else {
         // 公有组
@@ -505,6 +517,32 @@ export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityP
         // 公有组
         resolve({Message, code})
       }
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 移动叶子
+export async  function moveGroupIndex(moveSingle: moveSingle): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: any,
+    msg: ''
+  }
+  const { data } = await moveLeaf({
+    ...moveSingle
+  })
+  finalData = data
+
+  let Message: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
     }else{
       reject(new Error(finalData.msg))
     }
