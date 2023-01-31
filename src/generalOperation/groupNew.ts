@@ -558,7 +558,7 @@ export async  function moveGroupIndex(moveSingle: moveSingle): Promise<{}> {
   })
 }
 
-// 移动叶子
+// 模糊搜索树和叶子
 export async  function searchGroup(searchGroupParams: searchGroupParams): Promise<{}> {
   let finalData: {
     code: number,
