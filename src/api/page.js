@@ -10,10 +10,10 @@ export const selectPage = (data) =>{
 }
 
 // 批量新增page
-export const batchReplacePage = (data) =>{
+export const batchInsertPage = (data) =>{
   return request({
     method: 'post',
-    url: '/page/batchReplacePage',
+    url: '/page/batchInsertPage',
     data
   })
 }
