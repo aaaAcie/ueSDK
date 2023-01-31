@@ -110,3 +110,12 @@ export const moveLeaf = (data) =>{
     data
   })
 }
+
+// 模糊搜索树和叶子
+export const searchTree = (data) =>{
+  return request({
+    method: 'post',
+    url: '/systree/v1/search',
+    data
+  })
+}

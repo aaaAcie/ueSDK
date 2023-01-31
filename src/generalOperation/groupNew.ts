@@ -12,7 +12,8 @@ import {
   dismissSysTreeWorkIndex,
   copySysTree,
   copySysTreeWorkIndex,
-  moveLeaf
+  moveLeaf,
+  searchTree
 } from '../api/groupNew.js'
 
 interface GroupParam {
@@ -109,6 +110,13 @@ interface moveSingle{
   afterDirId: string, // 目标组的id
   afterDirPath: string, // 目标组的ancestorChainPathNames
   afterSortIndex: number, // 在目标组的顺序
+}
+interface searchGroupParams{
+  projectId: string, // 项目id
+  model: number, // 所属模块： 1-共有组 2-私有组
+  businessId: string, // 私有组传页面id，公共组传关卡id
+  keywords: string, // 检索关键字
+  searchType: string// 1-组 2-组+生命体
 }
 // 新建组  给数据库
 export async  function addGroup(GroupParam: GroupParam): Promise<{}> {
@@ -533,6 +541,32 @@ export async  function moveGroupIndex(moveSingle: moveSingle): Promise<{}> {
   }
   const { data } = await moveLeaf({
     ...moveSingle
+  })
+  finalData = data
+
+  let Message: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+
+// 移动叶子
+export async  function searchGroup(searchGroupParams: searchGroupParams): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: any,
+    msg: ''
+  }
+  const { data } = await searchTree({
+    ...searchGroupParams
   })
   finalData = data
 
