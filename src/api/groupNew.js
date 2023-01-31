@@ -101,3 +101,21 @@ export const copySysTreeWorkIndex = (data) =>{
     data
   })
 }
+
+// 移动叶子
+export const moveLeaf = (data) =>{
+  return request({
+    method: 'post',
+    url: '/systree/v1/move',
+    data
+  })
+}
+
+// 模糊搜索树和叶子
+export const searchTree = (data) =>{
+  return request({
+    method: 'post',
+    url: '/systree/v1/search',
+    data
+  })
+}

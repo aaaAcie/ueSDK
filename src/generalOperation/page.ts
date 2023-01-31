@@ -2,13 +2,14 @@
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import {
   selectPage,
-  batchReplacePage,
+  batchInsertPage,
   batchDeletePage,
   batchUpdateLifeEntityBelongShowStatus
 } from '../api/page.js'
 interface pageParams {
   pass_id: string;
   page_id: string;
+  projectId: string;
 }
 interface belongShowStatus {
   life_entity_ids: Array<string>;
@@ -34,7 +35,7 @@ export async function queryPage(pass_id: string): Promise<{}> {
 
 // 新增页面 from数睿 给数据库 已重构
 export async function addPage(page_list: Array<pageParams>): Promise<{}> {
-  const { data } = await batchReplacePage({
+  const { data } = await batchInsertPage({
     // "oper_type": "batchReplacePage",
     pageReqList: page_list
   })
