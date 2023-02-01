@@ -1,4 +1,4 @@
-import { Model } from './../initModel/initModel'
+import { Model,addModelFunction } from './../initModel/initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 // import { operLifeEntity } from '../api/api.js'
 import { insertLifeEntity,updateLifeEntity } from '../api/lifeEntity.js'
@@ -9,7 +9,7 @@ interface TextStyle {
   fontColor: string;
 }
 class POIModel extends Model {
-  belong: string;
+  // belong: string;
   group: string;
   textStyle: TextStyle; // 文字效果
   // offset: { x: number; y: number }; // 位移
@@ -31,21 +31,7 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   let msg2: {}
   let successCallback = []
   successCallback.push((msg2) => {
-    return insertLifeEntity({
-      // "oper_type": "insertLifeEntity",
-      ...msg2
-    }).then(bigdata => {
-      let data = bigdata.data
-      if(data.code==1001){
-        let Message = data.value
-        return Message
-        // console.log(Message)
-        // resolve({uedata, Message})
-      }else{
-        // reject(new Error(data.msg))
-        throw (new Error(data.msg))
-      }
-    })
+    return addModelFunction(msg2)
   })
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {

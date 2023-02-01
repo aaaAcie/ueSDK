@@ -74,3 +74,12 @@ export const updateLifeEntity = (data) =>{
     data
   })
 }
+
+// 增加特殊的belong记录 用于记录生命体在关卡的状态
+export const addSpecialBelong = (data) =>{
+  return request({
+    method: 'post',
+    url: '/lifeEntityBelong/insert',
+    data
+  })
+}

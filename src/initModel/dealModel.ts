@@ -1,4 +1,4 @@
-import { Model,DeleteParams,ModelParams } from './initModel'
+import { Model, addModelFunction } from './initModel'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
 // import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
@@ -15,7 +15,8 @@ import {
   insertLifeEntity,
   deleteLifeEntity,
   batchUpdateLifeEntity,
-  updateLifeEntity
+  updateLifeEntity,
+  addSpecialBelong
 } from '../api/lifeEntity.js'
 
 interface pageLifeEntity{
@@ -64,24 +65,11 @@ export function addModel(meshasset: {}): Promise<{}> {
   })
     
   let ueMsg: Model
-  let msg2: String
+  let msg2: Model
   let successCallback = []
+  let belong: Array<{page_id: string, showStatus: string}>
   successCallback.push((msg2) => {
-    return insertLifeEntity({
-      // "oper_type": "insertLifeEntity",
-      ...msg2
-    }).then(bigdata => {
-      let data = bigdata.data
-      if(data.code==1001){
-        let Message = data.value
-        return Message
-        // console.log(Message)
-        // resolve({uedata, Message})
-      }else{
-        // reject(new Error(data.msg))
-        throw (new Error(data.msg))
-      }
-    })
+    return addModelFunction(msg2)
   })
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {

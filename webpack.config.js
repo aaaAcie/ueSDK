@@ -8,8 +8,13 @@ module.exports = {
   },
   target: 'web',
   entry: "./src/index.ts",
+  // entry: {
+  //   bundle: "./src/index.ts",
+  //   bundle2: "./src/index.ts",
+  // },
   output: {
     filename: 'bundle.js',
+    // filename: '[name].[chunkhash:5].js',
     // path: [path.resolve(__dirname, "dist"), path.resolve('../.vite-ptoject/')],
     path: path.resolve('../vite-project/public/static'),
 

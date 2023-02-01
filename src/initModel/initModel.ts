@@ -16,6 +16,7 @@ export class Model {
   properties?: object; // ⽣命体属性 
   showstatus?: string;
   lockStatus?: string;
+  belong?: Array<{page_id: string, showStatus: string}>;
 }
 
 export interface ModelParams{ 
@@ -27,4 +28,30 @@ export interface DeleteParams {
   life_entity_id: string; 
   successCallback?: () => {}; // 删除⽣命体成功回调⽅法 
   errorCallback?: () => {}; // 删除⽣命体失败回调⽅法 
+}
+import {
+  insertLifeEntity,
+  addSpecialBelong
+} from '../api/lifeEntity.js'
+
+export async function addModelFunction(msg2: Model) {
+  const { data } = await insertLifeEntity({
+    ...msg2
+  })
+  // belong = msg2.belong
+  if(data.code==1001){
+    let Message = data.value
+    const { data: d } = await addSpecialBelong({
+      lifeEntityId: msg2.life_entity_id,
+      pageId: "AlwaysShow",
+      showStatus: "1"
+    })
+    if(d.code==1001){
+      return Message
+    }else{
+      throw (new Error(d.msg))
+    }
+  }else{
+    throw (new Error(data.msg))
+  }
 }
