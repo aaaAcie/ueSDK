@@ -55,3 +55,13 @@ export async function addModelFunction(msg2: Model) {
     throw (new Error(data.msg))
   }
 }
+
+export function changeNameFunction(oldObj: {}) {
+  let oldString: string = JSON.stringify(oldObj)
+  let newString: string = oldString
+                            .replace(/lifeEntityId/g,'life_entity_id')
+                            .replace(/pageId/g,'page_id')
+  let newObj = JSON.parse(newString)
+  console.log(newObj)
+  return newObj
+}

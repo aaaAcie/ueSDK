@@ -15,7 +15,7 @@ import {
   moveLeaf,
   searchTree
 } from '../api/groupNew.js'
-
+import { changeNameFunction } from '../initModel/initModel'
 interface GroupParam {
   name: string; // 新组的名字
   directParentId?: string; // 新组的父级的group_id（嵌套的新组需要传，否则可以为空或不传） 
@@ -216,7 +216,8 @@ export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
-      Message = finalData.value
+      // Message = finalData.value
+      Message = changeNameFunction(finalData.value)
       let code = finalData.code
       // resolve({Message, code})
       if (deleteGroupParam.model.toString() === '2') {
@@ -311,7 +312,8 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
-      Message = finalData.value
+      // Message = finalData.value
+      Message = changeNameFunction(finalData.value)
       let code = finalData.code
       if (groupIndexParam.model.toString() === '2') {
         // 私有组
@@ -352,7 +354,8 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
-      Message = finalData.value
+      // Message = finalData.value
+      Message = changeNameFunction(finalData.value)
       let code = finalData.code
       if (groupIndexDeleteParam.model.toString() === '2') {
         // 私有组
@@ -393,7 +396,8 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
-      Message = finalData.value
+      // Message = finalData.value
+      Message = changeNameFunction(finalData.value)
       let code = finalData.code
       if (cancelAddParams.model.toString() === '2') {
         // 私有组
@@ -470,7 +474,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
         // 私有组
         emitUIInteraction({
           Category: "addBelong",
-          Message: Message.lifeEntityBelongVOList
+          Message: changeNameFunction(Message.lifeEntityBelongVOList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
@@ -514,7 +518,7 @@ export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityP
         // 私有组
         emitUIInteraction({
           Category: "addBelong",
-          Message: Message.lifeEntityBelongVOList
+          Message: changeNameFunction(Message.lifeEntityBelongVOList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
