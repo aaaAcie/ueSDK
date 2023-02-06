@@ -47,6 +47,7 @@ interface drillGroupParam{
   model: number, // 所属模块： 1-共有组 2-私有组
   businessId: string, // 私有组传页面id，公共组传关卡id
   directParentId: string, // 要操作的组id
+  businessPageId: string // 用于公有组传页面id，以计算当前组下生命体是否被该页面id引用
 }
 interface idGroup{
   dirId: string, //  根组id（name为‘-’的组）
@@ -448,7 +449,7 @@ export async  function disbandGroup(disbandGroupParams: disbandGroupParams): Pro
   })
 }
 
-// 复制组 发给ue 1
+// 复制组 发给ue 1 addModelInBulk+addBelong
 export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -464,26 +465,38 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
     lifeEntityVOList: [],
     lifeEntityBelongVOList: []
   }
+  let ueMsg0: {}
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
+      // 1.与ue通信，批量添加生命体。
+      emitUIInteraction({
+        Category: "addModelInBulk",
+        allParams: { "lifeEntityList": Message.lifeEntityVOList }
+      })
+      addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg0 = uedata['Message']
+      })
+
       if (copyGroupParam.model.toString() === '2') {
         // 私有组
+        // 2.与ue通信，addBelong。
         emitUIInteraction({
           Category: "addBelong",
           Message: changeNameFunction(Message.lifeEntityBelongVOList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
-          ueMsg = uedata
+          ueMsg = {ueMsg: uedata, ueMsg0}
           resolve({Message, ueMsg, code})
         })
       } else {
         // 公有组
-        resolve({Message, code})
+        resolve({Message, code, ueMsg: ueMsg0})
       }
     }else{
       reject(new Error(finalData.msg))
@@ -492,7 +505,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   })
 }
 
-// 复制组内生命体 发给ue 1
+// 复制组内生命体 发给ue 1 
 export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -508,14 +521,25 @@ export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityP
     lifeEntityVOList: [],
     lifeEntityBelongVOList: []
   }
+  let ueMsg0: {}
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){
       Message = finalData.value
       let code = finalData.code
+      // 1.与ue通信，批量添加生命体。
+      emitUIInteraction({
+        Category: "addModelInBulk",
+        allParams: { "lifeEntityList": Message.lifeEntityVOList }
+      })
+      addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        ueMsg0 = uedata['Message']
+      })
       if (copyLifeEntityParam.model.toString() === '2') {
         // 私有组
+        // 2.与ue通信，addBelong。
         emitUIInteraction({
           Category: "addBelong",
           Message: changeNameFunction(Message.lifeEntityBelongVOList)

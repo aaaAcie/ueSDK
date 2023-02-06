@@ -79,8 +79,8 @@ export function addModel(meshasset: {}): Promise<{}> {
         msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
           successCallback.shift()(msg2)
-          .then(Message => resolve({uedata, Message}))
-          .catch(err => reject(new Error(err)))
+            .then(Message => resolve({uedata, Message}))
+            .catch(err => reject(new Error(err)))
         }
         
       } catch (error) {

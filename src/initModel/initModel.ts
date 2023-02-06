@@ -43,8 +43,10 @@ export async function addModelFunction(msg2: Model) {
     let Message = data.value
     const { data: d } = await addSpecialBelong({
       lifeEntityId: msg2.life_entity_id,
-      pageId: "AlwaysShow",
-      showStatus: "1"
+      // pageId: "AlwaysShow",
+      // showStatus: "1",
+      pageId: "",
+      showStatus: "3" // 2隐藏 3显示
     })
     if(d.code==1001){
       return Message

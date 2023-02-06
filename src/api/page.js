@@ -31,7 +31,8 @@ export const batchDeletePage = (data) =>{
 export const batchUpdateLifeEntityBelongShowStatus = (data) =>{
   return request({
     method: 'post',
-    url: '/executorLifeEntity/batchUpdateLifeEntityBelongShowStatus',
+    // url: '/executorLifeEntity/batchUpdateLifeEntityBelongShowStatus',
+    url: "/lifeEntityBelong/batchUpdate",
     data
   })
 }
