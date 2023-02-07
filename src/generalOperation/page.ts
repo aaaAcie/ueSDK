@@ -1,5 +1,7 @@
 // import { operPage, batchUpdateLifeEntityBelongShowStatus } from '../api/api.js'
 import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { changeNameFunction } from '../initModel/initModel'
+
 import {
   selectPage,
   batchInsertPage,
@@ -93,10 +95,10 @@ export async function changePage(page_id: string): Promise<{}> {
 // 设置生命体在页面的显隐状态 数据库 给ue 已重构
 export async function setBelongShowStatus(belongShowStatus: belongShowStatus): Promise<{}> {
   const { data } = await batchUpdateLifeEntityBelongShowStatus({
-    ...belongShowStatus
+    updateLifeEntityBelongReqList: [belongShowStatus]
   })
 
-  let Message: {}
+  let Message: {lifeEntityBelongList: []}
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
@@ -108,7 +110,7 @@ export async function setBelongShowStatus(belongShowStatus: belongShowStatus): P
         Message = data.value
         emitUIInteraction({
           Category: "addBelong",
-          Message
+          Message: changeNameFunction(Message.lifeEntityBelongList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)

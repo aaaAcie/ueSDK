@@ -32,7 +32,7 @@ export const batchUpdateLifeEntityBelongShowStatus = (data) =>{
   return request({
     method: 'post',
     // url: '/executorLifeEntity/batchUpdateLifeEntityBelongShowStatus',
-    url: "/lifeEntityBelong/batchUpdate",
+    url: "/lifeEntityBelong/batchUpdateLifeEntityBelongShowStatus",
     data
   })
 }

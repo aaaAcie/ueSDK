@@ -505,7 +505,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
   })
 }
 
-// 复制组内生命体 发给ue 1 
+// 复制组内生命体 发给ue 1 addModelInBulk+addBelong
 export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityParam): Promise<{}> {
   let finalData: {
     code: number,
