@@ -103,14 +103,14 @@ export async function setBelongShowStatus(belongShowStatus: belongShowStatus): P
 
   return new Promise<{}>((resolve, reject) => {
     try {
-      console.log(data)
+      // console.log(data)
       Message = data
 
       if(data.code==1001){
-        Message = data.value
+        Message = data.value.lifeEntityBelongList
         emitUIInteraction({
           Category: "addBelong",
-          Message: changeNameFunction(Message.lifeEntityBelongList)
+          Message: changeNameFunction(Message)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)

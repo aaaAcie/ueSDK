@@ -9,8 +9,8 @@ module.exports = {
   target: 'web',
   entry: "./src/index.ts",
   // entry: {
-  //   bundle: "./src/index.ts",
-  //   bundle2: "./src/index.ts",
+  //   // bundle: "./src/index.ts",
+  //   bundle2: "./src/index2.ts",
   // },
   output: {
     filename: 'bundle.js',

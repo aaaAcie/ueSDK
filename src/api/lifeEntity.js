@@ -22,11 +22,12 @@ export const importBatchManagementList = (data) =>{
 
 
 // 下载模板
-export const downloadExcel = (data) =>{
+export const downloadExcel = (params) =>{
   return request({
-    method: 'post',
+    method: 'get',
     url: '/materialManagement/downloadBatchManagementTemplateExcel',
-    data
+    params,
+    responseType: "blob"
   })
 }
 

@@ -43,10 +43,10 @@ interface getMaterialParams {
   sortByName?: boolean; // false为降序 true为升序
 }
 // 读取预置素材  从接口拿到数据 给前端 1 已重构
-export async function initMaterial(project_id:string): Promise<{}> { 
-  project_id = project_id.toString()
+export async function initMaterial(projectId:string): Promise<{}> { 
+  projectId = projectId.toString()
   const { data } = await selectSourceMaterial({
-    project_id
+    projectId
   })
   let Message: Model
   return new Promise<Model>((resolve, reject) => {

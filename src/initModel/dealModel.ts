@@ -23,6 +23,12 @@ interface pageLifeEntity{
   name: string;
   page_id: string;
 }
+interface BulkParams{
+  file: File, // 指定格式的excel文件
+  passId: string; // 关卡id
+  pageId: string; // 页面id
+  projectId: string; // 项目id
+}
 // 读取底座⽣命体 向接口查询 返回给前端 1 已重构
 export async function initModels(pass_id: string): Promise<Array<Model>> {
   const { data } = await selectLifeEntity({
@@ -442,10 +448,9 @@ export async function setModelPropsByIdsSave(allParams0: Array<Model>): Promise<
 }
 
 // 批量添加⽣命体  跟ue通信并向接口提交 已重构
-export async function addModelInBulk(file: File, pass_id: string): Promise<{}> {
+export async function addModelInBulk(BulkParams: BulkParams): Promise<{}> {
   const { data } = await importBatchManagementList({
-    file,
-    pass_id
+    ...BulkParams
   })
   const allParams = data.value
   emitUIInteraction({
@@ -481,12 +486,13 @@ export async function downloadTemplateExcel(fileType: string): Promise<{}> {
   let Message: Array<Number>
 
   return new Promise<object>((resolve, reject) => {
-    if(data.code==1001){
-      Message = data.value
-      resolve(Message)
-    }else{
-      reject(new Error(data.msg))
-    }
+    // if(data.code==1001){
+    //   Message = data.value
+    //   resolve(Message)
+    // }else{
+    //   reject(new Error(data.msg))
+    // }
+    resolve(data)
   })
 }
 
