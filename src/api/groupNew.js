@@ -59,7 +59,7 @@ export const insertTreeWorkIndex = (data) =>{
     data
   })
 }
-// 私有组删除生命体的关联关系
+// 删除生命体的关联关系
 export const deleteTreeWorkIndex = (data) =>{
   return request({
     method: 'post',

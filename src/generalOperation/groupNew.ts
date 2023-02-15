@@ -338,7 +338,8 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
   })
 }
 
-// 私有组删除生命体的关联关系 发给ue 1
+// 组内删除生命体 发给ue 1
+// 私有组删除生命体关联关系，公有组删除生命体
 export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -359,7 +360,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
       Message = changeNameFunction(finalData.value)
       let code = finalData.code
       if (groupIndexDeleteParam.model.toString() === '2') {
-        // 私有组
+        // 私有组 删除belong
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -370,8 +371,17 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
           resolve({Message, ueMsg, code})
         })
       } else {
-        // 公有组
-        resolve({Message, code})
+        // 公有组 删除元素 给ue发命令 deleteModelInBulk
+        // 暂时写死只删除第一个生命体
+        emitUIInteraction({
+          Category: "deleteModelById",
+          life_entity_id: groupIndexDeleteParam.sysTreeWorkIndexDTOList[0].workId
+        })
+        addResponseEventListener("deleteModelByIdResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg, code})
+        })
       }
     }else{
       reject(new Error(finalData.msg))

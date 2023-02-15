@@ -513,3 +513,40 @@ export async function queryPageLifeEntityByName(pageLifeEntity: pageLifeEntity):
     }
   })
 }
+
+
+interface lockParams{
+  life_entity_id: string; // 生命体id
+  lockStatus: string; // 1锁定 0解锁
+}
+//  锁定、解锁生命体  跟ue通信并向接口提交 1 已重构
+export async function lockModelByIds (allParams: Array<lockParams>): Promise<{}> {
+  // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
+  let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
+
+  console.log(allParams2)
+
+  const { data } = await batchUpdateLifeEntity({
+    // "oper_type": "batchUpdateLifeEntity",
+    allParams: allParams2
+  })
+  let Message: number
+
+  emitUIInteraction({
+    Category: "lockModelByIds",
+    allParams
+  })
+  let ueMsg
+  return new Promise<object>((resolve, reject) => {
+    addResponseEventListener("lockModelByIdsResponse", (uedata?: string): Model => {
+      if(data.code==1001){
+        Message = data.value
+        ueMsg = JSON.parse(uedata)
+        resolve({ueMsg, Message, code:data.code})
+      }else{
+        reject(new Error(data.msg))
+      }
+      return ueMsg
+    })
+  })
+}
