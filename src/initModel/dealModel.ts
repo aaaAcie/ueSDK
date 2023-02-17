@@ -85,7 +85,7 @@ export function addModel(meshasset: {}): Promise<{}> {
         msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
           successCallback.shift()(msg2)
-            .then(Message => resolve({uedata, Message}))
+            .then(Message => resolve({uedata, Message, code:Message.code}))
             .catch(err => reject(new Error(err)))
         }
         
@@ -118,7 +118,7 @@ export async function deleteModelById(id: string): Promise<{}> {
         Message = data.value
         // console.log(Message)
         ueMsg = JSON.parse(uedata)
-        resolve({ ueMsg, Message })
+        resolve({ ueMsg, Message, code:data.code })
       }else{
         reject(new Error(data.msg))
         

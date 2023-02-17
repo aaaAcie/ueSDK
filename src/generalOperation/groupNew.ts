@@ -377,6 +377,15 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
           Category: "deleteModelById",
           life_entity_id: groupIndexDeleteParam.sysTreeWorkIndexDTOList[0].workId
         })
+        // let ids = []
+        // groupIndexDeleteParam.sysTreeWorkIndexDTOList.forEach(i => {
+        //   ids.push(i.workId)
+        // })
+        // console.log(ids)
+        // emitUIInteraction({
+        //   Category: "deleteModelInBulk",
+        //   life_entity_id: ids
+        // })
         addResponseEventListener("deleteModelByIdResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
