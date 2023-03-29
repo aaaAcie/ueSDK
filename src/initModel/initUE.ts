@@ -1,3 +1,12 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-01-16 09:44:34
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-03-29 17:05:45
+ * @FilePath: \mxxx\src\initModel\initUE.ts
+ * @Description: 
+ * 
+ */
 // const { load,hideOverlay,closews } = require('../basic2/app')
 const { load,closews,passStats,emitUIInteraction,addResponseEventListener } = require('../basic2/myApp')
 import { selectAllView } from '../api/api.js'
@@ -27,17 +36,22 @@ export class initUE {
     this.errorCallback = parameters.errorCallback
   }
   // 返回streamingVideo的dom实例
-  connect(projectData={project_id: '1', pass_id: 'demoProject_1'}):Promise<HTMLElement> {
-    let { project_id, pass_id } = projectData
-    console.log({
+  connect(projectData={project_id: '1', pass_id: 'demoProject_1', EVRSceneName:''}):Promise<HTMLElement> {
+    let { project_id, pass_id, EVRSceneName } = projectData
+    let obj = {
       Category: "sendMaterialAndChangePass",
-      // pass_id: "demoProject_1",
       pass_id,
       baseURL: BASE_URL + '/mix/selectAllView',
       project_id,
-      // project_id: "1",
       baseURL2: BASE_URL + '/material/selectMaterial'
-    })
+    }
+    // 增加EVRSceneName
+    if (EVRSceneName?.length>0) {
+      console.log('EVRSceneName: ', EVRSceneName)
+      obj['EVRSceneName'] = EVRSceneName
+    }
+    console.log(obj)
+
     return new Promise((resolve,reject) => {
       console.log(this.url)
       let streamingVideo = null
@@ -50,22 +64,13 @@ export class initUE {
           addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
             uedata = JSON.parse(uedata)
           })
-          emitUIInteraction({
-            Category: "sendMaterialAndChangePass",
-            // pass_id: "demoProject_1",
-            pass_id,
-            baseURL: BASE_URL + '/mix/selectAllView',
-            project_id,
-            // project_id: "1",
-            baseURL2: BASE_URL + '/material/selectMaterial'
+          emitUIInteraction(obj)
+          // 接收到ue初始化完成的信号，执行成功回调。
+          addResponseEventListener("InitPassCompleteResponse",(uedata) => {
+            this.successCallback(ws)
+            console.log('执行了successCallback--------------',uedata)
           })
-          this.successCallback(ws)
-          // emitUIInteraction({
-          //   Category: "sendMaterial",
-          //   pass_id: "demoProject_1",
-          //   baseURL: BASE_URL + '/selectAllView'
-          // })
-        },1000)
+        }, 1000)
 
         // this.successCallback(ws)
         streamingVideo = document.getElementById("streamingVideo")

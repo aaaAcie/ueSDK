@@ -6,3 +6,5 @@ export * from './basic2/myApp.js'
 // 底座连接
 export * from './initModel/initUE2'
 
+// 底座连接
+export * from './demo/demo'

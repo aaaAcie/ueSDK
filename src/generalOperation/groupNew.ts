@@ -1,4 +1,7 @@
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 import { 
   addTree,
   getNewbieTree,
@@ -618,6 +621,37 @@ export async  function searchGroup(searchGroupParams: searchGroupParams): Promis
   finalData = data
 
   let Message: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+interface groupStatus{
+  id: string; // 组id
+  lockStatus: string; // 组的锁定状态 1-锁定 0-不锁定
+  showStatus: string; // 组的显示状态 1-显示 0-不显示
+}
+// 修改组状态
+export async  function setGroupStatus(groupStatus: groupStatus): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await updateTree({
+    ...groupStatus
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){

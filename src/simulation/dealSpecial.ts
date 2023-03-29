@@ -1,5 +1,8 @@
 import { Model } from './../initModel/initModel'
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 interface sliceParams {
   life_entity_id: string;
   floor: string;

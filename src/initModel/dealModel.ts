@@ -1,5 +1,17 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-13 08:50:00
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-03-08 16:01:58
+ * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
+ * @Description: 
+ * 
+ */
 import { Model, addModelFunction } from './initModel'
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
 // import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
 import { 
