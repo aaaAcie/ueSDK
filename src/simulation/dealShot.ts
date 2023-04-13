@@ -27,6 +27,7 @@ interface modifyParam {
 interface cameraBelong{
   shot_id: string; // 镜头id
   page_id: string; // 绑定的页面id
+  switch_type: "black" | "move" | "balck+move" // 切镜头的方式
 }
 // 添加镜头 跟ue通信并向接口提交 1 已重构
 export function addShot(name: string): Promise<Object> {

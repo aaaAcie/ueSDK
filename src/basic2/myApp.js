@@ -1317,6 +1317,7 @@ function connect(WSurl) {
                 })
 
             } else if (msg.type === 'playerCount') {
+                // 跟player有关的信息会进入这里，表示当前的player总数
                 // console.log("%c[Inbound SS (playerCount)]", "background: lightblue; color: black", msg);
             } else if (msg.type === 'offer') {
                 // console.log("%c[Inbound SS (offer)]", "background: lightblue; color: black", msg);

@@ -29,7 +29,7 @@
         this.pcClient = null;
         this.dcClient = null;
         this.tnClient = null;
-
+        
         this.sdpConstraints = {
           offerToReceiveAudio: 1,
           offerToReceiveVideo: 1
