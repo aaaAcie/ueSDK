@@ -1022,6 +1022,9 @@ function setupWebRtcPlayer(htmlElement, config) {
             if(responseEventListeners.get('logAll')){
                 responseEventListeners.get('logAll')(response)
             }
+            console.log("%c[收到ue消息]", "background: pink; color: black" , response);
+
+            // console.log('--------- 收到ue消息:', response)
             // responseEventListeners.get('logAll')(response)
           }
           
