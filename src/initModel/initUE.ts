@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-04-14 11:29:28
+ * @LastEditTime: 2023-04-18 11:22:57
  * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
@@ -73,8 +73,9 @@ export class initUE {
             }else{
               // 因为selectAllView接口报错，调用失败回调
               this.errorCallback(ueMsg)
+              console.log('ue初始化失败--------------', ueMsg)
             }
-            console.log('执行了successCallback--------------',uedata)
+            console.log('接收到ue初始化完成--------------',uedata)
           })
         }, 1000)
 

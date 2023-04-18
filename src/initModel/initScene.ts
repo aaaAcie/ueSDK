@@ -95,7 +95,13 @@ export async function changePass(pass_id: string, EVRSceneName:string=''): Promi
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
       let ueMsg: {} = JSON.parse(uedata)
-      resolve(ueMsg)
+      if(ueMsg['Success'].toString() === 'true'){
+        resolve(ueMsg)
+      }else{
+        // 因为selectAllView接口报错，调用失败回调
+        reject(ueMsg)
+        console.log('ue初始化失败--------------', ueMsg)
+      }
     })
   })
 }
