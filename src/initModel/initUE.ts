@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-03-29 17:05:45
- * @FilePath: \mxxx\src\initModel\initUE.ts
+ * @LastEditTime: 2023-04-14 11:29:28
+ * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
  */
@@ -67,7 +67,13 @@ export class initUE {
           emitUIInteraction(obj)
           // 接收到ue初始化完成的信号，执行成功回调。
           addResponseEventListener("InitPassCompleteResponse",(uedata) => {
-            this.successCallback(ws)
+            let ueMsg: {} = JSON.parse(uedata)
+            if(ueMsg['Success'].toString() === 'true'){
+              this.successCallback(ws)
+            }else{
+              // 因为selectAllView接口报错，调用失败回调
+              this.errorCallback(ueMsg)
+            }
             console.log('执行了successCallback--------------',uedata)
           })
         }, 1000)

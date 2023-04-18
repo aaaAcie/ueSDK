@@ -90,7 +90,14 @@ export async function changePass(pass_id: string, EVRSceneName:string=''): Promi
       baseURL: BASE_URL + '/mix/selectAllView'
     })
   }
-  return Promise.resolve({"Success":true})
+
+  // return Promise.resolve({"Success":true,"Message": "xxxx"})
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
+      let ueMsg: {} = JSON.parse(uedata)
+      resolve(ueMsg)
+    })
+  })
 }
 
 // 修改时间 跟ue通信并向接口提交 1 已重构

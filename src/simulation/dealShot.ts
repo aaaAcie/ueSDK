@@ -15,9 +15,18 @@ import {
 } from '../api/shot.js'
 
 interface Shot {
-  shot_id: string // 镜头id
-  name: string // 镜头名称
-  position: {} // 镜头参数等
+  shot_id: string; // 镜头id
+  pass_id?: string;
+  type: "镜头"; // 分类(很重要，否则ue无法解析）
+  name?: string; // 镜头名称
+  position?: {}; // 镜头参数等
+  rotation?: {}; 
+  properties?: {
+    length: number; // 臂长 
+    sensitivity: string; // 灵敏度
+    allowRotation: number; // 是否允许旋转 1-允许 0-不允许
+    allowTranslation: number; // 是否允许平移 1-允许 0-不允许
+  };
 }
 interface modifyParam {
   shot_id: string
@@ -27,7 +36,7 @@ interface modifyParam {
 interface cameraBelong{
   shot_id: string; // 镜头id
   page_id: string; // 绑定的页面id
-  switch_type: "black" | "move" | "balck+move" // 切镜头的方式
+  switchType: "black" | "move" // 切镜头的方式
 }
 // 添加镜头 跟ue通信并向接口提交 1 已重构
 export function addShot(name: string): Promise<Object> {
