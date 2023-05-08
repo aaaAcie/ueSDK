@@ -1,7 +1,7 @@
 // import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { myChannel } from '../utils/basic.js'
 const { addResponseEventListener, emitUIInteraction } = myChannel
-
+import { dealReturn } from '../utils/fns'
 import { 
   // operCamera,
   // operCameraBelong 
@@ -11,7 +11,8 @@ import {
   selectCamera,
   updateCamera,
   deleteCameraById,
-  insertOrUpdateCameraBelong
+  insertOrUpdateCameraBelong,
+  cameraDataQueryByPageId
 } from '../api/shot.js'
 
 interface Shot {
@@ -282,4 +283,12 @@ export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Prom
     }
 
   })
+}
+
+// 通过页面ID查询镜头信息
+export async function queryShotByPageId(pageId: string): Promise<{}> {
+  const { data } = await cameraDataQueryByPageId({
+    pageId
+  })
+  return dealReturn(data)
 }

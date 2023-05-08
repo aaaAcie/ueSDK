@@ -142,28 +142,3 @@ export async function deleteInteractive(interactive_id: string): Promise<{}>{
     })
   })
 }
-
-// ue底座响应类的命令  ==>   发送 类的ancestors+动作 -> ue执行
-export function listenToExecutor(listenToExecutorParams:listenToExecutorParams): Promise<{}> { 
-  emitUIInteraction({
-    Category: "listenToExecutor",
-    ...listenToExecutorParams
-  })
-  let msg = ''
-
-  return new Promise<string>((resolve, reject) => {
-    // SendSelectModelDataResponse
-    addResponseEventListener("listenToExecutorResponse", (data?: string): string => {
-      msg = JSON.parse(data)
-      // console.log(msg)
-      resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
-      return msg
-    })
-  })
-}

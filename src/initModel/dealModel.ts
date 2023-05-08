@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-03-08 16:01:58
+ * @LastEditTime: 2023-04-24 11:36:24
  * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
@@ -41,6 +41,32 @@ interface BulkParams{
   pageId: string; // 页面id
   projectId: string; // 项目id
 }
+interface RelativeModel {
+  bindId: string, // 代表该生命体绑在【bindId】这个生命体上，传入的xyz代表与【bindId】的相对位置
+  x: number,
+  y: number,
+  z: number
+}
+interface RelativeLayer {
+  bindId: string, // 代表该生命体绑在【bindId】这个生命体上
+  layer: string // 该生命体绑在生命体的指定楼层【layer】上
+}
+interface Properties {
+  [key: string]: string;
+}
+interface modelType {
+  type: string; // 生命体类型
+  subtype: string; // ⽣命体子类型
+  properties?: Properties & {
+    meshasset?: string;
+    sliceasset?: string;
+    robotasset?: string;
+    proceduralasset?: string;
+    bgasset?: string;
+    fxasset?: string;
+  }; // 模型 标签 特效 对应有各自的素材。详见素材接口·3. 读取预置素材·
+  relative?: RelativeModel | RelativeLayer  // 绑定生命体的入参 | 绑定拆楼的入参
+}
 // 读取底座⽣命体 向接口查询 返回给前端 1 已重构
 export async function initModels(pass_id: string): Promise<Array<Model>> {
   const { data } = await selectLifeEntity({
@@ -76,10 +102,10 @@ export async function initModels(pass_id: string): Promise<Array<Model>> {
 
 
 // 添加⽣命体  跟ue通信并向接口提交 已重构
-export function addModel(meshasset: {}): Promise<{}> {
+export function addModel(modelType: modelType): Promise<{}> {
   emitUIInteraction({
     Category: "addModel",
-    ...meshasset
+    ...modelType
   })
     
   let ueMsg: Model

@@ -43,7 +43,12 @@ export * from './generalOperation/page'
 export * from './generalOperation/material'
 
 // 操作类 执行者组
-export * from './generalOperation/label'
+// export * from './generalOperation/label'
+export * from './generalOperation/labelNew'
+
 
 // 操作项目
 export * from './generalOperation/project'
+
+// 操作全局类事件
+export * from './simulation/dealGlobalEvent'

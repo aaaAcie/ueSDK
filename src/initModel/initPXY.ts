@@ -59,13 +59,13 @@ export class initUEPXY {
       baseURL2: BASE_URL + '/material/selectMaterial'
     }
     // 增加EVRSceneName
-    if (EVRSceneName.length>0) {
+    if (EVRSceneName?.length>0) {
       obj['EVRSceneName'] = EVRSceneName
     }
     console.log(obj)
 
     return new Promise((resolve,reject) => {
-      console.log(this.url)
+      // console.log(this.url)
       let streamingVideo = null
       let Message: {}
 

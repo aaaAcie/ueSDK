@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-04-18 11:22:57
+ * @LastEditTime: 2023-05-05 09:27:27
  * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
@@ -11,22 +11,26 @@
 const { load,closews,passStats,emitUIInteraction,addResponseEventListener } = require('../basic2/myApp')
 import { selectAllView } from '../api/api.js'
 import { BASE_URL } from '../utils/basic.js'
-
+type ConnectStatus = "origin" | "read" | "bind" | "preview" | "edit" | "refresh";
 interface ConnectParams {
   url: string // 底座连接地址
   domId: string // 底座dom，⼤屏有固定的底座位置
   resolution?: string // 底座分辨率
-  options?: object // 可选剩余参数
-  successCallback?: () => {} // 连接成功回调⽅法
-  errorCallback?: () => {} // 连接失败回调⽅法 
+  options?: {
+    status: ConnectStatus
+  } // 可选剩余参数
+  successCallback?: (ws: WebSocket) => {} // 连接成功回调⽅法
+  errorCallback?: (v?) => {} // 连接失败回调⽅法 
 }
 
-export class initUE {
+export class initUE implements ConnectParams {
   url: string
   domId: string
   stats: object
   resolution?: string // 底座分辨率
-  options?: object // 可选剩余参数
+  options?: {
+    status: ConnectStatus
+  } // 可选剩余参数
   successCallback?: (ws: WebSocket) => {} // 接收当前的websocket连接实例
   errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
@@ -34,6 +38,7 @@ export class initUE {
     this.domId = parameters.domId
     this.successCallback = parameters.successCallback
     this.errorCallback = parameters.errorCallback
+    this.options = parameters.options
   }
   // 返回streamingVideo的dom实例
   connect(projectData={project_id: '1', pass_id: 'demoProject_1', EVRSceneName:''}):Promise<HTMLElement> {
@@ -43,13 +48,17 @@ export class initUE {
       pass_id,
       baseURL: BASE_URL + '/mix/selectAllView',
       project_id,
-      baseURL2: BASE_URL + '/material/selectMaterial'
+      baseURL2: BASE_URL + '/material/selectMaterial',
+      // origin read bind preview edit refresh
+      status: this.options?.status
     }
     // 增加EVRSceneName
-    if (EVRSceneName?.length>0) {
-      console.log('EVRSceneName: ', EVRSceneName)
-      obj['EVRSceneName'] = EVRSceneName
-    }
+    // if (EVRSceneName?.length>0) {
+    //   console.log('EVRSceneName: ', EVRSceneName)
+    //   obj['EVRSceneName'] = EVRSceneName
+    // }
+    // 默认增加EVRSceneName
+    obj['EVRSceneName'] = "Test3"
     console.log(obj)
 
     return new Promise((resolve,reject) => {
