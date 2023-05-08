@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-05-04 16:53:58
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-08 09:48:43
+ * @LastEditTime: 2023-05-08 17:09:10
  * @FilePath: \mxxx\src\api\globalEvent.js
  * @Description: 
  * 
@@ -58,7 +58,7 @@ export const addEventRecord = (data) =>{
 export const queryDict = (data) =>{
   return request({
     method: 'post',
-    url: '/dict/data/list',
+    url: '/dict/type/selectPlus',
     data
   })
 }
