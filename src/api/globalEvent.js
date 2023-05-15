@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-05-04 16:53:58
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-08 17:09:10
+ * @LastEditTime: 2023-05-09 09:27:17
  * @FilePath: \mxxx\src\api\globalEvent.js
  * @Description: 
  * 
@@ -55,10 +55,10 @@ export const addEventRecord = (data) =>{
 }
 
 // 根据条件批量查询字典数据 eventType
-export const queryDict = (data) =>{
+export const queryDict = (params) =>{
   return request({
-    method: 'post',
+    method: 'get',
     url: '/dict/type/selectPlus',
-    data
+    params
   })
 }

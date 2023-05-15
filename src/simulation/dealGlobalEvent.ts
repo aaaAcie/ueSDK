@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-04-27 17:52:28
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-08 09:59:52
+ * @LastEditTime: 2023-05-09 09:28:22
  * @FilePath: \mxxx\src\simulation\dealGlobalEvent.ts
  * @Description: 
  * 
@@ -106,8 +106,8 @@ interface eventTypeParams{
   eventType?: string, // 全局类事件类型
 }
 export async function queryEventType(eventTypeParams: eventTypeParams): Promise<{}>{
-  const { data } = await getGlobalEvent({
-    dictType: "GLOBAL_EVENT_TYPE",
+  const { data } = await queryDict({
+    type: "GLOBAL_EVENT_TYPE",
     ...eventTypeParams
   })
   return dealReturn(data)

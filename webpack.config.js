@@ -2,23 +2,14 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-04 16:18:22
+ * @LastEditTime: 2023-05-15 15:57:38
  * @FilePath: \mxxx\webpack.config.js
  * @Description: 
  * 
  */
-/*
- * @Author: 徐亦快 913587892@qq.com
- * @Date: 2023-02-13 08:50:00
- * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-04-25 15:23:36
- * @FilePath: \WebServers424\mxxx\webpack.config.js
- * @Description: 
- * 
- */
 const path = require("path")
-const resolve = path.resolve
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const resolve = path.resolve
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   mode: "development",
   optimization:{

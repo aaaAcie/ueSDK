@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-04-27 09:03:55
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-06 11:30:58
+ * @LastEditTime: 2023-05-10 10:32:48
  * @FilePath: \mxxx\src\generalOperation\labelNew.ts
  * @Description: 
  * 
@@ -84,7 +84,7 @@ export async function drillLifeEntityExecutor(drillLifeEntityExecutorParam: dril
   return dealReturn(data)
 }
 interface executorLifeEntityIndexParam{
-  dirId: string, // 类id
+  dirIds: Array<string>, // 类id
   lifeEntityId: string, // 生命体id 
   model: 3,
   projectId: string, // 项目id
@@ -131,7 +131,7 @@ interface deleteLifeEntityExecutorIndex{
 }
 export async function deleteLifeEntityExecutor(deleteLifeEntityExecutorIndex: deleteLifeEntityExecutorIndex): Promise<{}> {
   const { data } = await removeSysTree({
-    deleteLifeEntityExecutorIndex
+    ...deleteLifeEntityExecutorIndex
   })
   return dealReturn(data)
 }

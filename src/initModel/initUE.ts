@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-05 09:27:27
- * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
+ * @LastEditTime: 2023-05-09 14:58:08
+ * @FilePath: \mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
  */
@@ -50,7 +50,7 @@ export class initUE implements ConnectParams {
       project_id,
       baseURL2: BASE_URL + '/material/selectMaterial',
       // origin read bind preview edit refresh
-      status: this.options?.status
+      status: this.options?.status || 'bind'
     }
     // 增加EVRSceneName
     // if (EVRSceneName?.length>0) {
@@ -59,7 +59,12 @@ export class initUE implements ConnectParams {
     // }
     // 默认增加EVRSceneName
     obj['EVRSceneName'] = "Test3"
-    console.log(obj)
+    selectAllView(pass_id).then(({data}) => {
+      if (data.code === 1001) {
+        console.log(data.value)
+      }
+    })
+    console.log('向ue发送的数据 ======== ',obj)
 
     return new Promise((resolve,reject) => {
       console.log(this.url)
