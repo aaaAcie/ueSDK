@@ -23,10 +23,11 @@ interface Shot {
   position?: {}; // 镜头参数等
   rotation?: {}; 
   properties?: {
-    length: number; // 臂长 
-    sensitivity: string; // 灵敏度
+    length: number; // 臂长 范围 [500, 100000]
     allowRotation: number; // 是否允许旋转 1-允许 0-不允许
     allowTranslation: number; // 是否允许平移 1-允许 0-不允许
+    sensitivity: string; // 灵敏度  平移[1, 300]
+    zoom: number; // 缩放 允许小数
   };
 }
 interface modifyParam {
