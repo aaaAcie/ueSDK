@@ -29,7 +29,7 @@ export class initUEPXY {
   }
   resolution?: string // 底座分辨率
   options?: object // 可选剩余参数
-  successCallback?: ({ poster, initMouseEvent }) => {} // 接收当前的websocket连接实例
+  successCallback?: ({ poster, initMouseEvent, emitUIInteraction, addResponseEventListener }) => {}
   errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
     // this.url = parameters.url
@@ -79,7 +79,7 @@ export class initUEPXY {
             console.log('---------------------------',uedata);
           })
           emitUIInteraction(obj)
-          this.successCallback({ poster, initMouseEvent })
+          this.successCallback({ poster, initMouseEvent, emitUIInteraction: Function, addResponseEventListener: Function })
         },1000)
         resolve({'success': true})
       }).catch((reason) => {
