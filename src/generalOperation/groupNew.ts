@@ -1,4 +1,7 @@
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 import { 
   addTree,
   getNewbieTree,
@@ -338,7 +341,8 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
   })
 }
 
-// 私有组删除生命体的关联关系 发给ue 1
+// 组内删除生命体 发给ue 1
+// 私有组删除生命体关联关系，公有组删除生命体
 export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteParam): Promise<{}> {
   let finalData: {
     code: number,
@@ -359,7 +363,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
       Message = changeNameFunction(finalData.value)
       let code = finalData.code
       if (groupIndexDeleteParam.model.toString() === '2') {
-        // 私有组
+        // 私有组 删除belong
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -370,8 +374,26 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
           resolve({Message, ueMsg, code})
         })
       } else {
-        // 公有组
-        resolve({Message, code})
+        // 公有组 删除元素 给ue发命令 deleteModelInBulk
+        // 暂时写死只删除第一个生命体
+        emitUIInteraction({
+          Category: "deleteModelById",
+          life_entity_id: groupIndexDeleteParam.sysTreeWorkIndexDTOList[0].workId
+        })
+        // let ids = []
+        // groupIndexDeleteParam.sysTreeWorkIndexDTOList.forEach(i => {
+        //   ids.push(i.workId)
+        // })
+        // console.log(ids)
+        // emitUIInteraction({
+        //   Category: "deleteModelInBulk",
+        //   life_entity_id: ids
+        // })
+        addResponseEventListener("deleteModelByIdResponse", (uedata?: string): void => {
+          uedata = JSON.parse(uedata)
+          ueMsg = uedata
+          resolve({Message, ueMsg, code})
+        })
       }
     }else{
       reject(new Error(finalData.msg))
@@ -599,6 +621,37 @@ export async  function searchGroup(searchGroupParams: searchGroupParams): Promis
   finalData = data
 
   let Message: {}
+
+  return new Promise<{}>((resolve, reject) => {
+    if(finalData.code==1001){
+      Message = finalData.value
+      let code = finalData.code
+      resolve({Message, code})
+    }else{
+      reject(new Error(finalData.msg))
+    }
+
+  })
+}
+interface groupStatus{
+  id: string; // 组id
+  lockStatus: string; // 组的锁定状态 1-锁定 0-不锁定
+  showStatus: string; // 组的显示状态 1-显示 0-不显示
+}
+// 修改组状态
+export async  function setGroupStatus(groupStatus: groupStatus): Promise<{}> {
+  let finalData: {
+    code: number,
+    value: [],
+    msg: ''
+  }
+  const { data } = await updateTree({
+    ...groupStatus
+  })
+  finalData = data
+
+  let Message: {}
+  // let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
     if(finalData.code==1001){

@@ -1,10 +1,19 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-03-08 14:12:00
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-03-08 15:50:08
+ * @FilePath: \WebServers424\mxxx\src\index3.ts
+ * @Description: 
+ * 
+ */
 
 // 通过*号直接继承某一个模块的接口
 
-export * from './basic2/myApp.js'
+export * from './pxy/pxy'
 
 // 底座连接
-export * from './initModel/initUE'
+export * from './initModel/initPXY'
 
 // 生命体
 export * from './initModel/initModel'
@@ -43,12 +52,7 @@ export * from './generalOperation/page'
 export * from './generalOperation/material'
 
 // 操作类 执行者组
-// export * from './generalOperation/label'
-export * from './generalOperation/labelNew'
-
+export * from './generalOperation/label'
 
 // 操作项目
 export * from './generalOperation/project'
-
-// 操作全局类事件
-export * from './simulation/dealGlobalEvent'

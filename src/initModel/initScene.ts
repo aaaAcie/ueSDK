@@ -1,5 +1,8 @@
 // 场景设置
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 // import { operPoint, selectAllView } from '../api/api.js'
 import { BASE_URL } from '../utils/basic.js'
 import { 
@@ -72,26 +75,35 @@ export async function readPass(project_id: string): Promise<{}> {
 }
 
 // 关卡切换 只跟ue通信 并向ue发消息
-export async function changePass(pass_id: string): Promise<{}> {
-  emitUIInteraction({
-    Category: "changePass",
-    pass_id,
-    baseURL: BASE_URL + '/mix/selectAllView'
+export async function changePass(pass_id: string, EVRSceneName:string=''): Promise<{}> {
+  if (EVRSceneName.length > 0) {
+    emitUIInteraction({
+      Category: "changePass",
+      pass_id,
+      baseURL: BASE_URL + '/mix/selectAllView',
+      EVRSceneName
+    })    
+  }else{
+    emitUIInteraction({
+      Category: "changePass",
+      pass_id,
+      baseURL: BASE_URL + '/mix/selectAllView'
+    })
+  }
+
+  // return Promise.resolve({"Success":true,"Message": "xxxx"})
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
+      let ueMsg: {} = JSON.parse(uedata)
+      if(ueMsg['Success'].toString() === 'true'){
+        resolve(ueMsg)
+      }else{
+        // 因为selectAllView接口报错，调用失败回调
+        reject(ueMsg)
+        console.log('ue初始化失败--------------', ueMsg)
+      }
+    })
   })
-  // let ueMsg: {}
-  // return new Promise<{}>((resolve, reject) => {
-  //   addResponseEventListener("changePassResponse", (uedata?: string): {} => {
-  //     try {
-  //       ueMsg = JSON.parse(uedata)['Message']
-  //       // msg = data
-  //       resolve(ueMsg)
-  //     } catch (error) {
-  //       reject(new Error(error))
-  //     }
-  //     return ueMsg
-  //   })
-  // })
-  return Promise.resolve({"Success":true})
 }
 
 // 修改时间 跟ue通信并向接口提交 1 已重构

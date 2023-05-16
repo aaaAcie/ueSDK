@@ -1,3 +1,12 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-13 08:50:00
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-05-11 15:38:27
+ * @FilePath: \mxxx\src\initModel\initModel.ts
+ * @Description: 
+ * 
+ */
 // 生命体相关
 
 export interface EventParams { 
@@ -33,6 +42,8 @@ import {
   insertLifeEntity,
   addSpecialBelong
 } from '../api/lifeEntity.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
 
 export async function addModelFunction(msg2: Model) {
   const { data } = await insertLifeEntity({
@@ -41,6 +52,17 @@ export async function addModelFunction(msg2: Model) {
   // belong = msg2.belong
   if(data.code==1001){
     let Message = data.value
+    // 如果收到belong的消息 即若绑定poi的归属信息同步添加成功
+    if (Message.belong) {
+      emitUIInteraction({
+        Category: "addBelong",
+        Message
+      })
+      addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+        uedata = JSON.parse(uedata)
+        // resolve({Message, ueMsg:uedata, code})
+      })
+    }
     const { data: d } = await addSpecialBelong({
       lifeEntityId: msg2.life_entity_id,
       // pageId: "AlwaysShow",

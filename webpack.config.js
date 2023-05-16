@@ -1,23 +1,34 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-13 08:50:00
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-05-15 15:57:38
+ * @FilePath: \mxxx\webpack.config.js
+ * @Description: 
+ * 
+ */
 const path = require("path")
-const resolve = path.resolve
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const resolve = path.resolve
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   mode: "development",
   optimization:{
     minimize: false // 关闭代码压缩，可选
   },
   target: 'web',
-  entry: "./src/index.ts",
-  // entry: {
-  //   // bundle: "./src/index.ts",
-  //   bundle2: "./src/index2.ts",
-  // },
+  // entry: "./src/index.ts",
+  entry: {
+    bundle: "./src/index.ts", // paas平台
+  //   bundle2: "./src/index2.ts", // 普通项目
+    // bundle3: "./src/index3.ts", // 平行云
+  },
   output: {
-    filename: 'bundle.js',
+    // filename: 'bundle.js',
+    filename: '[name].js',
     // filename: '[name].[chunkhash:5].js',
     // path: [path.resolve(__dirname, "dist"), path.resolve('../.vite-ptoject/')],
     path: path.resolve('../vite-project/public/static'),
-
+    // path: path.resolve('../streaming demo/public/static'),
     libraryTarget: "umd",
     globalObject: "this",
     library: "mxxx"

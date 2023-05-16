@@ -260,7 +260,7 @@ function webRtcPlayer(parOptions) {
             }
 
             datachannel.onclose = function (e) {
-                console.log("Data channel connected", e);
+                console.log("Data channel closed", e);
             }
 
             datachannel.onmessage = function (e) {

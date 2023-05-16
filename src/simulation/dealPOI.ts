@@ -1,24 +1,48 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-01 17:20:47
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-03-28 11:29:32
+ * @FilePath: \WebServers424\mxxx\src\simulation\dealPOI.ts
+ * @Description: 
+ * 
+ */
 import { Model,addModelFunction } from './../initModel/initModel'
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 // import { operLifeEntity } from '../api/api.js'
 import { insertLifeEntity,updateLifeEntity } from '../api/lifeEntity.js'
 
-interface TextStyle {
-  fontSize: number;
-  fontFamily: string;
-  fontColor: string;
-}
-class POIModel extends Model {
-  // belong: string;
-  group: string;
-  textStyle: TextStyle; // 文字效果
-  // offset: { x: number; y: number }; // 位移
-  // effect: {}; // 特效，预留
+interface POItype {
+  type: "标签",
+  subtype: "custom",
+  below_type: "title",
+  properties: {
+    text: string,
+    fontsize: number,
+    fontcolor: string, // RGBA 如 "255,255,10,0.6"
+    fontpadding: string, // 左边距，上边距 如"1.0,1.0"
+    bgasset: string, // 来源于素材3.1
+    bgcolor: string // RGBA 如 "255,255,10,0.6"
+  },
+  data_properties: {
+    canvas_url: string,
+    canvas_action: "click" | "hover",
+    canvas_size: string // 宽高之间用逗号分开 如"100,200"
+  }
+  relative?: {
+    bindId?: string, // 被绑定的poi才需要传的属性，代表它被绑在bindId这个生命体上
+    x: 0,
+    y: 0,
+    z: 10
+  },  // 被绑定的poi才需要传的属性
 }
 
 // 增加POI 跟ue通信并走接口提交保存 已重构
 // POItype: 标题式 图标式 文本弹窗 视频弹窗式
-export async function addPOIModel (POItype: String): Promise<{}> {
+export async function addPOIModel (POItype: POItype): Promise<{}> {
   // 增加POI 返回当前POI 属性
   emitUIInteraction({
     // Category: "addPOIModel",
@@ -27,7 +51,7 @@ export async function addPOIModel (POItype: String): Promise<{}> {
   })
   // operLifeEntity().then(data => console.log('0000000 ',data.data))
   
-  let ueMsg: POIModel
+  let ueMsg: POItype
   let msg2: {}
   let successCallback = []
   successCallback.push((msg2) => {

@@ -1,4 +1,7 @@
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+import { dealReturn } from '../utils/fns'
 import { 
   // operCamera,
   // operCameraBelong 
@@ -8,13 +11,24 @@ import {
   selectCamera,
   updateCamera,
   deleteCameraById,
-  insertOrUpdateCameraBelong
+  insertOrUpdateCameraBelong,
+  cameraDataQueryByPageId
 } from '../api/shot.js'
 
 interface Shot {
-  shot_id: string // 镜头id
-  name: string // 镜头名称
-  position: {} // 镜头参数等
+  shot_id: string; // 镜头id
+  pass_id?: string;
+  type: "镜头"; // 分类(很重要，否则ue无法解析）
+  name?: string; // 镜头名称
+  position?: {}; // 镜头参数等
+  rotation?: {}; 
+  properties?: {
+    length: number; // 臂长 范围 [500, 100000]
+    allowRotation: number; // 是否允许旋转 1-允许 0-不允许
+    allowTranslation: number; // 是否允许平移 1-允许 0-不允许
+    sensitivity: string; // 灵敏度  平移[1, 300]
+    zoom: number; // 缩放 允许小数
+  };
 }
 interface modifyParam {
   shot_id: string
@@ -24,6 +38,7 @@ interface modifyParam {
 interface cameraBelong{
   shot_id: string; // 镜头id
   page_id: string; // 绑定的页面id
+  switchType: "black" | "move" // 切镜头的方式
 }
 // 添加镜头 跟ue通信并向接口提交 1 已重构
 export function addShot(name: string): Promise<Object> {
@@ -269,4 +284,12 @@ export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Prom
     }
 
   })
+}
+
+// 通过页面ID查询镜头信息
+export async function queryShotByPageId(pageId: string): Promise<{}> {
+  const { data } = await cameraDataQueryByPageId({
+    pageId
+  })
+  return dealReturn(data)
 }

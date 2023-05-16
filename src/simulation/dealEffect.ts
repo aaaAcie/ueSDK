@@ -1,5 +1,17 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-01 17:20:47
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-02-23 09:44:17
+ * @FilePath: \WebServers424\mxxx\src\simulation\dealEffect.ts
+ * @Description: 
+ * 
+ */
 import { Model, addModelFunction } from './../initModel/initModel'
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 // import { operLifeEntity } from '../api/api.js'
 import { insertLifeEntity,updateLifeEntity } from '../api/lifeEntity.js'
 

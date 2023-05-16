@@ -86,7 +86,7 @@ export const operCameraBelong = (data) =>{
 export const selectAllView = (pass_id) =>{
   return request({
     method: 'post',
-    url: '/selectAllView',
+    url: '/mix/selectAllView',
     data: {
       pass_id
     }

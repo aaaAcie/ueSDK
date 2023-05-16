@@ -1,4 +1,7 @@
-import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
+import { myChannel } from '../utils/basic.js'
+const { addResponseEventListener, emitUIInteraction } = myChannel
+
 // import { operInteractive } from '../api/api.js'
 import { 
   selectInteractive,
@@ -8,8 +11,9 @@ import {
 } from '../api/Interactive.js'
 
 interface Interactive {
-  trigger: string; // 触发事件的方式 单击 双击
-  event: string; // 触发的事件
+  trigger: string; // 触发事件的方式 click | dbclick | mouseenter | mouseleave
+  event: string; // 触发的事件 show | hide | highlight | unhighlight | toggleHignlight | focus | move | 
+  params?: string; //  事件的参数，拼接方式： "direction=up&distance=10"; 
   target: Array<string>; // 目标生命体的id
 }
 interface AllInteractives {
@@ -135,31 +139,6 @@ export async function deleteInteractive(interactive_id: string): Promise<{}>{
         reject(new Error(data.msg))
       }
       return ueMsg
-    })
-  })
-}
-
-// ue底座响应类的命令  ==>   发送 类的ancestors+动作 -> ue执行
-export function listenToExecutor(listenToExecutorParams:listenToExecutorParams): Promise<{}> { 
-  emitUIInteraction({
-    Category: "listenToExecutor",
-    ...listenToExecutorParams
-  })
-  let msg = ''
-
-  return new Promise<string>((resolve, reject) => {
-    // SendSelectModelDataResponse
-    addResponseEventListener("listenToExecutorResponse", (data?: string): string => {
-      msg = JSON.parse(data)
-      // console.log(msg)
-      resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
-      return msg
     })
   })
 }
