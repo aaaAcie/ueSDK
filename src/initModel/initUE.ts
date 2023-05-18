@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-18 09:10:10
+ * @LastEditTime: 2023-05-18 11:43:50
  * @FilePath: \mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
@@ -19,7 +19,7 @@ interface ConnectParams {
   options?: {
     status: ConnectStatus
   } // 可选剩余参数
-  successCallback?: (ws: WebSocket) => {} // 连接成功回调⽅法
+  successCallback?: (ws: WebSocket, ueMsg:{}) => {} // 连接成功回调⽅法
   errorCallback?: (v?) => {} // 连接失败回调⽅法 
 }
 
@@ -31,7 +31,7 @@ export class initUE implements ConnectParams {
   options?: {
     status: ConnectStatus
   } // 可选剩余参数
-  successCallback?: (ws: WebSocket) => {} // 接收当前的websocket连接实例
+  successCallback?: (ws: WebSocket, ueMsg:{}) => {} // 接收当前的websocket连接实例
   errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
     this.url = parameters.url
@@ -71,7 +71,7 @@ export class initUE implements ConnectParams {
       let streamingVideo = null
       let Message: {}
       // load(this.url)
-      load(this.url, this.domId).then((ws) => {
+      load(this.url, this.domId).then((ws:WebSocket) => {
         // 连接成功后 可以在这里给ue发消息，发送当前项目的默认关卡
         // pass_id
         setTimeout(() => {
@@ -83,7 +83,7 @@ export class initUE implements ConnectParams {
           addResponseEventListener("InitPassCompleteResponse",(uedata) => {
             let ueMsg: {} = JSON.parse(uedata)
             if(ueMsg['Success'].toString() === 'true'){
-              this.successCallback(ws)
+              this.successCallback(ws, ueMsg)
             }else{
               // 因为selectAllView接口报错，调用失败回调
               this.errorCallback(ueMsg)

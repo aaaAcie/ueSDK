@@ -300,10 +300,14 @@ export async  function drillGroup(drillGroupParam: drillGroupParam): Promise<{}>
 }
 
 // 私有组引入生命体 发送给ue 1
+interface belongParams{
+  life_entity_id: string,
+  belong: Array<{page_id: string, showStatus: string}>
+}
 export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    value: Array<belongParams>,
     msg: ''
   }
   const { data } = await insertTreeWorkIndex({
@@ -311,7 +315,7 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
   })
   finalData = data
 
-  let Message: {}
+  let Message: Array<belongParams>
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
@@ -319,8 +323,12 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
       // Message = finalData.value
       Message = changeNameFunction(finalData.value)
       let code = finalData.code
+      // 私有组
       if (groupIndexParam.model.toString() === '2') {
-        // 私有组
+        let allParams: Array<{"life_entity_id": string, "showStatus": string}> = []
+        Message.forEach(item => {
+          allParams.push({"life_entity_id": item.life_entity_id, "showStatus": "1"})
+        })
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -328,6 +336,11 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
+          // 私有组引入生命体后，生命体应该立刻显示。（只跟ue通信）
+          emitUIInteraction({
+            Category: "showModelByIds",
+            allParams
+          })
           resolve({Message, ueMsg, code})
         })
       } else {
@@ -346,7 +359,7 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
 export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteParam): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    value: Array<belongParams>,
     msg: ''
   }
   const { data } = await deleteTreeWorkIndex({
@@ -354,7 +367,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
   })
   finalData = data
 
-  let Message: {}
+  let Message: Array<belongParams>
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
@@ -362,8 +375,13 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
       // Message = finalData.value
       Message = changeNameFunction(finalData.value)
       let code = finalData.code
+      // 私有组
       if (groupIndexDeleteParam.model.toString() === '2') {
-        // 私有组 删除belong
+        let allParams: Array<{"life_entity_id": string, "showStatus": string}> = []
+        Message.forEach(item => {
+          allParams.push({"life_entity_id": item.life_entity_id, "showStatus": "0"})
+        })
+        // 删除belong
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -371,6 +389,11 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
+          // 私有组取消引入生命体后，生命体应该立刻不显示。（只跟ue通信）
+          emitUIInteraction({
+            Category: "showModelByIds",
+            allParams
+          })
           resolve({Message, ueMsg, code})
         })
       } else {
