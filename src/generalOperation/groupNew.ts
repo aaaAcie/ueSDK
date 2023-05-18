@@ -389,10 +389,13 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
-          // 私有组取消引入生命体后，生命体应该立刻不显示。（只跟ue通信）
+          // 私有组取消引入生命体后，1. 生命体应该立刻不显示。2.取消选中状态（只跟ue通信）
           emitUIInteraction({
             Category: "showModelByIds",
             allParams
+          })
+          emitUIInteraction({
+            Category: "SelectCancel",
           })
           resolve({Message, ueMsg, code})
         })
