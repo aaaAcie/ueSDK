@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-11 15:38:27
+ * @LastEditTime: 2023-05-16 11:18:51
  * @FilePath: \mxxx\src\initModel\initModel.ts
  * @Description: 
  * 
@@ -63,6 +63,7 @@ export async function addModelFunction(msg2: Model) {
         // resolve({Message, ueMsg:uedata, code})
       })
     }
+    // AlwaysShow乔治自己去添加了
     const { data: d } = await addSpecialBelong({
       lifeEntityId: msg2.life_entity_id,
       // pageId: "AlwaysShow",

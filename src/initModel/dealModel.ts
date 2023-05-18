@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-04-24 11:36:24
- * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
+ * @LastEditTime: 2023-05-16 12:08:58
+ * @FilePath: \mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
  */
@@ -417,14 +417,7 @@ export function getModelClick(): Promise<{}> {
     // SendSelectModelDataResponse
     addResponseEventListener("getModelClickResponse", (data?: string): string => {
       msg = JSON.parse(data)
-      // console.log(msg)
       resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
       return msg
     })
   })
@@ -445,12 +438,6 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
       // console.log(msg)
       cb(msg)
       resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
       return msg
     })
   })
@@ -497,17 +484,27 @@ export async function addModelInBulk(BulkParams: BulkParams): Promise<{}> {
   })
     
   let ueMsg: Model
+  let uedataBelong: {}
   let Message: {}
 
   return new Promise<object>((resolve, reject) => {
     if(data.code==1001){
+      let BelongMessage = data.value.lifeEntityBelongList
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
-        ueMsg = uedata['Message']
-
+        let uedataAddModel = JSON.parse(uedata)
+        ueMsg = uedataAddModel['Message']
+      })
+      
+      // 新增归属
+      emitUIInteraction({
+        Category: "addBelong",
+        Message: BelongMessage
+      })
+      addResponseEventListener("addBelongResponse", (uedata?: string): void => {
+        uedataBelong = JSON.parse(uedata)
       })
       Message = allParams
-      resolve({Message, ueMsg})
+      resolve({Message, ueMsg, uedataBelong})
     }else{
       reject(new Error(data.msg))
     }
@@ -585,6 +582,28 @@ export async function lockModelByIds (allParams: Array<lockParams>): Promise<{}>
         reject(new Error(data.msg))
       }
       return ueMsg
+    })
+  })
+}
+
+// 底座执行特殊事件
+interface eventParams{
+  LevelEventName: string
+}
+export async function callLevelEvent (eventParams: eventParams): Promise<{}> {
+  emitUIInteraction({
+    Category: "callLevelEvent",
+    ...eventParams
+  })
+  let msg
+
+  return new Promise<Model>((resolve, reject) => {
+    // SendSelectModelDataResponse
+    addResponseEventListener("callLevelEventResponse", (data?: string): {} => {
+      msg = JSON.parse(data)
+      // console.log(msg)
+      resolve(msg)
+      return msg
     })
   })
 }

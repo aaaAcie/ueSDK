@@ -162,3 +162,47 @@ export async function setInitShot(initShotParams: InitShotParams): Promise<{}> {
     })
   })
 }
+
+// 切换ue状态 只跟ue通信 并向ue发消息
+interface projectData{ 
+  project_id: string,
+  pass_id: string,
+  EVRSceneName: string,
+  status: string
+}
+export async function changeUEStatus(projectData: projectData): Promise<{}> {
+  let { project_id, pass_id, EVRSceneName, status } = projectData
+  let obj = {
+    Category: "sendMaterialAndChangePass",
+    pass_id,
+    baseURL: BASE_URL + '/mix/selectAllView',
+    project_id,
+    baseURL2: BASE_URL + '/material/selectMaterial',
+    // origin read bind preview edit
+    status: status, // bind edit
+    EVRSceneName
+  }
+  // 默认增加EVRSceneName
+  obj['EVRSceneName'] = "Test3"
+  console.log('向ue发送的数据 ======== ',obj)
+  return new Promise<{}>((resolve, reject) => {
+    addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
+      uedata = JSON.parse(uedata)
+    })
+    emitUIInteraction(obj)
+    // 接收到ue初始化完成的信号，执行成功回调。edit没发，origin,read,bind,preview发了
+    addResponseEventListener("InitPassCompleteResponse",(uedata) => {
+      let ueMsg: {} = JSON.parse(uedata)
+      if(ueMsg['Success'].toString() === 'true'){
+        // this.successCallback(ueMsg)
+        resolve(ueMsg)
+      }else{
+        // 因为selectAllView接口报错，调用失败回调
+        // this.errorCallback(ueMsg)
+        console.log('ue初始化失败--------------', ueMsg)
+        reject(ueMsg)
+      }
+      console.log('接收到ue初始化完成--------------',uedata)
+    })
+  })
+}
