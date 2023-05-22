@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-16 12:08:58
+ * @LastEditTime: 2023-05-19 12:32:32
  * @FilePath: \mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
@@ -222,7 +222,9 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
     if(data.code==1001){
-      Message = data.value
+      // Message = data.value
+      Message = data // 全返回
+
       // console.log(Message)
       resolve(Message)
     }else{
@@ -599,7 +601,7 @@ export async function callLevelEvent (eventParams: eventParams): Promise<{}> {
 
   return new Promise<Model>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("callLevelEventResponse", (data?: string): {} => {
+    addResponseEventListener("CallLevelEventResponse", (data?: string): {} => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
