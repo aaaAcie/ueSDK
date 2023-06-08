@@ -2,23 +2,15 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-19 12:32:32
- * @FilePath: \mxxx\src\initModel\dealModel.ts
+ * @LastEditTime: 2023-06-07 10:25:27
+ * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
  */
 import { Model, addModelFunction } from './initModel'
-// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { myChannel } from '../utils/basic.js'
 const { addResponseEventListener, emitUIInteraction } = myChannel
-
-import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-// import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
-import { 
-  // importBatchManagementList,
-  // downloadExcel 
-} from '../api/detail.js'
-
+import { dealReturn } from '../utils/fns'
 import {
   selectPageLifeEntityListByName,
   importBatchManagementList,
@@ -28,9 +20,13 @@ import {
   deleteLifeEntity,
   batchUpdateLifeEntity,
   updateLifeEntity,
-  addSpecialBelong
+  addSpecialBelong,
+  deleteBindLifeEntity
 } from '../api/lifeEntity.js'
-
+interface ModelParams {
+  project_id?: string,
+  pass_id?: string
+}
 interface pageLifeEntity{
   name: string;
   page_id: string;
@@ -68,35 +64,19 @@ interface modelType {
   relative?: RelativeModel | RelativeLayer  // 绑定生命体的入参 | 绑定拆楼的入参
 }
 // 读取底座⽣命体 向接口查询 返回给前端 1 已重构
-export async function initModels(pass_id: string): Promise<Array<Model>> {
+export async function initModels(ModelParams: ModelParams): Promise<Array<Model>> {
   const { data } = await selectLifeEntity({
-    // "oper_type": "selectLifeEntity",
-    pass_id
+    ...ModelParams
   })
   let Message: Array<Model> = []
 
   return new Promise<Array<Model>>((resolve, reject) => {
     if(data.code==1001){
       Message = data.value
-      // emitUIInteraction({
-      //   Category: "initModels",
-      //   Message 
-      // })
       resolve(Message)
     }else{
       reject(new Error(data.msg))
     }
-    // 这里的response名字跟ue对上
-    // addResponseEventListener("initModelsResponse", (data: string): ModelParams => {
-    //   msg = JSON.parse(data)
-    //   // 二次校验，等ue做状态码后修改
-    //   if(msg.Category == "initModelsResponse"){
-    //     resolve(msg)
-    //   }else{
-    //     reject(new Error('接收ue返回失败'))
-    //   }
-    //   return msg
-    // })
   })
 }
 
@@ -178,7 +158,6 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   if (!modelProps.hasOwnProperty('type')) {
     let array = modelProps['life_entity_id'].split('_')
     let tag = array[array.length-1]
-    // console.log(tag);
     if(tag.startsWith("1")){
       modelProps["type"] = "模型"
     }else if(tag.startsWith("2")){
@@ -186,7 +165,9 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
     }else if(tag.startsWith("4")){
       modelProps["type"] = "特效"
     }
+    console.log(tag, modelProps["type"],'===type属性新增为===');
   }
+
   emitUIInteraction({
     Category: "setModelPropsById",
     ...modelProps
@@ -608,4 +589,32 @@ export async function callLevelEvent (eventParams: eventParams): Promise<{}> {
       return msg
     })
   })
+}
+
+// 删除绑定的⽣命体  跟ue通信并向接口提交 1 已重构
+interface bindLifeEntityParams{
+  projectId: string;
+  life_entity_id: string; // 需要被删除的 绑定的生命体id
+  // father_life_entity_id: string  // 被绑定的父生命体id
+}
+export async function deleteBindLifeEntityById(bindLifeEntityParams: bindLifeEntityParams): Promise<{}> {
+  const { data } = await deleteBindLifeEntity({...bindLifeEntityParams})
+
+  emitUIInteraction({
+    Category: "deleteModelById",
+    life_entity_id: bindLifeEntityParams.life_entity_id,
+    // father_life_entity_id: bindLifeEntityParams.father_life_entity_id
+  })
+  return new Promise<object>((resolve, reject) => {
+    // addResponseEventListener("deleteModelByIdResponse", (uedata?: string): string => {
+      
+    //   let ueMsg
+    //   ueMsg = JSON.parse(data)
+    //   // console.log(msg)
+    //   resolve({ueMsg, data})
+    //   return ueMsg
+    // })
+    resolve({data})
+  })
+  // return dealReturn(data)
 }

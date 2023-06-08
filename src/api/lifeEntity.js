@@ -1,3 +1,12 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-02-13 08:50:00
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-06-06 16:41:17
+ * @FilePath: \WebServers424\mxxx\src\api\lifeEntity.js
+ * @Description: 
+ * 
+ */
 import request from '../utils/request.js'
 
 // 模糊查询当前页面下对应的生命体
@@ -81,6 +90,15 @@ export const addSpecialBelong = (data) =>{
   return request({
     method: 'post',
     url: '/lifeEntityBelong/insert',
+    data
+  })
+}
+
+// 删除绑定的生命体
+export const deleteBindLifeEntity = (data) =>{
+  return request({
+    method: 'post',
+    url: '/executorLifeEntity/deleteBindLifeEntity',
     data
   })
 }

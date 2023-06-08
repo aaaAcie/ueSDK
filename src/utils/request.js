@@ -6,21 +6,23 @@ import { BASE_URL } from './basic.js'
 
 const request = axios.create({
   // timeout: 5000
-  baseURL: BASE_URL
+  // baseURL: BASE_URL
   // baseURL: 'http://115.238.181.246:10010'
 })
 
 function getBaseURL (url) {
   // console.log(url.startsWith('getMarketReportPriceList'))
-  if (url.startsWith('/data')) {
-    // return "http://192.168.2.183:999/"
-    return "http://localhost:999/"
+  if (url.startsWith('/node')) {
+    // return "http://192.168.2.183:999"
+    // return "http://122.112.169.3:83"
+    // return "http://192.168.6.227:83"
+    return "http://115.238.181.246:12001" // 对应83端口
   }else{
-    return 'https://mip-prod.myfuwu.com.cn'
+    return BASE_URL
   }
 }
 request.interceptors.request.use(config => {
-  // config.baseURL = getBaseURL(config.url)
+  config.baseURL = getBaseURL(config.url)
   config.headers["Access-Control-Allow-Origin"]=config.url
   // const { user } = store.state
   // if (user && user!='null') {

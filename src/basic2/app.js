@@ -54,6 +54,7 @@ let file = {
 };
 
 // Optionally detect if the user is not interacting (AFK) and disconnect them.
+// TODO 自动踢用户
 let afk = {
     enabled: false,   // Set to true to enable the AFK system.
     warnTimeout: 120,   // The time to elapse before warning the user they are inactive.
@@ -841,7 +842,7 @@ function setupWebRtcPlayer(htmlElement, config) {
             // 让responseEventListeners对应的key去调用value
             console.log('test response -1-- ', k_response)
             let answer = responseEventListeners.get(k_response)(response)
-            console.log('test response -2-- ', k_response,answer)
+            console.log('test response -2-- ', k_response, answer)
             // if(responseEventListeners.keys().includes(k_response)){
             // }
             

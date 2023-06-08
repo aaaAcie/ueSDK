@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-15 15:57:38
- * @FilePath: \mxxx\webpack.config.js
+ * @LastEditTime: 2023-05-30 11:49:29
+ * @FilePath: \WebServers424\mxxx\webpack.config.js
  * @Description: 
  * 
  */
@@ -19,7 +19,7 @@ module.exports = {
   // entry: "./src/index.ts",
   entry: {
     bundle: "./src/index.ts", // paas平台
-  //   bundle2: "./src/index2.ts", // 普通项目
+    // bundle2: "./src/index2.ts", // 普通项目
     // bundle3: "./src/index3.ts", // 平行云
   },
   output: {
