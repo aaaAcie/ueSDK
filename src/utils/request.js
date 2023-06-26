@@ -12,7 +12,7 @@ const request = axios.create({
 
 function getBaseURL (url) {
   // console.log(url.startsWith('getMarketReportPriceList'))
-  if (url.startsWith('/node')) {
+  if (url.startsWith('/server')) {
     // return "http://192.168.2.183:999"
     // return "http://122.112.169.3:83"
     // return "http://192.168.6.227:83"

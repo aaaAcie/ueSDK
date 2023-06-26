@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-18 11:43:50
- * @FilePath: \mxxx\src\initModel\initUE.ts
+ * @LastEditTime: 2023-06-16 15:21:22
+ * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
  */
@@ -50,15 +50,15 @@ export class initUE implements ConnectParams {
       project_id,
       baseURL2: BASE_URL + '/material/selectMaterial',
       // origin read bind preview edit refresh
-      status: this.options?.status // origin read preview 其他的状态在initScene的changeUEStatus方法中。
+      status: this.options?.status, // origin read preview 其他的状态在initScene的changeUEStatus方法中。
+      EVRSceneName: 'Test3' // 默认增加EVRSceneName
     }
-    // 增加EVRSceneName
-    // if (EVRSceneName?.length>0) {
-    //   console.log('EVRSceneName: ', EVRSceneName)
-    //   obj['EVRSceneName'] = EVRSceneName
-    // }
-    // 默认增加EVRSceneName
-    obj['EVRSceneName'] = "Test3"
+    // update EVRSceneName
+    if (EVRSceneName?.length>0) {
+      console.log('EVRSceneName: ', EVRSceneName)
+      obj['EVRSceneName'] = EVRSceneName
+    }
+
     selectAllView(pass_id).then(({data}) => {
       if (data.code === 1001) {
         console.log(data.value)
