@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-06-16 09:09:56
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-16 15:16:26
+ * @LastEditTime: 2023-06-26 17:42:22
  * @FilePath: \WebServers424\mxxx\src\webServer\index.ts
  * @Description: 
  * 
@@ -34,7 +34,12 @@ const getLauncherServer = (port: string, msgMap: Map<string, Function>):Promise<
         console.log(error)
       }
     }
-    
+    ws.onclose = (e) => {
+      console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+      setTimeout(function() {
+        getLauncherServer(port, msgMap);
+      }, 2000);
+    }
   })
 }
 

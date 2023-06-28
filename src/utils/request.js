@@ -17,6 +17,9 @@ function getBaseURL (url) {
     // return "http://122.112.169.3:83"
     // return "http://192.168.6.227:83"
     return "http://115.238.181.246:12001" // 对应83端口
+  }else if(url.startsWith('http://') || url.startsWith('https://'))
+  {
+    return ''
   }else{
     return BASE_URL
   }

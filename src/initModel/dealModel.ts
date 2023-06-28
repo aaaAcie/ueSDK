@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-07 10:25:27
+ * @LastEditTime: 2023-06-28 09:55:45
  * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
@@ -11,6 +11,7 @@ import { Model, addModelFunction } from './initModel'
 import { myChannel } from '../utils/basic.js'
 const { addResponseEventListener, emitUIInteraction } = myChannel
 import { dealReturn } from '../utils/fns'
+import request from '../utils/request'
 import {
   selectPageLifeEntityListByName,
   importBatchManagementList,
@@ -606,15 +607,28 @@ export async function deleteBindLifeEntityById(bindLifeEntityParams: bindLifeEnt
     // father_life_entity_id: bindLifeEntityParams.father_life_entity_id
   })
   return new Promise<object>((resolve, reject) => {
-    // addResponseEventListener("deleteModelByIdResponse", (uedata?: string): string => {
-      
-    //   let ueMsg
-    //   ueMsg = JSON.parse(data)
-    //   // console.log(msg)
-    //   resolve({ueMsg, data})
-    //   return ueMsg
-    // })
     resolve({data})
+  })
+  // return dealReturn(data)
+}
+
+export async function testDataUrl(data_url: string): Promise<{}> {
+  return new Promise<object>((resolve, reject) => {
+      request({
+        method: 'get',
+        url: data_url.trim()
+      }).then(data => {
+        let value = data.data
+        console.log('测试该接口结果返回：',value)
+        if(value?.data?.x){
+          resolve({code: 1001, value: true})
+        } else {
+          resolve({code: 2001, value: false, msg: `数据格式错误，要求格式举例：{data: {x: 20,y: 10}}`})
+        }
+      }).catch(error => {
+        // 处理失败状态
+        resolve({code: 2001, value: false, msg: `该接口测试失败, ${error}`})
+      });
   })
   // return dealReturn(data)
 }
