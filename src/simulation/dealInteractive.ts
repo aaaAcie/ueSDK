@@ -12,9 +12,10 @@ import {
 
 interface Interactive {
   trigger: string; // 触发事件的方式 click | dbclick | mouseenter | mouseleave
-  event: string; // 触发的事件 show | hide | highlight | unhighlight | toggleHignlight | focus | move | 
+  event: string; // 触发的事件 show | hide | highlight | unhighlight | toggleHignlight | focus | move | CallLevelEvent_TT | CallLevelEvent_TT2
   params?: string; //  事件的参数，拼接方式： "direction=up&distance=10"; 
-  target: Array<string>; // 目标生命体的id
+  target?: Array<string>; // 目标生命体的id 组成的数组
+  targetLifeEntityExecutor?: Array<string>; // 类的祖链 组成的数组
 }
 interface AllInteractives {
   life_entity_id: string; // 被绑定的生命体id
@@ -25,7 +26,8 @@ interface DetailInteractive {
   interactive_id: string; // 对应的事件id
   trigger: string; // 触发事件的方式 单击 双击
   event: string; // 触发的事件
-  target: Array<string>; // 目标生命体的id
+  target?: Array<string>; // 目标生命体的id 组成的数组
+  targetLifeEntityExecutor?: Array<string>; // 类的祖链 组成的数组
 }
 interface listenToExecutorParams{
   ancestors: string, // 类的 ancestors

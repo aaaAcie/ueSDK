@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-28 09:55:45
+ * @LastEditTime: 2023-07-18 16:09:04
  * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
@@ -330,21 +330,19 @@ export async function getModelById (id: string): Promise<Model> {
 }
 
 interface showParams{
-  life_entity_id: string; // 生命体id
+  life_entity_id?: string; // 生命体id
+  LifeEntityExecutor?: Array<string>; // 类的祖链 组成的数组
   showStatus: string; // 1可见 0隐藏
 }
 // 显示、隐藏生命体  跟ue通信并向接口提交 1 已重构
 export async function showModelByIds (allParams: Array<showParams>): Promise<{}> {
   // let allParams2 = JSON.parse(JSON.stringify(allParams).replaceAll('life_entity_id', 'where_life_entity_id'))
-  let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
+  // let allParams2 = JSON.parse(JSON.stringify(allParams).replace(/life_entity_id/g, 'where_life_entity_id'))
 
-  console.log(allParams2)
-
-  const { data } = await batchUpdateLifeEntity({
-    // "oper_type": "batchUpdateLifeEntity",
-    allParams: allParams2
-  })
-  let Message: number
+  // const { data } = await batchUpdateLifeEntity({
+  //   allParams: allParams2
+  // })
+  // let Message: number
 
   emitUIInteraction({
     Category: "showModelByIds",
@@ -353,13 +351,15 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("showModelByIdsResponse", (uedata?: string): Model => {
-      if(data.code==1001){
-        Message = data.value
-        ueMsg = JSON.parse(uedata)
-        resolve({ueMsg, Message})
-      }else{
-        reject(new Error(data.msg))
-      }
+      ueMsg = JSON.parse(uedata)
+      // if(data.code==1001){
+      //   Message = data.value
+      //   ueMsg = JSON.parse(uedata)
+      //   resolve({ueMsg, Message})
+      // }else{
+      //   reject(new Error(data.msg))
+      // }
+      resolve({ueMsg, Message: null})
       return ueMsg
     })
   })
