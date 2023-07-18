@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-16 15:21:22
+ * @LastEditTime: 2023-06-28 12:21:00
  * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
@@ -51,7 +51,7 @@ export class initUE implements ConnectParams {
       baseURL2: BASE_URL + '/material/selectMaterial',
       // origin read bind preview edit refresh
       status: this.options?.status, // origin read preview 其他的状态在initScene的changeUEStatus方法中。
-      EVRSceneName: 'Test3' // 默认增加EVRSceneName
+      EVRSceneName: '' // 默认增加EVRSceneName
     }
     // update EVRSceneName
     if (EVRSceneName?.length>0) {

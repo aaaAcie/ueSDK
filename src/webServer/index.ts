@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-06-16 09:09:56
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-26 17:42:22
+ * @LastEditTime: 2023-06-28 15:59:32
  * @FilePath: \WebServers424\mxxx\src\webServer\index.ts
  * @Description: 
  * 
@@ -35,10 +35,8 @@ const getLauncherServer = (port: string, msgMap: Map<string, Function>):Promise<
       }
     }
     ws.onclose = (e) => {
-      console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-      setTimeout(function() {
-        getLauncherServer(port, msgMap);
-      }, 2000);
+      console.log('Socket is closed.', e.reason);
+      
     }
   })
 }
@@ -77,8 +75,11 @@ class mxLauncher {
       })
     })
   }
+  // 用来表示当前mxLauncher实例的状态，如果为3，代表已经关闭。需要重新实例化一个mxLauncher
+  isClose(){
+    return this.ws.readyState === 3
+  }
 }
-
 // 工厂函数
 export async function createLuncherServer(port: string): Promise<mxLauncher> {
   const msgMap = new Map()
