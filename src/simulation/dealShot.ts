@@ -1,19 +1,18 @@
 // import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
-import { myChannel } from '../utils/basic.js'
-const { addResponseEventListener, emitUIInteraction } = myChannel
-import { dealReturn } from '../utils/fns'
-import { 
-  // operCamera,
-  // operCameraBelong 
-} from '../api/api.js'
-import { 
+import { myChannel } from "../utils/basic.js";
+const { addResponseEventListener, emitUIInteraction } = myChannel;
+import { dealReturn } from "../utils/fns";
+import // operCamera,
+// operCameraBelong
+"../api/api.js";
+import {
   insertCamera,
   selectCamera,
   updateCamera,
   deleteCameraById,
   insertOrUpdateCameraBelong,
-  cameraDataQueryByPageId
-} from '../api/shot.js'
+  cameraDataQueryByPageId,
+} from "../api/shot.js";
 
 interface Shot {
   shot_id: string; // 镜头id
@@ -21,7 +20,7 @@ interface Shot {
   type: "镜头"; // 分类(很重要，否则ue无法解析）
   name?: string; // 镜头名称
   position?: {}; // 镜头参数等
-  rotation?: {}; 
+  rotation?: {};
   properties?: {
     length: number; // 臂长 范围 [500, 100000]
     allowRotation: number; // 是否允许旋转 1-允许 0-不允许
@@ -31,208 +30,192 @@ interface Shot {
   };
 }
 interface modifyParam {
-  shot_id: string
-  name: string
-  position: {}
+  shot_id: string;
+  name: string;
+  position: {};
 }
-interface cameraBelong{
+interface cameraBelong {
   shot_id: string; // 镜头id
   page_id: string; // 绑定的页面id
-  switchType: "black" | "move" // 切镜头的方式
+  switchType: "black" | "move"; // 切镜头的方式
 }
 // 添加镜头 跟ue通信并向接口提交 1 已重构
 export function addShot(name: string): Promise<Object> {
   emitUIInteraction({
     Category: "addShot",
-    name
-  })
-  let msg = {}
-  let uedata:{}
-  let successCallback = []
+    name,
+  });
+  let msg = {};
+  let uedata: {};
+  let successCallback = [];
   successCallback.push(() => {
     return insertCamera({
       // "oper_type": "insertCamera",
-      ...msg
-    }).then(bigdata => {
-      let data = bigdata.data
-      if(data.code==1001){
-        let Message = data.value
-        return Message
+      ...msg,
+    }).then((bigdata) => {
+      let data = bigdata.data;
+      if (data.code == 1001) {
+        let Message = data.value;
+        return Message;
         // console.log(Message)
         // resolve({uedata, Message})
-      }else{
-        throw (new Error(data.msg))
+      } else {
+        throw new Error(data.msg);
       }
-    })
-  })
+    });
+  });
   return new Promise<Object>((resolve, reject) => {
     addResponseEventListener("addShotResponse", (uedata0?: string): Object => {
       try {
-        uedata = JSON.parse(uedata0)
-        msg = uedata['Message']
-        if(successCallback.length){
-          successCallback.shift()()
-          .then(Message => resolve({uedata, Message}))
-          .catch(err => reject(new Error(err)))
+        uedata = JSON.parse(uedata0);
+        msg = uedata["Message"];
+        if (successCallback.length) {
+          successCallback
+            .shift()()
+            .then((Message) => resolve({ uedata, Message }))
+            .catch((err) => reject(new Error(err)));
         }
       } catch (error) {
-        reject(new Error(error))
+        reject(new Error(error));
       }
-      return msg
-    })
-    
-  })
+      return msg;
+    });
+  });
 }
 
 // 删除镜头 根据镜头id删除镜头 1未测试 已重构
 export async function deleteShotById(shot_id: string): Promise<Object> {
   const { data } = await deleteCameraById({
     // "oper_type": "deleteCamera",
-    shot_id
-  })
+    shot_id,
+  });
   emitUIInteraction({
     Category: "deleteShotById",
-    shot_id
-  })
-  let Message: number
-  let ueMsg = {}
+    shot_id,
+  });
+  let Message: number;
+  let ueMsg = {};
   return new Promise<Object>((resolve, reject) => {
-    addResponseEventListener("deleteShotByIdResponse", (uedata?: string): Object => {
-      if(data.code==1001){
-        Message = data.value
-        // console.log(Message)
-        ueMsg = JSON.parse(uedata)
-        resolve({ ueMsg, Message })
-      }else{
-        reject(new Error(data.msg))
-        
+    addResponseEventListener(
+      "deleteShotByIdResponse",
+      (uedata?: string): Object => {
+        if (data.code == 1001) {
+          Message = data.value;
+          // console.log(Message)
+          ueMsg = JSON.parse(uedata);
+          resolve({ ueMsg, Message });
+        } else {
+          reject(new Error(data.msg));
+        }
+        return ueMsg;
       }
-      return ueMsg
-    })
-  })
+    );
+  });
 }
 
 // 保存镜头 已重构
 export async function saveShotById(modifyParam: modifyParam): Promise<Object> {
-  let modifyParam2 = JSON.parse(JSON.stringify(modifyParam).replace('shot_id', 'where_shot_id'))
+  let modifyParam2 = JSON.parse(
+    JSON.stringify(modifyParam).replace("shot_id", "where_shot_id")
+  );
   const { data } = await updateCamera({
-    // "oper_type": "updateCamera",
-    ...modifyParam2
-  })
-  let Message
-
-  emitUIInteraction({
-    Category: "saveShotById",
-    // shot_id: modifyParam["shot_id"]
-    ...modifyParam
-  })
-  let ueMsg = {}
-  return new Promise<Object>((resolve, reject) => {
-    addResponseEventListener("saveShotByIdResponse", (uedata?: string): Object => {
-      if(data.code==1001){
-        Message = data.value
-        // console.log(Message)
-        ueMsg = JSON.parse(uedata)
-        // resolve({ ueMsg, Message })
-        resolve({ ueMsg, Message })
-
-      }else{
-        reject(new Error(data.msg))
-        
-      }
-      return ueMsg
-    })
-  })
+    ...modifyParam2,
+  });
+  return dealReturn(data)
 }
 
 // 查询镜头列表 向接口请求数据返回给前端 1 已重构
 export async function queryShotList(pass_id: string): Promise<Array<Shot>> {
   const { data } = await selectCamera({
     // "oper_type": "selectCamera",
-    pass_id
-  })
-  let Message: Array<Shot>
+    pass_id,
+  });
+  let Message: Array<Shot>;
   return new Promise<Array<Shot>>((resolve, reject) => {
-    if(data.code==1001){
-      Message = data.value
-      resolve(Message)
-    }else{
-      reject(new Error(data.msg))
+    if (data.code == 1001) {
+      Message = data.value;
+      resolve(Message);
+    } else {
+      reject(new Error(data.msg));
     }
-
-  })
+  });
 }
 
 // 获取单个镜头 向接口请求数据返回给前端 1 已重构
 export async function getShotById(shot_id: string): Promise<Shot> {
   const { data } = await selectCamera({
     // "oper_type": "selectCamera",
-    shot_id
-  })
-  let Message: Shot
+    shot_id,
+  });
+  let Message: Shot;
   return new Promise<Shot>((resolve, reject) => {
-    if(data.code==1001){
-      Message = data.value
-      resolve(Message)
-    }else{
-      reject(new Error(data.msg))
+    if (data.code == 1001) {
+      Message = data.value;
+      resolve(Message);
+    } else {
+      reject(new Error(data.msg));
     }
-
-  })
+  });
 }
 
 // 修改镜头名称 1未测试 已重构
 export async function modifyShotName(modifyParam: modifyParam): Promise<{}> {
-  let modifyParam2 = JSON.parse(JSON.stringify(modifyParam).replace('shot_id', 'where_shot_id'))
+  let modifyParam2 = JSON.parse(
+    JSON.stringify(modifyParam).replace("shot_id", "where_shot_id")
+  );
   const { data } = await updateCamera({
     // "oper_type": "updateCamera",
-    ...modifyParam2
-  })
-  let Message: Shot
+    ...modifyParam2,
+  });
+  let Message: Shot;
   emitUIInteraction({
     Category: "modifyShotName",
-    ...modifyParam
-  })
-  let ueMsg
+    ...modifyParam,
+  });
+  let ueMsg;
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("modifyShotNameResponse", (uedata?: string): {} => {
-      if(data.code==1001){
-        Message = data.value
-        // console.log(Message)
-        ueMsg = JSON.parse(uedata)
-        resolve({ ueMsg, Message })
-      }else{
-        reject(new Error(data.msg))
-        
+    addResponseEventListener(
+      "modifyShotNameResponse",
+      (uedata?: string): {} => {
+        if (data.code == 1001) {
+          Message = data.value;
+          // console.log(Message)
+          ueMsg = JSON.parse(uedata);
+          resolve({ ueMsg, Message });
+        } else {
+          reject(new Error(data.msg));
+        }
+        return ueMsg;
       }
-      return ueMsg
-    })
-  })
+    );
+  });
 }
 
 // 切换镜头 只跟ue通信 1
 export function switchShot(shot_id: string): Promise<Shot> {
   emitUIInteraction({
     Category: "switchShot",
-    shot_id
-  })
-  let msg: Shot
+    shot_id,
+  });
+  let msg: Shot;
   return new Promise<Shot>((resolve, reject) => {
     addResponseEventListener("switchShotResponse", (data?: string): Shot => {
       try {
-        msg = JSON.parse(data)
+        msg = JSON.parse(data);
         // msg = data
-        resolve(msg)
+        resolve(msg);
       } catch (error) {
-        reject(new Error(error))
+        reject(new Error(error));
       }
-      return msg
-    })
-  })
+      return msg;
+    });
+  });
 }
 
 // 修改镜头属性 只跟ue通信
-export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> {
+export async function modifyShotProperty(
+  modifyParam: modifyParam
+): Promise<{}> {
   // let modifyParam2 = JSON.parse(JSON.stringify(modifyParam).replace('shot_id', 'where_shot_id'))
   // const { data } = await operCamera({
   //   "oper_type": "updateCamera",
@@ -241,55 +224,62 @@ export async function modifyShotProperty(modifyParam: modifyParam): Promise<{}> 
   // let Message
   emitUIInteraction({
     Category: "modifyShotProperty",
-    ...modifyParam
-  })
-  let ueMsg
+    ...modifyParam,
+  });
+  let ueMsg;
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("modifyShotPropertyResponse", (uedata?: string): {} => {
-      ueMsg = JSON.parse(uedata)
-      if(ueMsg){
-        resolve(ueMsg)
-      }else{
-        reject(new Error('ue接收失败'))
+    addResponseEventListener(
+      "modifyShotPropertyResponse",
+      (uedata?: string): {} => {
+        ueMsg = JSON.parse(uedata);
+        if (ueMsg) {
+          resolve(ueMsg);
+        } else {
+          reject(new Error("ue接收失败"));
+        }
+        return ueMsg;
       }
-      return ueMsg
-    })
-  })
+    );
+  });
 }
 
 // 建立镜头与页面的关联关系  向接口请求数据返回给前端 1 已重构
-export async function addCameraBelong(camera_belongs: Array<cameraBelong>): Promise<{}> {
+export async function addCameraBelong(
+  camera_belongs: Array<cameraBelong>
+): Promise<{}> {
   const { data } = await insertOrUpdateCameraBelong({
     // "oper_type": "insertOrUpdateCameraBelong",
-    camera_belongs
-  })
+    camera_belongs,
+  });
 
-  let ueMsg
-  let Message: Shot
+  let ueMsg;
+  let Message: Shot;
   return new Promise<{}>((resolve, reject) => {
-    if(data.code==1001){
-      Message = data.value
+    if (data.code == 1001) {
+      Message = data.value;
       emitUIInteraction({
         Category: "addCameraBelong",
-        Message
-      })
+        Message,
+      });
 
-      addResponseEventListener("addCameraBelongResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
-        ueMsg = uedata
-        resolve({Message, ueMsg})
-      })
-    }else{
-      reject(new Error(data.msg))
+      addResponseEventListener(
+        "addCameraBelongResponse",
+        (uedata?: string): void => {
+          uedata = JSON.parse(uedata);
+          ueMsg = uedata;
+          resolve({ Message, ueMsg });
+        }
+      );
+    } else {
+      reject(new Error(data.msg));
     }
-
-  })
+  });
 }
 
 // 通过页面ID查询镜头信息
 export async function queryShotByPageId(pageId: string): Promise<{}> {
   const { data } = await cameraDataQueryByPageId({
-    pageId
-  })
-  return dealReturn(data)
+    pageId,
+  });
+  return dealReturn(data);
 }

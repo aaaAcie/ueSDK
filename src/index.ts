@@ -1,3 +1,12 @@
+/*
+ * @Author: 徐亦快 913587892@qq.com
+ * @Date: 2023-05-18 14:29:15
+ * @LastEditors: 徐亦快 913587892@qq.com
+ * @LastEditTime: 2023-05-31 12:33:10
+ * @FilePath: \WebServers424\mxxx\src\index.ts
+ * @Description: 
+ * 
+ */
 
 // 通过*号直接继承某一个模块的接口
 
@@ -52,3 +61,12 @@ export * from './generalOperation/project'
 
 // 操作全局类事件
 export * from './simulation/dealGlobalEvent'
+
+// 管理UE文件
+export * from './ueFile/manageUE'
+
+// 管理流
+export * from './system/index.js'
+
+// 连接启动器
+export * from './webServer/index'

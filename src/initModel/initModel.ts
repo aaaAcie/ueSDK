@@ -2,8 +2,8 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-16 11:18:51
- * @FilePath: \mxxx\src\initModel\initModel.ts
+ * @LastEditTime: 2023-06-26 11:28:00
+ * @FilePath: \WebServers424\mxxx\src\initModel\initModel.ts
  * @Description: 
  * 
  */
@@ -43,6 +43,7 @@ import {
   addSpecialBelong
 } from '../api/lifeEntity.js'
 import { myChannel } from '../utils/basic.js'
+import { objToArr } from '../utils/fns'
 const { addResponseEventListener, emitUIInteraction } = myChannel
 
 export async function addModelFunction(msg2: Model) {
@@ -51,12 +52,14 @@ export async function addModelFunction(msg2: Model) {
   })
   // belong = msg2.belong
   if(data.code==1001){
-    let Message = data.value
+    let Message = data.value // [{xxx:xxx, belong:[{page_id:xxx, showStatus:xxx}]}]
     // 如果收到belong的消息 即若绑定poi的归属信息同步添加成功
-    if (Message.belong) {
+    if (Message[0]?.belong) {
+      // 因为后端没有做主动加入AlwaysShow的操作，为了防止ue主动添加的AlwaysShow被覆盖，需要手动加入
+      Message[0].belong.push({page_id:'AlwaysShow', showStatus: "1"})
       emitUIInteraction({
         Category: "addBelong",
-        Message
+        Message: objToArr(Message)
       })
       addResponseEventListener("addBelongResponse", (uedata?: string): void => {
         uedata = JSON.parse(uedata)

@@ -8,3 +8,5 @@ export * from './initModel/initUE2'
 
 // 底座连接
 export * from './demo/demo'
+
+export * from './ue/index'

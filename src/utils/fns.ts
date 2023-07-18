@@ -50,3 +50,12 @@ export function dealGlobalEventsReturn(listenToExecutorParams){
     })
   })
 }
+
+// 将{}转化成[]
+export function objToArr(data: Array<{}> | {}){
+  if(Array.isArray(data)){
+    return data
+  }else{
+    return [data]
+  }
+}

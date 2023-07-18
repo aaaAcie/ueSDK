@@ -38,19 +38,19 @@ export async function makeInteractiveById(AllInteractives:AllInteractives): Prom
     ...AllInteractives
   })
   let Message: []
-  if(data.code==1001){
-    Message = data.value
-    emitUIInteraction({
-      // Category: "addPOIModel",
-      Category: "makeInteractiveById",
-      AllInteractives: Message
-    })
-  }
+  Message = data.value
+  emitUIInteraction({
+    // Category: "addPOIModel",
+    Category: "makeInteractiveById",
+    // AllInteractives: Message
+    AllInteractives // 直接拿前端的入参 后端的出参不太稳定（靠谱）
+  })
+
 
   let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("makeInteractivebyIdResponse", (uedata?: string): {} => {
-      if(data.code==200){
+      if(data.code==1001){
         ueMsg = JSON.parse(uedata)
         resolve({ueMsg, Message})
       }else{

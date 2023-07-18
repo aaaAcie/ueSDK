@@ -389,10 +389,13 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
-          // 私有组取消引入生命体后，生命体应该立刻不显示。（只跟ue通信）
+          // 私有组取消引入生命体后，1. 生命体应该立刻不显示。2.取消选中状态（只跟ue通信）
           emitUIInteraction({
             Category: "showModelByIds",
             allParams
+          })
+          emitUIInteraction({
+            Category: "SelectCancel",
           })
           resolve({Message, ueMsg, code})
         })
@@ -429,7 +432,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
 export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Promise<{}> {
   let finalData: {
     code: number,
-    value: [],
+    value: Array<belongParams>,
     msg: ''
   }
   const { data } = await deleteByRootNode({
@@ -437,7 +440,7 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
   })
   finalData = data
 
-  let Message: {}
+  let Message: Array<belongParams>
   let ueMsg: {}
 
   return new Promise<{}>((resolve, reject) => {
@@ -445,8 +448,12 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
       // Message = finalData.value
       Message = changeNameFunction(finalData.value)
       let code = finalData.code
+      // 私有组
       if (cancelAddParams.model.toString() === '2') {
-        // 私有组
+        let allParams: Array<{"life_entity_id": string, "showStatus": string}> = []
+        Message.forEach(item => {
+          allParams.push({"life_entity_id": item.life_entity_id, "showStatus": "0"})
+        })
         emitUIInteraction({
           Category: "addBelong",
           Message
@@ -454,6 +461,14 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
           uedata = JSON.parse(uedata)
           ueMsg = uedata
+          // 私有组取消引入生命体后，1. 生命体应该立刻不显示。2.取消选中状态（只跟ue通信）
+          emitUIInteraction({
+            Category: "showModelByIds",
+            allParams
+          })
+          emitUIInteraction({
+            Category: "SelectCancel",
+          })
           resolve({Message, ueMsg, code})
         })
       } else {

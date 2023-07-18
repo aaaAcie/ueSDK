@@ -2,23 +2,16 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-16 12:08:58
- * @FilePath: \mxxx\src\initModel\dealModel.ts
+ * @LastEditTime: 2023-06-28 09:55:45
+ * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
  */
 import { Model, addModelFunction } from './initModel'
-// import { addResponseEventListener, emitUIInteraction} from '../basic2/myApp.js'
 import { myChannel } from '../utils/basic.js'
 const { addResponseEventListener, emitUIInteraction } = myChannel
-
-import { operLifeEntity,selectSourceMaterial } from '../api/api.js'
-// import { importBatchManagementList,downloadExcel,selectPageLifeEntityListByName } from '../api/detail.js'
-import { 
-  // importBatchManagementList,
-  // downloadExcel 
-} from '../api/detail.js'
-
+import { dealReturn } from '../utils/fns'
+import request from '../utils/request'
 import {
   selectPageLifeEntityListByName,
   importBatchManagementList,
@@ -28,9 +21,13 @@ import {
   deleteLifeEntity,
   batchUpdateLifeEntity,
   updateLifeEntity,
-  addSpecialBelong
+  addSpecialBelong,
+  deleteBindLifeEntity
 } from '../api/lifeEntity.js'
-
+interface ModelParams {
+  project_id?: string,
+  pass_id?: string
+}
 interface pageLifeEntity{
   name: string;
   page_id: string;
@@ -68,35 +65,19 @@ interface modelType {
   relative?: RelativeModel | RelativeLayer  // 绑定生命体的入参 | 绑定拆楼的入参
 }
 // 读取底座⽣命体 向接口查询 返回给前端 1 已重构
-export async function initModels(pass_id: string): Promise<Array<Model>> {
+export async function initModels(ModelParams: ModelParams): Promise<Array<Model>> {
   const { data } = await selectLifeEntity({
-    // "oper_type": "selectLifeEntity",
-    pass_id
+    ...ModelParams
   })
   let Message: Array<Model> = []
 
   return new Promise<Array<Model>>((resolve, reject) => {
     if(data.code==1001){
       Message = data.value
-      // emitUIInteraction({
-      //   Category: "initModels",
-      //   Message 
-      // })
       resolve(Message)
     }else{
       reject(new Error(data.msg))
     }
-    // 这里的response名字跟ue对上
-    // addResponseEventListener("initModelsResponse", (data: string): ModelParams => {
-    //   msg = JSON.parse(data)
-    //   // 二次校验，等ue做状态码后修改
-    //   if(msg.Category == "initModelsResponse"){
-    //     resolve(msg)
-    //   }else{
-    //     reject(new Error('接收ue返回失败'))
-    //   }
-    //   return msg
-    // })
   })
 }
 
@@ -178,7 +159,6 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   if (!modelProps.hasOwnProperty('type')) {
     let array = modelProps['life_entity_id'].split('_')
     let tag = array[array.length-1]
-    // console.log(tag);
     if(tag.startsWith("1")){
       modelProps["type"] = "模型"
     }else if(tag.startsWith("2")){
@@ -186,7 +166,9 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
     }else if(tag.startsWith("4")){
       modelProps["type"] = "特效"
     }
+    console.log(tag, modelProps["type"],'===type属性新增为===');
   }
+
   emitUIInteraction({
     Category: "setModelPropsById",
     ...modelProps
@@ -222,7 +204,9 @@ export async function setModelPropsByIdSave(modelProps: Model): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     // 走接口 把接口回答返回给前端
     if(data.code==1001){
-      Message = data.value
+      // Message = data.value
+      Message = data // 全返回
+
       // console.log(Message)
       resolve(Message)
     }else{
@@ -599,11 +583,52 @@ export async function callLevelEvent (eventParams: eventParams): Promise<{}> {
 
   return new Promise<Model>((resolve, reject) => {
     // SendSelectModelDataResponse
-    addResponseEventListener("callLevelEventResponse", (data?: string): {} => {
+    addResponseEventListener("CallLevelEventResponse", (data?: string): {} => {
       msg = JSON.parse(data)
       // console.log(msg)
       resolve(msg)
       return msg
     })
   })
+}
+
+// 删除绑定的⽣命体  跟ue通信并向接口提交 1 已重构
+interface bindLifeEntityParams{
+  projectId: string;
+  life_entity_id: string; // 需要被删除的 绑定的生命体id
+  // father_life_entity_id: string  // 被绑定的父生命体id
+}
+export async function deleteBindLifeEntityById(bindLifeEntityParams: bindLifeEntityParams): Promise<{}> {
+  const { data } = await deleteBindLifeEntity({...bindLifeEntityParams})
+
+  emitUIInteraction({
+    Category: "deleteModelById",
+    life_entity_id: bindLifeEntityParams.life_entity_id,
+    // father_life_entity_id: bindLifeEntityParams.father_life_entity_id
+  })
+  return new Promise<object>((resolve, reject) => {
+    resolve({data})
+  })
+  // return dealReturn(data)
+}
+
+export async function testDataUrl(data_url: string): Promise<{}> {
+  return new Promise<object>((resolve, reject) => {
+      request({
+        method: 'get',
+        url: data_url.trim()
+      }).then(data => {
+        let value = data.data
+        console.log('测试该接口结果返回：',value)
+        if(value?.data?.x){
+          resolve({code: 1001, value: true})
+        } else {
+          resolve({code: 2001, value: false, msg: `数据格式错误，要求格式举例：{data: {x: 20,y: 10}}`})
+        }
+      }).catch(error => {
+        // 处理失败状态
+        resolve({code: 2001, value: false, msg: `该接口测试失败, ${error}`})
+      });
+  })
+  // return dealReturn(data)
 }
