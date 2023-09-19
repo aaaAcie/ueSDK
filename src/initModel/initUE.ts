@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-01-16 09:44:34
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-06-28 12:21:00
+ * @LastEditTime: 2023-08-14 17:12:29
  * @FilePath: \WebServers424\mxxx\src\initModel\initUE.ts
  * @Description: 
  * 
@@ -64,7 +64,6 @@ export class initUE implements ConnectParams {
         console.log(data.value)
       }
     })
-    console.log('向ue发送的数据 ======== ',obj)
 
     return new Promise((resolve,reject) => {
       console.log(this.url)
@@ -76,12 +75,13 @@ export class initUE implements ConnectParams {
         // pass_id
         setTimeout(() => {
           addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
-            uedata = JSON.parse(uedata)
+            uedata = JSON.parse(JSON.stringify(uedata))
           })
+          console.log('向ue发送的数据 ======== ',obj)
           emitUIInteraction(obj)
           // 接收到ue初始化完成的信号，执行成功回调。
           addResponseEventListener("InitPassCompleteResponse",(uedata) => {
-            let ueMsg: {} = JSON.parse(uedata)
+            let ueMsg: {} = JSON.parse(JSON.stringify(uedata))
             if(ueMsg['Success'].toString() === 'true'){
               this.successCallback(ws, ueMsg)
             }else{
@@ -91,7 +91,7 @@ export class initUE implements ConnectParams {
             }
             console.log('接收到ue初始化完成--------------',uedata)
           })
-        }, 1000)
+        }, 4000)
 
         // this.successCallback(ws)
         streamingVideo = document.getElementById("streamingVideo")
@@ -126,5 +126,8 @@ export class initUE implements ConnectParams {
     emitUIInteraction({
       Category: "SaveMeshData"
     })
+  }
+  getUEUrl(){
+    return this.url
   }
 }

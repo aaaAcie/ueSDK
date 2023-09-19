@@ -53,7 +53,7 @@ export async function makeInteractiveById(AllInteractives:AllInteractives): Prom
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("makeInteractivebyIdResponse", (uedata?: string): {} => {
       if(data.code==1001){
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ueMsg, Message})
       }else{
         reject(new Error(data.msg))
@@ -102,7 +102,7 @@ export async function setInteractive(DetailInteractive: Array<DetailInteractive>
   let ueMsg: {}
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("setInteractiveResponse", (uedata?: string): {} => {
-      ueMsg = JSON.parse(uedata)
+      ueMsg = JSON.parse(JSON.stringify(uedata))
       if(data.code==1001){
         Message = data.value
         // console.log(Message)
@@ -132,7 +132,7 @@ export async function deleteInteractive(interactive_id: string): Promise<{}>{
 
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("deleteInteractiveResponse", (uedata?: string): {} => {
-      ueMsg = JSON.parse(uedata)
+      ueMsg = JSON.parse(JSON.stringify(uedata))
       if(data.code==1001){
         Message = data.value
         // console.log(Message)

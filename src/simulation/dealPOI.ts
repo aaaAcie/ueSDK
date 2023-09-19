@@ -60,7 +60,7 @@ export async function addPOIModel (POItype: POItype): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         msg2 = ueMsg
         // let { belong, group, ...msg2} = ueMsg

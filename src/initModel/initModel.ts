@@ -62,7 +62,7 @@ export async function addModelFunction(msg2: Model) {
         Message: objToArr(Message)
       })
       addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         // resolve({Message, ueMsg:uedata, code})
       })
     }

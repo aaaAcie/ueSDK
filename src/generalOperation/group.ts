@@ -156,7 +156,7 @@ export async function addGroupIndex (idGroup: Array<GroupIndexParams>, isCommon:
             Message
           })
           addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-            uedata = JSON.parse(uedata)
+            uedata = JSON.parse(JSON.stringify(uedata))
             ueMsg = uedata
             resolve({Message, ueMsg})
           })
@@ -442,7 +442,7 @@ export async function deleteGroupIndex(deleteSingle: deleteSingle): Promise<{}> 
             Message
           })
           addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-            uedata = JSON.parse(uedata)
+            uedata = JSON.parse(JSON.stringify(uedata))
             ueMsg = uedata
             resolve({Message, ueMsg})
           })
@@ -581,7 +581,7 @@ export async function copyLifeEntityInBulk(copyLifeEntityInBulkParam: copyLifeEn
         allParams: {"lifeEntityList": Message}
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata
         resolve({Message, ueMsg})
       })
@@ -633,7 +633,7 @@ export async function copyLifeEntityGroup(copyGroupParam: copyGroupParam): Promi
         allParams: {"lifeEntityList": Message}
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata
         resolve({Message, ueMsg})
       })
@@ -696,7 +696,7 @@ export async function deleteGroupLifeEntityInBulk(param_list: Array<deleteGroupL
         Message
       })
       addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata
         resolve({Message, ueMsg})
       })

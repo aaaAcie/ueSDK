@@ -42,7 +42,7 @@ export async function changeWeather(weatherParams: WeatherParams): Promise<{}> {
       if(data.code==1001){
         Message = data.value
         // console.log(Message)
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ ueMsg, Message })
       }else{
         reject(new Error(data.msg))
@@ -94,7 +94,7 @@ export async function changePass(pass_id: string, EVRSceneName:string=''): Promi
   // return Promise.resolve({"Success":true,"Message": "xxxx"})
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
-      let ueMsg: {} = JSON.parse(uedata)
+      let ueMsg: {} = JSON.parse(JSON.stringify(uedata))
       if(ueMsg['Success'].toString() === 'true'){
         resolve(ueMsg)
       }else{
@@ -124,7 +124,7 @@ export async function changeTime(timeParams: TimeParams): Promise<{}> {
       if(data.code==1001){
         Message = data.value
         // console.log(Message)
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ ueMsg, Message })
       }else{
         reject(new Error(data.msg))
@@ -152,7 +152,7 @@ export async function setInitShot(initShotParams: InitShotParams): Promise<{}> {
       if(data.code==1001){
         Message = data.value
         // console.log(Message)
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ ueMsg, Message })
       }else{
         reject(new Error(data.msg))
@@ -187,12 +187,12 @@ export async function changeUEStatus(projectData: projectData): Promise<{}> {
   console.log('向ue发送的数据 ======== ',obj)
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
-      uedata = JSON.parse(uedata)
+      uedata = JSON.parse(JSON.stringify(uedata))
     })
     emitUIInteraction(obj)
     // 接收到ue初始化完成的信号，执行成功回调。edit没发，origin,read,bind,preview发了
     addResponseEventListener("InitPassCompleteResponse",(uedata) => {
-      let ueMsg: {} = JSON.parse(uedata)
+      let ueMsg: {} = JSON.parse(JSON.stringify(uedata))
       if(ueMsg['Success'].toString() === 'true'){
         // this.successCallback(ueMsg)
         resolve(ueMsg)

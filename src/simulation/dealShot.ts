@@ -102,7 +102,7 @@ export async function deleteShotById(shot_id: string): Promise<Object> {
         if (data.code == 1001) {
           Message = data.value;
           // console.log(Message)
-          ueMsg = JSON.parse(uedata);
+          ueMsg = JSON.parse(JSON.stringify(uedata));
           resolve({ ueMsg, Message });
         } else {
           reject(new Error(data.msg));
@@ -180,7 +180,7 @@ export async function modifyShotName(modifyParam: modifyParam): Promise<{}> {
         if (data.code == 1001) {
           Message = data.value;
           // console.log(Message)
-          ueMsg = JSON.parse(uedata);
+          ueMsg = JSON.parse(JSON.stringify(uedata));
           resolve({ ueMsg, Message });
         } else {
           reject(new Error(data.msg));
@@ -201,7 +201,7 @@ export function switchShot(shot_id: string): Promise<Shot> {
   return new Promise<Shot>((resolve, reject) => {
     addResponseEventListener("switchShotResponse", (data?: string): Shot => {
       try {
-        msg = JSON.parse(data);
+        msg = JSON.parse(JSON.stringify(data));
         // msg = data
         resolve(msg);
       } catch (error) {
@@ -231,7 +231,7 @@ export async function modifyShotProperty(
     addResponseEventListener(
       "modifyShotPropertyResponse",
       (uedata?: string): {} => {
-        ueMsg = JSON.parse(uedata);
+        ueMsg = JSON.parse(JSON.stringify(uedata));
         if (ueMsg) {
           resolve(ueMsg);
         } else {
@@ -265,7 +265,7 @@ export async function addCameraBelong(
       addResponseEventListener(
         "addCameraBelongResponse",
         (uedata?: string): void => {
-          uedata = JSON.parse(uedata);
+          uedata = JSON.parse(JSON.stringify(uedata));
           ueMsg = uedata;
           resolve({ Message, ueMsg });
         }

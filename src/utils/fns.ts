@@ -26,7 +26,7 @@ export function dealLabelBelongsReturn(data: data){
         Message
       })
       addResponseEventListener("addLabelBelongsResponse", (uedata?: string): void => {
-        let msg = JSON.parse(uedata)
+        let msg = JSON.parse(JSON.stringify(uedata))
         resolve({ueMsg: msg, ...data})
       })
     }else{
@@ -45,7 +45,7 @@ export function dealGlobalEventsReturn(listenToExecutorParams){
       ...listenToExecutorParams
     })
     addResponseEventListener("listenToExecutorResponse", (data?: string): void => {
-      let msg = JSON.parse(data)
+      let msg = JSON.parse(JSON.stringify(data))
       resolve(msg)
     })
   })

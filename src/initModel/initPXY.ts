@@ -75,7 +75,7 @@ export class initUEPXY {
           console.log('kaiqilm?????');
           
           addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
-            uedata = JSON.parse(uedata)
+            uedata = JSON.parse(JSON.stringify(uedata))
             console.log('---------------------------',uedata);
           })
           emitUIInteraction(obj)

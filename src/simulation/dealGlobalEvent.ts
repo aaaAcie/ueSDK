@@ -90,7 +90,7 @@ export async function listenToExecutor(listenToExecutorParams:listenToExecutorPa
   let msg = {}
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("listenToExecutorResponse", async (uedata?: string): Promise<{}> => {
-      msg = JSON.parse(uedata)
+      msg = JSON.parse(JSON.stringify(uedata))
       // 向后端推送该事件记录
       const { data } = await addEventRecord({
         ...listenToExecutorParams

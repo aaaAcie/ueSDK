@@ -1,19 +1,20 @@
 /*
  * @Author: 徐亦快 913587892@qq.com
- * @Date: 2023-05-18 14:29:15
+ * @Date: 2023-08-18 12:33:27
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-09-19 17:12:17
- * @FilePath: \WebServers424\mxxx\src\index.ts
+ * @LastEditTime: 2023-09-19 17:13:23
+ * @FilePath: \WebServers424\mxxx\src\indexAsWeb.ts
  * @Description: 
  * 
  */
 
+
 // 通过*号直接继承某一个模块的接口
 
-export * from './basic2/myApp.js'
+// export * from './basic2/myApp.js'
 
 // 底座连接
-export * from './initModel/initUE'
+export * from './initModel/initUEAsWeb'
 
 // 生命体
 export * from './initModel/initModel'

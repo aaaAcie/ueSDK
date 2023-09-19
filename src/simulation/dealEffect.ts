@@ -45,7 +45,7 @@ export function addEffect (effectType: String): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
@@ -78,7 +78,7 @@ export function addSpecialEffect (life_entity_id: String): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addSpecialEffectResponse", (uedata?: string): effectModel => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         // ueMsg.showstatus = ueMsg.showstatus.toString()
         // msg2 = JSON.parse(JSON.stringify(ueMsg).replace('id', 'life_entity_id').replace('showstatus','showStatus'))
@@ -122,7 +122,7 @@ export function hideSpecialEffectPoint (): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("hideSpecialEffectPointResponse", (uedata?: string): effectModel => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         resolve({ueMsg})
         
@@ -144,7 +144,7 @@ export function showSpecialEffectPoint (): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("showSpecialEffectPointResponse", (uedata?: string): effectModel => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         resolve({ueMsg})
         

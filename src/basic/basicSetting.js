@@ -6,7 +6,7 @@ function myHandleResponseFunction(data) {
     case "MyCustomEvent":
       console.log("44444444444")
 		default:
-			var obj = JSON.parse(data)
+			var obj = JSON.parse(JSON.stringify(data))
       console.log('收到消息：',obj.data1)
 	}
 	

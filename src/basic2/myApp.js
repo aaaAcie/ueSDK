@@ -776,6 +776,7 @@ function emitDescriptor(messageType, descriptor) {
 }
 
 function emitUIInteraction(descriptor) {
+  console.log("%c[SEND -->]", "background: #bf9eee; color: black" , descriptor);
   emitDescriptor(MessageType.UIInteraction, descriptor);
 }
 function emitCommand(descriptor) {
@@ -846,6 +847,9 @@ function setupWebRtcPlayer(htmlElement, config) {
       if (ws && ws.readyState === WS_OPEN_STATE) {
           console.log('WebRTC data channel connected... waiting for video');
           requestQualityControl();
+          if(webRtcPlayerObj.video){
+              resolve(webRtcPlayerObj.video)
+          }
       }
   };
 
@@ -1022,7 +1026,7 @@ function setupWebRtcPlayer(htmlElement, config) {
             if(responseEventListeners.get('logAll')){
                 responseEventListeners.get('logAll')(response)
             }
-            console.log("%c[收到ue消息]", "background: pink; color: black" , response);
+            console.log("%c[RECEIVE <--]", "background: #f286c4; color: black" , response);
 
             // console.log('--------- 收到ue消息:', response)
             // responseEventListeners.get('logAll')(response)
@@ -1091,9 +1095,9 @@ function setupWebRtcPlayer(htmlElement, config) {
   //createWebRtcOffer();
 
   //   return webRtcPlayerObj.video;
-    if(webRtcPlayerObj.video){
-        resolve(webRtcPlayerObj.video)
-    }
+    // if(webRtcPlayerObj.video){
+    //     resolve(webRtcPlayerObj.video)
+    // }
   })
 }
 function playVideo() {

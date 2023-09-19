@@ -22,7 +22,7 @@ export function demoInteractiveSend(action: string): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("demoInteractiveResponse", (uedata?: string): {} => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         // ueMsg = uedata['Message']
         resolve({uedata})
       } catch (error) {

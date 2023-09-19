@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-07-18 16:09:04
+ * @LastEditTime: 2023-08-10 17:27:01
  * @FilePath: \WebServers424\mxxx\src\initModel\dealModel.ts
  * @Description: 
  * 
@@ -99,7 +99,7 @@ export function addModel(modelType: modelType): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("addModelResponse", (uedata?: string): {} => {
       try {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedata['Message']
         msg2 = JSON.parse(JSON.stringify(ueMsg))
         if(successCallback.length){
@@ -136,7 +136,7 @@ export async function deleteModelById(id: string): Promise<{}> {
       if(data.code==1001){
         Message = data.value
         // console.log(Message)
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ ueMsg, Message, code:data.code })
       }else{
         reject(new Error(data.msg))
@@ -176,7 +176,7 @@ export function setModelPropsById(modelProps: Model): Promise<{}> {
   let msg = ''
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("setModelPropsByIdResponse", (data: string): string => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       // console.log(msg)
       
       // 二次校验，等ue做状态码后修改
@@ -225,7 +225,7 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
   }
   console.log(myarray)
   addResponseEventListener("selectModelDataResponse", (data?: string): string => {
-    msg = JSON.parse(data)['Message']
+    msg = JSON.parse(JSON.stringify(data))['Message']
     console.log(msg)
     // 如果是linechild 不再给回调传值
     if(msg[0]['subtype']!='linechild' && msg[0]['subtype']!='line'){
@@ -234,7 +234,7 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
     return msg
   })
   addResponseEventListener("moveSpecialEffectResponse", (data?: string): string => {
-    msg = JSON.parse(data)['Message']
+    msg = JSON.parse(JSON.stringify(data))['Message']
     // 回调 让前端更新数字
     cb(msg)
     return msg
@@ -249,7 +249,7 @@ export function selectModelById(life_entity_id: string | Array<string>, cb:Funct
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("selectModelByIdResponse", (data?: string): string => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       console.log(msg)
       if (msg['Message']) {
         cb(msg['Message'])
@@ -273,7 +273,7 @@ export function selectModeChange(mode: string): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("selectModeChangeResponse", (data?: string): string => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       // console.log(msg)
       resolve(msg)
       // 二次校验，等ue做状态码后修改
@@ -296,7 +296,7 @@ export function selectCancel(): Promise<{}> {
 
   return new Promise<string>((resolve, reject) => {
     addResponseEventListener("selectCancelResponse", (data?: string): string => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
 
       resolve(msg)
       // 二次校验，等ue做状态码后修改
@@ -329,9 +329,13 @@ export async function getModelById (id: string): Promise<Model> {
   })
 }
 
-interface showParams{
-  life_entity_id?: string; // 生命体id
-  LifeEntityExecutor?: Array<string>; // 类的祖链 组成的数组
+type showParams = {
+  life_entity_id: string;// 生命体id
+  LifeEntityExecutor?: never; // 类的祖链 组成的数组
+  showStatus: string; // 1可见 0隐藏
+} | {
+  life_entity_id?: never;// 生命体id
+  LifeEntityExecutor: Array<string>; // 类的祖链 组成的数组
   showStatus: string; // 1可见 0隐藏
 }
 // 显示、隐藏生命体  跟ue通信并向接口提交 1 已重构
@@ -351,10 +355,10 @@ export async function showModelByIds (allParams: Array<showParams>): Promise<{}>
   let ueMsg
   return new Promise<object>((resolve, reject) => {
     addResponseEventListener("showModelByIdsResponse", (uedata?: string): Model => {
-      ueMsg = JSON.parse(uedata)
+      ueMsg = JSON.parse(JSON.stringify(uedata))
       // if(data.code==1001){
       //   Message = data.value
-      //   ueMsg = JSON.parse(uedata)
+      //   ueMsg = JSON.parse(JSON.stringify(uedata))
       //   resolve({ueMsg, Message})
       // }else{
       //   reject(new Error(data.msg))
@@ -372,19 +376,11 @@ export function focusModelById(life_entity_id: string): Promise<{}> {
     life_entity_id
   })
   let msg = ''
-
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("focusModelByIdResponse", (data?: string): string => {
-      msg = JSON.parse(data)
-      // console.log(msg)
+      msg = JSON.parse(JSON.stringify(data))
       resolve(msg)
-      // 二次校验，等ue做状态码后修改
-      // if(msg){
-      //   resolve(msg)
-      // }else{
-      //   reject(new Error('接收ue返回失败'))
-      // }
       return msg
     })
   })
@@ -400,7 +396,7 @@ export function getModelClick(): Promise<{}> {
   return new Promise<string>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("getModelClickResponse", (data?: string): string => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       resolve(msg)
       return msg
     })
@@ -418,7 +414,7 @@ export async function getModelByIdFromUE (life_entity_id: string, cb: Function):
   return new Promise<Model>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("getModelByIdResponse", (data?: string): Model => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       // console.log(msg)
       cb(msg)
       resolve(msg)
@@ -475,7 +471,7 @@ export async function addModelInBulk(BulkParams: BulkParams): Promise<{}> {
     if(data.code==1001){
       let BelongMessage = data.value.lifeEntityBelongList
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        let uedataAddModel = JSON.parse(uedata)
+        let uedataAddModel = JSON.parse(JSON.stringify(uedata))
         ueMsg = uedataAddModel['Message']
       })
       
@@ -485,7 +481,7 @@ export async function addModelInBulk(BulkParams: BulkParams): Promise<{}> {
         Message: BelongMessage
       })
       addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-        uedataBelong = JSON.parse(uedata)
+        uedataBelong = JSON.parse(JSON.stringify(uedata))
       })
       Message = allParams
       resolve({Message, ueMsg, uedataBelong})
@@ -560,7 +556,7 @@ export async function lockModelByIds (allParams: Array<lockParams>): Promise<{}>
     addResponseEventListener("lockModelByIdsResponse", (uedata?: string): Model => {
       if(data.code==1001){
         Message = data.value
-        ueMsg = JSON.parse(uedata)
+        ueMsg = JSON.parse(JSON.stringify(uedata))
         resolve({ueMsg, Message, code:data.code})
       }else{
         reject(new Error(data.msg))
@@ -584,7 +580,7 @@ export async function callLevelEvent (eventParams: eventParams): Promise<{}> {
   return new Promise<Model>((resolve, reject) => {
     // SendSelectModelDataResponse
     addResponseEventListener("CallLevelEventResponse", (data?: string): {} => {
-      msg = JSON.parse(data)
+      msg = JSON.parse(JSON.stringify(data))
       // console.log(msg)
       resolve(msg)
       return msg
@@ -631,4 +627,17 @@ export async function testDataUrl(data_url: string): Promise<{}> {
       });
   })
   // return dealReturn(data)
+}
+
+// 发送生命体交互事件 只跟ue通信
+export function getModelInteraction(cb: Function): void { 
+  let msg = {}
+  addResponseEventListener("getModelInteractionResponse", (data?: string): void => {
+    msg = JSON.parse(JSON.stringify(data))
+    // msg: {type: 'hover', life_entity_id: 'xxx_10001'}
+    // msg: {type: 'dbclick', life_entity_id: 'xxx_10001'}
+    // msg: {type: 'click', life_entity_id: 'xxx_10001'}
+
+    cb(msg)
+  })
 }

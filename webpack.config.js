@@ -2,7 +2,7 @@
  * @Author: 徐亦快 913587892@qq.com
  * @Date: 2023-02-13 08:50:00
  * @LastEditors: 徐亦快 913587892@qq.com
- * @LastEditTime: 2023-05-30 11:49:29
+ * @LastEditTime: 2023-08-18 12:35:47
  * @FilePath: \WebServers424\mxxx\webpack.config.js
  * @Description: 
  * 
@@ -18,13 +18,16 @@ module.exports = {
   target: 'web',
   // entry: "./src/index.ts",
   entry: {
-    bundle: "./src/index.ts", // paas平台
+    // bundle: "./src/index.ts", // paas平台
     // bundle2: "./src/index2.ts", // 普通项目
     // bundle3: "./src/index3.ts", // 平行云
+    // bundleUE: "./src/ue/index.ts", // paas平台
+    bundle: "./src/indexAsWeb.ts", // paas平台内嵌于ue
+
   },
   output: {
     // filename: 'bundle.js',
-    filename: '[name].js',
+    filename: 'bundleAsWeb.js',
     // filename: '[name].[chunkhash:5].js',
     // path: [path.resolve(__dirname, "dist"), path.resolve('../.vite-ptoject/')],
     path: path.resolve('../vite-project/public/static'),

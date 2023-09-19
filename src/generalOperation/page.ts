@@ -83,9 +83,8 @@ export async function changePage(page_id: string): Promise<{}> {
   return new Promise<{}>((resolve, reject) => {
     addResponseEventListener("changePageResponse", (uedata?: string): {} => {
       try {
-        uedata = JSON.parse(uedata)
-        ueMsg = uedata['Message']
-        resolve(ueMsg)
+        uedata = JSON.parse(JSON.stringify(uedata))
+        resolve(uedata)
         
       } catch (error) {
         reject(new Error(error))
@@ -116,7 +115,7 @@ export async function setBelongShowStatus(belongShowStatus: belongShowStatus): P
           Message: changeNameFunction(Message)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           resolve({Message, ueMsg})
         })

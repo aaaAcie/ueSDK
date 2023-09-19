@@ -231,7 +231,7 @@ export async  function deleteGroup(deleteGroupParam: deleteGroupParam): Promise<
           Message
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           resolve({Message, ueMsg, code})
         })
@@ -334,7 +334,7 @@ export async  function addGroupIndex(groupIndexParam: groupIndexParam): Promise<
           Message
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           // 私有组引入生命体后，生命体应该立刻显示。（只跟ue通信）
           emitUIInteraction({
@@ -387,7 +387,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
           Message
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           // 私有组取消引入生命体后，1. 生命体应该立刻不显示。2.取消选中状态（只跟ue通信）
           emitUIInteraction({
@@ -416,7 +416,7 @@ export async  function deleteGroupIndex(groupIndexDeleteParam: groupIndexDeleteP
         //   life_entity_id: ids
         // })
         addResponseEventListener("deleteModelByIdResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           resolve({Message, ueMsg, code})
         })
@@ -459,7 +459,7 @@ export async  function cancelAddGroupIndex(cancelAddParams: cancelAddParams): Pr
           Message
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           // 私有组取消引入生命体后，1. 生命体应该立刻不显示。2.取消选中状态（只跟ue通信）
           emitUIInteraction({
@@ -538,7 +538,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
         allParams: { "lifeEntityList": Message.lifeEntityVOList }
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg0 = uedata['Message']
       })
 
@@ -550,7 +550,7 @@ export async  function copyGroup(copyGroupParam: copyGroupParam): Promise<{}> {
           Message: changeNameFunction(Message.lifeEntityBelongVOList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = {ueMsg: uedata, ueMsg0}
           resolve({Message, ueMsg, code})
         })
@@ -594,7 +594,7 @@ export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityP
         allParams: { "lifeEntityList": Message.lifeEntityVOList }
       })
       addResponseEventListener("addModelInBulkResponse", (uedata?: string): void => {
-        uedata = JSON.parse(uedata)
+        uedata = JSON.parse(JSON.stringify(uedata))
         ueMsg0 = uedata['Message']
       })
       if (copyLifeEntityParam.model.toString() === '2') {
@@ -605,7 +605,7 @@ export async  function copyLifeEntityInBulk(copyLifeEntityParam: copyLifeEntityP
           Message: changeNameFunction(Message.lifeEntityBelongVOList)
         })
         addResponseEventListener("addBelongResponse", (uedata?: string): void => {
-          uedata = JSON.parse(uedata)
+          uedata = JSON.parse(JSON.stringify(uedata))
           ueMsg = uedata
           resolve({Message, ueMsg, code})
         })
