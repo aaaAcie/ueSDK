@@ -17,9 +17,13 @@ import {
   emitUIInteraction as ue_emitUIInteraction,
 } from "../ue/indexNew.ts";
 
+// export const myChannel = {
+//   addResponseEventListener: ue_addResponseEventListener,
+//   emitUIInteraction: ue_emitUIInteraction,
+// };
 export const myChannel = {
-  addResponseEventListener: ue_addResponseEventListener,
-  emitUIInteraction: ue_emitUIInteraction,
+  addResponseEventListener: stream_addResponseEventListener,
+  emitUIInteraction: stream_emitUIInteraction,
 };
 
 export const myChannel2 = {

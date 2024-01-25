@@ -76,6 +76,9 @@ export async function readPass(project_id: string): Promise<{}> {
 
 // 关卡切换 只跟ue通信 并向ue发消息
 export async function changePass(pass_id: string, EVRSceneName:string=''): Promise<{}> {
+  if(!pass_id){
+    return 
+  }
   if (EVRSceneName.length > 0) {
     emitUIInteraction({
       Category: "changePass",
@@ -93,7 +96,8 @@ export async function changePass(pass_id: string, EVRSceneName:string=''): Promi
 
   // return Promise.resolve({"Success":true,"Message": "xxxx"})
   return new Promise<{}>((resolve, reject) => {
-    addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
+    // addResponseEventListener("InitPassCompleteResponse", (uedata?: string): void => {
+    addResponseEventListener("changePassResponse", (uedata?: string): void => {
       let ueMsg: {} = JSON.parse(JSON.stringify(uedata))
       if(ueMsg['Success'].toString() === 'true'){
         resolve(ueMsg)

@@ -32,7 +32,7 @@ export class initUE implements ConnectParams {
   options?: {
     status: ConnectStatus
   } // 可选剩余参数
-  successCallback?: (ueMsg:{}) => {} // 接收当前的websocket连接实例
+  successCallback?: (ueMsg?:{}) => {} // 接收当前的websocket连接实例
   errorCallback?: (v?) => {}
   constructor(parameters: ConnectParams) {
     this.url = parameters.url
@@ -75,6 +75,7 @@ export class initUE implements ConnectParams {
 
     return new Promise((resolve,reject) => {
       console.log(this.url)
+      // this.successCallback()
       addResponseEventListener("sendMaterialAndChangePassResponse",(uedata) => {
         uedata = JSON.parse(JSON.stringify(uedata))
         // 发送connect消息成功，收到对方反馈
